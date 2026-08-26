@@ -3,12 +3,18 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "demo2"
+  ],
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "dev:demo2": "npm run dev --workspace demo2",
+    "build:demo2": "npm run build --workspace demo2",
+    "build": "npm run build:demo2 && astro build",
     "preview": "astro preview",
     "validate:routes": "node scripts/validate-built-routes.mjs",
-    "validate": "npm run build && npm run validate:routes"
+    "validate:demo2": "node scripts/validate-demo2.mjs",
+    "validate": "npm run build && npm run validate:routes && npm run validate:demo2"
   },
   "engines": {
     "node": ">=22.12.0 <23",

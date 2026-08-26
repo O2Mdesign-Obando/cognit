@@ -1,0 +1,11 @@
+{
+  "title": "Cognit Learning Hub demo",
+  "description": "This web application streamlines coaching sessions by organizing and managing feedback loops, enhancing communication and progress tracking for coaches and clients.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

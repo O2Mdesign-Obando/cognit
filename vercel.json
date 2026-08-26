@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/learninghub/demo2/:path*",
+      "destination": "/learninghub/demo2/index.html"
+    }
+  ]
+}
