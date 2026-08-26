@@ -1,0 +1,68 @@
+---
+import BaseLayout from "../../../../components/layout/BaseLayout.astro";
+import Container from "../../../../components/ui/Container.astro";
+import CognitDemoDeepView from "../../../../components/demo/CognitDemoDeepView.astro";
+import CognitCoachJourneyView from "../../../../components/demo/CognitCoachJourneyView.astro";
+import CognitStudentJourneyView from "../../../../components/demo/CognitStudentJourneyView.astro";
+import CognitFamilyJourneyView from "../../../../components/demo/CognitFamilyJourneyView.astro";
+import CognitHqView from "../../../../components/demo/CognitHqView.astro";
+import CognitCenterView from "../../../../components/demo/CognitCenterView.astro";
+import { CENTER_CONTEXT_KEYS, CENTER_SECTION_KEYS } from "../../../../demo/cognit-demo-routes.js";
+
+export function getStaticPaths() {
+  const contextSectionRoutes = CENTER_CONTEXT_KEYS.flatMap((context) => CENTER_SECTION_KEYS.map((section) => section === "overview" ? `context/${context}` : `context/${context}/${section}`));
+  const contextChildRoutes = CENTER_CONTEXT_KEYS.flatMap((context) => [
+    "classes/creative", "classes/creative/attendance", "classes/robotics",
+    "communication/coach", "communication/family", "communication/compose",
+    "coaches/jordan", "coaches/priya", "schedule/creative",
+    "scheduling/daily", "scheduling/weekly", "scheduling/monthly", "scheduling/season", "scheduling/cancel", "scheduling/cancel/confirmed",
+    "students/eli", "students/sofia", "students/noah", "students/mina", "students/lena", "students/ava",
+    "students/morgan", "students/reyes", "students/bennett", "students/park", "students/grant", "students/thompson",
+    "families/morgan", "families/reyes", "families/park", "attendance/eli", "attendance/sofia",
+    "courses/creative-app-lab", "courses/robotics-studio", "courses/digital-storytelling-lab",
+    "reports/eli", "reports/sofia", "reports/builder", "whats-new/archive",
+    "configuration/modules", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/ready"
+  ].map((child) => `context/${context}/${child}`));
+  const routes = {
+    center: [
+      "classes", "classes/creative", "classes/creative/attendance", "classes/robotics", "communication", "communication/coach", "communication/family", "communication/compose",
+      "coaches", "coaches/jordan", "coaches/priya", "schedule", "schedule/creative", "scheduling", "scheduling/daily", "scheduling/weekly", "scheduling/monthly", "scheduling/season", "scheduling/cancel", "scheduling/cancel/confirmed",
+      "students", "students/eli", "students/sofia", "students/noah", "students/mina", "students/lena", "students/ava",
+      "students/morgan", "students/reyes", "students/bennett", "students/park", "students/grant", "students/thompson",
+      "families", "families/morgan", "families/reyes", "families/park", "attendance", "attendance/eli", "attendance/sofia",
+      "courses", "courses/creative-app-lab", "courses/robotics-studio", "courses/digital-storytelling-lab", "billing",
+      "reports", "reports/eli", "reports/sofia", "reports/builder", "messages", "settings", "configuration", "configuration/modules", "module-control", "support",
+      "whats-new", "whats-new/archive", "migration", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/ready", ...contextSectionRoutes, ...contextChildRoutes
+    ],
+    coach: ["today", "readiness", "live", "capture", "after-class", "end-of-day", "releases", "support", "profile", "class", "learners/eli", "learners/noah", "learners/lena", "learning-plan", "progress", "progress/lena", "observations", "evidence/eli", "reporting"],
+    student: ["lesson", "active", "reflection", "complete", "my-work", "artifact", "progress", "courses", "courses/lena", "journey", "journey/eli"],
+    family: ["journey", "journey/eli", "attendance", "attendance/eli", "attendance/sofia", "messages", "absence", "absence-confirmed", "makeup", "courses", "billing", "account", "support"],
+    hq: ["network", "centers", "curriculum", "insights", "performance", "governance", "support", "deployment", "modules", "allocation"]
+  };
+  return Object.entries(routes).flatMap(([perspective, views]) => views.map((view) => ({ params: { perspective, view }, props: { perspective, view } })));
+}
+
+const { perspective, view } = Astro.props;
+const roleLabel = perspective[0].toUpperCase() + perspective.slice(1);
+const coachJourneyViews = new Set(["today", "readiness", "live", "capture", "after-class", "end-of-day", "releases", "support", "profile"]);
+const isCoachJourney = perspective === "coach" && coachJourneyViews.has(view);
+const studentJourneyViews = new Set(["lesson", "active", "reflection", "complete"]);
+const isStudentJourney = perspective === "student" && studentJourneyViews.has(view);
+const isFamilyJourney = perspective === "family";
+const isHqJourney = perspective === "hq";
+const isCenterJourney = perspective === "center";
+---
+
+<BaseLayout title={`${roleLabel} Demo · Cognit Learning Hub`} shellVariant="demo-shell" footerVariant="compact" demoPerspective={perspective}>
+  <main class="deep-demo-page">
+    <Container>
+      {isCoachJourney ? <CognitCoachJourneyView view={view} /> : isStudentJourney ? <CognitStudentJourneyView view={view} /> : isFamilyJourney ? <CognitFamilyJourneyView view={view} /> : isHqJourney ? <CognitHqView view={view} /> : isCenterJourney ? <CognitCenterView view={view} /> : <CognitDemoDeepView role={perspective} view={view} />}
+      <a class="all-perspectives" href="/learninghub/demo">← All demo perspectives</a>
+    </Container>
+  </main>
+  <style>
+    .deep-demo-page { min-height: 72vh; padding: clamp(28px, 5vw, 58px) 0 64px; }
+    .deep-demo-page :global(.container) { max-width: 1120px; }
+    .all-perspectives { display: inline-flex; margin-top: 30px; color: var(--color-ink); font-weight: 900; text-decoration: underline; text-underline-offset: 4px; }
+  </style>
+</BaseLayout>

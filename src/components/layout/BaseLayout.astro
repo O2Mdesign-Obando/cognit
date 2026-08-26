@@ -1,0 +1,29 @@
+---
+import "../../styles/global.css";
+import Header from "./Header.astro";
+import Footer from "./Footer.astro";
+
+const {
+  title = "Cognit Learning Hub",
+  shellVariant = "default",
+  footerVariant = "default",
+  demoPerspective = ""
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Cognit Learning Hub supports clarity and continuity across the learner’s journey." />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/assets/brand/cognit-icon.jpg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <Header variant={shellVariant} demoPerspective={demoPerspective} />
+    <slot />
+    <Footer variant={footerVariant} />
+  </body>
+</html>

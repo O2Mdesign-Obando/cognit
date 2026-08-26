@@ -1,0 +1,226 @@
+---
+import DemoImage from "./DemoImage.astro";
+import CognitCoachLiveTeaching from "./CognitCoachLiveTeaching.astro";
+import { getDemoCoachImage, getDemoContextImage, getDemoFamilyImage, getDemoStudentImage } from "../../demo/cognit-demo-images.js";
+
+const { model } = Astro.props;
+const isCenter = model.role === "center";
+const isCoach = model.role === "coach";
+const isStudent = model.role === "student";
+const isFamily = model.role === "family";
+const titleCase = (value) => String(value || "").replaceAll("_", " ").replace(/^./, (letter) => letter.toUpperCase());
+---
+
+<section class="demo-workspace" data-demo-perspective={model.role} data-synthetic-demo="true">
+  {isCenter && (
+    <div class="perspective-body center-body">
+      <section aria-labelledby="center-today-title">
+        <div class="section-heading">
+          <div class="heading-identity"><DemoImage image={getDemoContextImage("demo-context-northfield-studio")} size="avatar-md" loading="eager" /><div><span class="section-kicker">Today · Northfield Studio</span><h3 id="center-today-title">The operation at a glance</h3></div></div>
+          <span class="status-chip attention">{model.summary.operationalStatus}</span>
+        </div>
+        <div class="summary-grid">
+          <article><strong>{model.summary.activeCourses}</strong><span>Active courses</span></article>
+          <article><strong>{model.summary.learnersExpected}</strong><span>Learners expected</span></article>
+          <article><strong>{model.summary.coaches}</strong><span>Coaches</span></article>
+          <article><strong>2</strong><span>Active contexts</span></article>
+        </div>
+      </section>
+
+      <div class="two-column">
+        <a class="panel attention-panel actionable-card" href="/learninghub/demo/center/reports/sofia" aria-labelledby="attention-title">
+          <div class="section-heading compact"><div><span class="section-kicker">Needs attention</span><h3 id="attention-title">One review exception</h3></div><span class="status-chip attention">{model.needsAttention.status}</span></div>
+          <strong class="record-title">{model.needsAttention.student.name} · {model.needsAttention.course.name}</strong>
+          <p>{model.needsAttention.reason}</p>
+          <small>Center review is requested because the supporting artifact cannot be reviewed.</small>
+          <span class="card-action">Open review item →</span>
+        </a>
+
+        <a class="panel normal-panel actionable-card" href="/learninghub/demo/center/reports/eli" aria-labelledby="normal-title">
+          <div class="section-heading compact"><div><span class="section-kicker">Flowing normally</span><h3 id="normal-title">No intervention required</h3></div><span class="status-chip positive">Processed</span></div>
+          <strong class="record-title">{model.flowingNormally.student.name} · {model.flowingNormally.course.name}</strong>
+          <p>{model.flowingNormally.detail}</p>
+          <small>{model.flowingNormally.status}. Normal learning work stays out of the exception queue.</small>
+          <span class="card-action">View processed report →</span>
+        </a>
+      </div>
+
+      <section aria-labelledby="continuity-title">
+        <div class="section-heading"><div><span class="section-kicker">Enrollment continuity</span><h3 id="continuity-title">People continue across learning contexts</h3></div></div>
+        <div class="continuity-grid">
+          <a class="panel actionable-card" href="/learninghub/demo/center/students/mina">
+            <span class="status-chip neutral">Transition</span>
+            <h4>{model.continuity.transition.student.name}</h4>
+            <p>Previously participated through <strong>{model.continuity.transition.historical.name}</strong> and now attends directly at <strong>{model.continuity.transition.current.name}</strong>.</p>
+            <small>One learner profile · history preserved</small>
+            <span class="card-action">Open enrollment history →</span>
+          </a>
+          <a class="panel actionable-card" href="/learninghub/demo/center/students/lena">
+            <span class="status-chip neutral">Two active courses</span>
+            <h4>{model.continuity.multiCourse.student.name}</h4>
+            <p>{model.continuity.multiCourse.courses.map((item) => item.name).join(" · ")}</p>
+            <small>One learner identity · separate course progress</small>
+            <span class="card-action">Open course participation →</span>
+          </a>
+          <a class="panel actionable-card" href="/learninghub/demo/center/attendance/sofia">
+            <span class="status-chip positive">Available</span>
+            <h4>{model.makeup.student.name}</h4>
+            <p>{model.makeup.label} following a prior Robotics Studio absence.</p>
+            <small>No expiration policy applied</small>
+            <span class="card-action">Open attendance record →</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  )}
+
+  {isCoach && <CognitCoachLiveTeaching model={model} />}
+
+  {isStudent && (
+    <div class="perspective-body student-body">
+      <section class="student-focus" aria-labelledby="student-focus-title">
+        <div class="heading-identity"><DemoImage image={getDemoStudentImage(model.person.id)} size="profile-lg" loading="eager" /><div><span class="section-kicker">{model.person.name} · Today · {model.session.label}</span><h3 id="student-focus-title">{model.session.learningFocus}</h3><p>{model.course.name} with {model.coach.name}</p></div></div>
+      </section>
+
+      <section class="student-steps" aria-label="Current learning steps">
+        <a class="active-step actionable-card" href="/learninghub/demo/student/my-work"><span>Current</span><h4>{model.challenge}</h4><small>Keep building here</small><span class="card-action">Open My Work →</span></a>
+        <article><span>Completed</span><h4>{model.completed}</h4><small>Ready to build on</small></article>
+        <article><span>Next</span><h4>{model.next}</h4><small>Coming up</small></article>
+      </section>
+
+      <section class="progress-panel" aria-labelledby="progress-title">
+        <div><span class="section-kicker">Today’s progress</span><h3 id="progress-title">Your prototype is taking shape</h3></div>
+        <div class="progress-copy"><strong>{model.progression.label}</strong><span>Your next step is ready.</span></div>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax={model.progression.total} aria-valuenow={model.progression.completed} aria-label={model.progression.label}><span style={`width:${(model.progression.completed / model.progression.total) * 100}%`}></span></div>
+      </section>
+
+      <div class="two-column student-supporting">
+        <a class="panel artifact-card actionable-card" href="/learninghub/demo/student/artifact"><span class="section-kicker">Your latest work</span><h3>{model.artifact.label}</h3><p>Your Coach connected this project artifact to today’s learning.</p><span class="card-action">Open project artifact →</span></a>
+        <a class="panel actionable-card" href="/learninghub/demo/student/courses/lena"><span class="section-kicker">Continuity example</span><h3>{model.continuityExample.student.name}</h3><p>{model.continuityExample.courses.map((item) => item.name).join(" and ")} remain separate learning paths under one learner profile.</p><span class="card-action">View multi-course example →</span></a>
+      </div>
+    </div>
+  )}
+
+  {isFamily && (
+    <div class="perspective-body family-body">
+      <section class="family-story" aria-labelledby="family-update-title">
+        <div class="family-story-layout">
+          <DemoImage image={getDemoFamilyImage(model.family.id)} size="profile-lg" loading="eager" />
+          <div><div class="section-heading"><div><span class="section-kicker">{model.family.name} · Latest learning update</span><h3 id="family-update-title">{model.student.name} · {model.course.name}</h3></div><span class="status-chip positive">Published</span></div>
+          <p class="family-update">{model.update}</p>
+          <div class="family-status-row">
+            <article><span>Attendance</span><strong>{titleCase(model.attendance)}</strong></article>
+            <article><span>Family action</span><strong>{model.action}</strong></article>
+          </div></div>
+        </div>
+      </section>
+
+      <a class="published-story actionable-card" href="/learninghub/demo/family/journey/eli" aria-labelledby="published-story-title">
+        <div class="story-mark" aria-hidden="true">↗</div>
+        <div><span class="section-kicker">Latest published learning story</span><h3 id="published-story-title">{model.publishedStory}</h3><p>Today’s project shows how {model.student.name} planned, built, tested, and improved one interaction.</p></div>
+        <span class="card-action">Open learning story →</span>
+      </a>
+
+      <a class="panel family-secondary actionable-card" href="/learninghub/demo/family/attendance/sofia" aria-labelledby="family-makeup-title">
+        <div><span class="section-kicker">Another Family example</span><h3 id="family-makeup-title">{model.secondary.family.name}</h3><p>{model.secondary.student.name} has one makeup option following a prior Robotics Studio absence.</p></div>
+        <span class="status-chip neutral">{model.secondary.makeup.label}</span>
+      </a>
+    </div>
+  )}
+</section>
+
+<style>
+  .demo-workspace { display: grid; gap: 30px; }
+  .section-kicker { color: var(--color-muted); font-size: .72rem; font-weight: 950; letter-spacing: .045em; text-transform: uppercase; }
+  .perspective-body { display: grid; gap: 30px; }
+  .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
+  .section-heading.compact { align-items: start; }
+  .heading-identity, .learner-identity-row, .family-story-layout { display: flex; align-items: center; gap: 16px; }
+  .heading-identity > div, .learner-identity-row > div, .family-story-layout > div { min-width: 0; }
+  .family-story-layout { align-items: flex-start; gap: clamp(20px, 4vw, 34px); }
+  .family-story-layout > div { flex: 1; }
+  .section-heading h3, .session-banner h3, .student-focus h3, .progress-panel h3, .published-story h3 { margin: 4px 0 0; color: var(--color-ink); font-size: clamp(1.45rem, 3vw, 2rem); }
+  .status-chip { display: inline-flex; align-items: center; width: fit-content; min-height: 30px; padding: 5px 10px; border-radius: 999px; font-size: .74rem; font-weight: 950; white-space: nowrap; }
+  .status-chip.positive { background: var(--color-mint); color: #08746f; }
+  .status-chip.attention { background: #fff1dc; color: #8a4c00; }
+  .status-chip.neutral { background: var(--color-sky); color: var(--color-ink); }
+  .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .summary-grid article { padding: 18px; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; }
+  .summary-grid strong { display: block; color: var(--color-ink); font-size: 1.75rem; }
+  .summary-grid span { color: var(--color-muted); font-size: .84rem; font-weight: 800; }
+  .two-column { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .panel, .primary-story, .family-story, .progress-panel { padding: clamp(22px, 3vw, 30px); border: 1px solid var(--color-border); border-radius: 14px; background: #fff; box-shadow: var(--shadow-soft); }
+  .attention-panel { border-left: 5px solid var(--cognit-brand-accent); }
+  .normal-panel { border-left: 5px solid var(--cognit-brand-progress); }
+  .panel p { margin: 10px 0; }
+  .panel small { display: block; color: var(--color-muted); }
+  .actionable-card { color: inherit; transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease; }
+  .actionable-card:hover { border-color: var(--color-blue); box-shadow: var(--shadow-card); transform: translateY(-1px); }
+  .card-action { display: block; margin-top: 14px; color: var(--color-ink); font-size: .82rem; font-weight: 950; }
+  .record-title { display: block; color: var(--color-ink); font-size: 1.08rem; }
+  .continuity-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .continuity-grid h4 { margin: 16px 0 4px; color: var(--color-ink); font-size: 1.15rem; }
+  .continuity-grid p strong { color: var(--color-ink); }
+  .session-banner { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding: clamp(24px, 4vw, 38px); border-radius: 16px; background: linear-gradient(135deg, #eef5fa, #e8f7f6); }
+  .session-banner p { max-width: 65ch; margin: 12px 0 0; }
+  .session-meta { display: grid; justify-items: end; gap: 10px; color: var(--color-ink); text-align: right; }
+  .count-label { color: var(--color-muted); font-size: .86rem; font-weight: 850; }
+  .roster-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .learner-card { display: grid; gap: 14px; padding: 20px; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; }
+  .learner-card.featured { border-top: 5px solid var(--cognit-brand-progress); padding-top: 16px; }
+  .learner-card > div > div { display: grid; gap: 2px; }
+  .learner-card strong { color: var(--color-ink); }
+  .learner-card span, .learner-card p { color: var(--color-muted); font-size: .84rem; }
+  .learner-card p { margin: 0; }
+  .story-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .story-grid article { display: grid; gap: 8px; padding: 18px; border-radius: 10px; background: var(--cognit-surface-secondary); }
+  .story-grid span, .family-status-row span { color: var(--color-muted); font-size: .75rem; font-weight: 900; text-transform: uppercase; }
+  .story-grid strong { color: var(--color-ink); line-height: 1.45; }
+  .observation-grid { display: grid; grid-template-columns: 1.35fr .65fr; gap: 14px; margin-top: 16px; }
+  .observation-grid p { color: var(--color-ink); font-size: 1.04rem; line-height: 1.65; }
+  .artifact-card { background: #f5fbfb; }
+  .artifact-card strong { display: block; margin: 14px 0 8px; color: var(--color-ink); }
+  .clarification-strip, .family-secondary { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .clarification-strip h3, .family-secondary h3 { margin: 4px 0 6px; color: var(--color-ink); }
+  .clarification-strip p, .family-secondary p { margin: 0; }
+  .clarification-strip > div:last-child { display: grid; justify-items: end; gap: 8px; }
+  .student-focus { padding: clamp(28px, 5vw, 48px); border-radius: 16px; background: linear-gradient(135deg, #eef5fa, #fff); }
+  .student-focus p { margin: 12px 0 0; font-weight: 800; }
+  .student-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .student-steps > article, .student-steps > a { padding: 24px; border: 1px solid var(--color-border); border-radius: 14px; background: #fff; }
+  .student-steps > .active-step { border-top: 6px solid var(--cognit-brand-progress); padding-top: 19px; }
+  .student-steps span { color: var(--color-muted); font-size: .74rem; font-weight: 950; text-transform: uppercase; }
+  .student-steps h4 { margin: 12px 0; color: var(--color-ink); font-size: 1.18rem; }
+  .student-steps small { color: var(--color-muted); }
+  .progress-panel { display: grid; grid-template-columns: 1fr auto; gap: 20px; }
+  .progress-copy { display: grid; align-content: center; justify-items: end; gap: 2px; text-align: right; }
+  .progress-copy strong { color: var(--color-ink); }
+  .progress-copy span { color: var(--color-muted); font-size: .84rem; }
+  .progress-track { grid-column: 1 / -1; height: 12px; overflow: hidden; border-radius: 999px; background: var(--color-sky); }
+  .progress-track span { display: block; height: 100%; border-radius: inherit; background: var(--cognit-brand-progress); }
+  .family-story { border-top: 6px solid var(--cognit-brand-progress); }
+  .family-update { max-width: 760px; margin: 22px 0; color: var(--color-ink); font-size: clamp(1.25rem, 2.5vw, 1.65rem); line-height: 1.55; }
+  .family-status-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .family-status-row article { display: grid; gap: 5px; padding: 16px; border-radius: 10px; background: var(--cognit-surface-secondary); }
+  .family-status-row strong { color: var(--color-ink); }
+  .published-story { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 22px; padding: clamp(24px, 4vw, 38px); border-radius: 16px; background: #eef5fa; }
+  .story-mark { display: grid; width: 64px; height: 64px; place-items: center; border-radius: 50%; background: var(--color-ink); color: #fff; font-size: 1.8rem; }
+  .published-story p { margin: 10px 0 0; }
+  @media (max-width: 760px) {
+    .session-banner, .clarification-strip, .family-secondary { align-items: flex-start; flex-direction: column; }
+    .session-meta { justify-items: start; text-align: left; }
+    .summary-grid, .story-grid, .student-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .continuity-grid, .roster-grid, .two-column, .observation-grid { grid-template-columns: 1fr; }
+    .progress-panel { grid-template-columns: 1fr; }
+    .progress-copy { justify-items: start; text-align: left; }
+    .progress-track { grid-column: auto; }
+  }
+  @media (max-width: 460px) {
+    .summary-grid, .story-grid, .student-steps, .family-status-row { grid-template-columns: 1fr; }
+    .section-heading { align-items: flex-start; flex-direction: column; }
+    .published-story { grid-template-columns: 1fr; }
+    .story-mark { width: 52px; height: 52px; }
+    .family-story-layout { align-items: flex-start; flex-direction: column; }
+    .student-focus .heading-identity { align-items: flex-start; flex-direction: column; }
+  }
+</style>

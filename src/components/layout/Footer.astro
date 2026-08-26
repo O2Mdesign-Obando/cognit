@@ -1,0 +1,11 @@
+---
+const { variant = "default" } = Astro.props;
+const compact = variant === "compact";
+---
+<footer class:list={["site-footer", compact && "compact"]}>
+  {!compact && <img src="/assets/brand/cognit-wordmark.jpg" alt="Cognit" />}
+  <div><span>Know what happened. Understand what comes next.</span><small>© 2026 Cognit. All rights reserved.</small></div>
+</footer>
+<style>
+  .site-footer{padding:42px max(24px,calc((100vw - 1360px)/2));border-top:1px solid var(--color-border);background:var(--cognit-surface-secondary);display:grid;justify-items:center;gap:24px}.site-footer img{width:120px}.site-footer div{width:min(1120px,100%);display:flex;justify-content:space-between;gap:18px;color:var(--color-ink);font-weight:700}.site-footer small{color:var(--color-muted)}.site-footer.compact{padding-block:26px}@media(max-width:620px){.site-footer div{display:grid;text-align:center;justify-content:center}}
+</style>

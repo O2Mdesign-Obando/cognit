@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../../../components/layout/BaseLayout.astro";
+import Container from "../../../components/ui/Container.astro";
+const perspectives = [
+  ["center", "Center", "Run today’s learning operation."],
+  ["coach", "Coach", "Move teaching forward."],
+  ["student", "Student", "Know what you’re working on next."],
+  ["family", "Family", "Stay connected to the learning journey."],
+  ["hq", "HQ", "Steward the network by exception."]
+];
+---
+<BaseLayout title="Cognit Learning Hub Demo" shellVariant="demo-arrival-shell" footerVariant="compact">
+  <main class="demo-arrival"><Container><span class="eyebrow">Learning Hub Demo</span><h1>See one learning story from every perspective.</h1><p>Explore a local, synthetic, resettable demonstration across Center, Coach, Student, Family, and HQ.</p><section>{perspectives.map(([id,label,title]) => <a href={`/learninghub/demo/${id}`}><span>{label}</span><h2>{title}</h2><b>View {label} →</b></a>)}</section></Container></main>
+</BaseLayout>
+<style>.demo-arrival{min-height:72vh;padding:clamp(54px,8vw,110px) 0}.demo-arrival h1{margin:18px 0;max-width:850px}.demo-arrival> :global(.container)>p{max-width:720px;font-size:1.1rem}.demo-arrival section{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:40px}.demo-arrival section a{padding:28px;border:1px solid var(--color-border);border-radius:16px;background:#fff;box-shadow:var(--shadow-soft)}.demo-arrival section a:last-child{grid-column:1/-1}.demo-arrival section span{font-size:.78rem;font-weight:950;text-transform:uppercase;color:var(--cognit-brand-progress)}.demo-arrival h2{margin:12px 0 20px}.demo-arrival b{color:var(--color-ink)}@media(max-width:700px){.demo-arrival section{grid-template-columns:1fr}.demo-arrival section a:last-child{grid-column:auto}}</style>

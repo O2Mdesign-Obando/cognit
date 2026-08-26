@@ -1,0 +1,74 @@
+---
+import { centerContextSectionHref } from "../../demo/cognit-demo-routes.js";
+
+const { role, active = "overview", context = "northfield" } = Astro.props;
+const sections = {
+  center: [
+    ["overview", "Overview", "/learninghub/demo/center"],
+    ["schedule", "Schedule", "/learninghub/demo/center/schedule"],
+    ["students", "Students", "/learninghub/demo/center/students"],
+    ["families", "Families", "/learninghub/demo/center/families"],
+    ["attendance", "Attendance", "/learninghub/demo/center/attendance"],
+    ["reports", "Reports", "/learninghub/demo/center/reports"],
+    ["messages", "Messages", "/learninghub/demo/center/messages"],
+    ["settings", "Settings", "/learninghub/demo/center/settings"]
+  ],
+  coach: [
+    ["today", "Today", "/learninghub/demo/coach/today"],
+    ["class", "Class", "/learninghub/demo/coach/class"],
+    ["learning-plan", "Learning Plan", "/learninghub/demo/coach/learning-plan"],
+    ["progress", "Progress", "/learninghub/demo/coach/progress"],
+    ["observations", "Observations", "/learninghub/demo/coach/observations"],
+    ["reporting", "Reporting", "/learninghub/demo/coach/reporting"]
+  ],
+  student: [
+    ["today", "Today", "/learninghub/demo/student"],
+    ["my-work", "My Work", "/learninghub/demo/student/my-work"],
+    ["progress", "Progress", "/learninghub/demo/student/progress"],
+    ["courses", "Courses", "/learninghub/demo/student/courses"],
+    ["journey", "Learning Journey", "/learninghub/demo/student/journey"]
+  ],
+  family: [
+    ["overview", "Home", "/learninghub/demo/family"],
+    ["journey", "Learning Journey", "/learninghub/demo/family/journey"],
+    ["messages", "Messages", "/learninghub/demo/family/messages"],
+    ["attendance", "Attendance", "/learninghub/demo/family/attendance"],
+    ["courses", "Courses", "/learninghub/demo/family/courses"],
+    ["billing", "Tuition & Billing", "/learninghub/demo/family/billing"],
+    ["account", "Account", "/learninghub/demo/family/account"],
+    ["support", "Support", "/learninghub/demo/family/support"]
+  ]
+};
+---
+
+<div class="loop-navigation">
+  <nav class="loop-sections" aria-label={`${role} demo sections`}>
+    {sections[role].map(([id, label, href]) => (
+      <a href={role === "center" ? centerContextSectionHref(context, id) : href} aria-current={active === id ? "page" : undefined}>{label}</a>
+    ))}
+  </nav>
+  {role === "center" && (
+    <nav class="context-switcher" aria-label="Operating context">
+      <span>Operating context</span>
+      <a href={centerContextSectionHref("northfield", active)} aria-current={context === "northfield" ? "page" : undefined}>Northfield Studio</a>
+      <a href={centerContextSectionHref("harbor", active)} aria-current={context === "harbor" ? "page" : undefined}>Harbor Academy Program</a>
+    </nav>
+  )}
+</div>
+
+<style>
+  .loop-navigation { display: grid; gap: 12px; margin-bottom: clamp(30px, 5vw, 48px); }
+  .loop-sections, .context-switcher { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; padding: 8px; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; box-shadow: var(--shadow-soft); }
+  .loop-sections a, .context-switcher a { display: inline-flex; align-items: center; min-height: 40px; padding: 8px 12px; border-radius: 8px; color: var(--color-ink); font-size: .86rem; font-weight: 850; }
+  .loop-sections a[aria-current="page"] { background: var(--color-ink); color: #fff; }
+  .context-switcher { width: fit-content; border-radius: 999px; }
+  .context-switcher > span { padding: 6px 8px 6px 10px; color: var(--color-muted); font-size: .7rem; font-weight: 950; text-transform: uppercase; }
+  .context-switcher a[aria-current="page"] { background: var(--color-blue-soft); box-shadow: inset 0 0 0 2px var(--color-blue); }
+  @media (max-width: 760px) {
+    .loop-sections { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-inline: contain; }
+    .loop-sections a { flex: 0 0 auto; }
+    .context-switcher { align-items: stretch; width: 100%; border-radius: 12px; }
+    .context-switcher > span { flex-basis: 100%; }
+    .context-switcher a { flex: 1 1 145px; justify-content: center; text-align: center; }
+  }
+</style>

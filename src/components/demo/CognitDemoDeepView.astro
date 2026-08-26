@@ -1,0 +1,348 @@
+---
+import DemoLoopNav from "./DemoLoopNav.astro";
+import DemoImage from "./DemoImage.astro";
+import { getCognitDemoData, getCognitDemoPerspectiveModel } from "../../demo/cognit-demo-model.js";
+import { COGNIT_DEMO_IMAGES, getDemoCoachImage, getDemoContextImage, getDemoFamilyImage, getDemoStudentImage } from "../../demo/cognit-demo-images.js";
+import { parseCenterDemoView } from "../../demo/cognit-demo-routes.js";
+
+const { role, view } = Astro.props;
+const data = getCognitDemoData();
+const roleModel = getCognitDemoPerspectiveModel(role);
+const centerView = role === "center" ? parseCenterDemoView(view) : null;
+const [roleSection, roleItem = ""] = view.split("/");
+const section = centerView?.section ?? roleSection;
+const item = centerView?.item ?? roleItem;
+const active = section;
+const contextKey = centerView?.context || "northfield";
+const studentSlug = (studentId) => studentId.replace("demo-student-", "").split("-")[0];
+const findStudent = (slug) => data.people.students.find((person) => studentSlug(person.id) === slug);
+const findCourse = (id) => data.courses.find((course) => course.id === id);
+const findCoach = (id) => data.people.coaches.find((coach) => coach.id === id);
+const findContext = (id) => data.contexts.find((context) => context.id === id);
+const findFamily = (slug) => data.people.families.find((family) => family.id.endsWith(`-${slug}`));
+const familySlug = (familyId) => familyId.replace("demo-family-", "");
+const selectedStudent = item && section === "students" ? findStudent(item) : null;
+const selectedFamily = item && section === "families" ? findFamily(item) : null;
+const selectedContext = role === "center" ? findContext(contextKey === "harbor" ? "demo-context-harbor-academy" : "demo-context-northfield-studio") : null;
+const selectedContextEnrollments = selectedContext ? data.enrollments.filter((enrollment) => enrollment.contextId === selectedContext.id && enrollment.status === "active") : [];
+const selectedContextStudentIds = new Set(selectedContextEnrollments.map((enrollment) => enrollment.studentId));
+const selectedContextSessions = selectedContext ? data.sessions.filter((session) => session.contextId === selectedContext.id) : [];
+const selectedContextStudents = data.people.students.filter((student) => selectedContextStudentIds.has(student.id));
+const selectedContextFamilies = data.people.families.filter((family) => family.studentIds.some((studentId) => selectedContextStudentIds.has(studentId)));
+const selectedContextAttendance = data.attendance.filter((record) => selectedContextEnrollments.some((enrollment) => enrollment.studentId === record.studentId && enrollment.courseId === record.courseId));
+const selectedContextEvents = data.learningEvents.filter((event) => selectedContextEnrollments.some((enrollment) => enrollment.studentId === event.studentId && enrollment.courseId === event.courseId));
+const selectedContextMessages = contextKey === "northfield" ? data.messages : [];
+
+const meta = {
+  center: {
+    overview: ["Operating context", selectedContext?.name, selectedContext?.purpose],
+    schedule: ["Schedule", `${selectedContext?.name} sessions`, "Inspect course, Coach, learner, time, and session status."],
+    students: ["Students", selectedStudent ? selectedStudent.name : `${selectedContext?.name} learners`, selectedStudent ? "Current participation, attendance, and preserved enrollment history." : `${selectedContextStudents.length} learner${selectedContextStudents.length === 1 ? "" : "s"} in this operating context.`],
+    families: ["Families", selectedFamily ? selectedFamily.name : `${selectedContext?.name} Family relationships`, "Scoped learning visibility relationships without fabricated contact details."],
+    attendance: ["Attendance", item === "sofia" ? "Sofia Reyes · attendance and makeup" : item === "eli" ? "Eli Morgan · attendance" : `${selectedContext?.name} attendance`, "Attendance and makeup information scoped to the selected operating context."],
+    reports: ["Reports", item === "sofia" ? "Sofia Reyes · review exception" : item === "eli" ? "Eli Morgan · processed report" : `${selectedContext?.name} reports`, "Learning reports scoped to the selected operating context."],
+    messages: ["Messages", `${selectedContext?.name} operational conversations`, "Message threads scoped to the selected operating context."],
+    settings: ["Settings", `${selectedContext?.name} context`, "Context metadata and shared demo policy for this learning operation."]
+  },
+  coach: {
+    class: ["Class", "Creative App Lab learners", "Open a learner to see the current learning context."],
+    learners: ["Learner", `${findStudent(item)?.name} · Creative App Lab`, "The current challenge, Coach observation, and course-specific progress."],
+    "learning-plan": ["Learning Plan", "Habit-tracking app prototype", "A concrete learning sequence for today’s Creative App Lab."],
+    progress: ["Progress", item === "lena" ? "Lena Grant · two course paths" : "Course progression", "Progress remains attached to the relevant learner and course."],
+    observations: ["Observations", "Learning evidence and interpretation", "Concise observations stay connected to the learning work."],
+    evidence: ["Evidence", "Habit Tracker — interaction flow prototype", "Evidence connected to Eli’s Creative App Lab learning record."],
+    reporting: ["Reporting", "Learning update states", "See why one update flows normally and one returns for clarification."]
+  },
+  student: {
+    "my-work": ["My Work", "Habit Tracker prototype", "Current work, completed steps, and the next improvement."],
+    artifact: ["Project artifact", "Habit Tracker — interaction flow prototype", "The work connected to today’s learning focus."],
+    progress: ["Progress", "Creative App Lab progression", "Completed, current, and next—expressed in learning language."],
+    courses: ["Courses", item === "lena" ? "Lena Grant · two active courses" : "My active course", "One learner identity can participate in separate course paths."],
+    journey: ["Learning Journey", item === "eli" ? "A working first flow, improved through testing" : "Published learning stories", "A learner-readable account of what changed and what comes next."]
+  },
+  family: {
+    journey: ["Learning Journey", item === "eli" ? "A working first flow, improved through testing" : "Published learning updates", "The Family-facing story translated from the same learning event."],
+    attendance: ["Attendance", item === "sofia" ? "Sofia Reyes · makeup available" : item === "eli" ? "Eli Morgan · present" : "Attendance and makeup", "Clear current status and any Family action."],
+    messages: ["Messages", "Family communication", "A bounded synthetic exchange about Sofia’s makeup option."],
+    account: ["Account", "Learning visibility preferences", "Safe Family-level settings without fabricated personal contact information."]
+  }
+}[role][section];
+
+const eliEvent = data.learningEvents.find((event) => event.id === "demo-event-eli-habit-flow");
+const sofiaEvent = data.learningEvents.find((event) => event.id === "demo-event-sofia-sensor-test");
+const learnerEnrollments = selectedStudent ? data.enrollments.filter((enrollment) => enrollment.studentId === selectedStudent.id) : [];
+const learnerProgress = selectedStudent ? data.courseProgress.filter((progress) => progress.studentId === selectedStudent.id) : [];
+const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.studentIds[0])) : null;
+---
+
+<DemoLoopNav role={role} active={active} context={contextKey} />
+
+<header class="deep-heading">
+  <a href={`/learninghub/demo/${role}`}>{role[0].toUpperCase() + role.slice(1)} overview</a>
+  <span>{meta[0]}</span>
+  <h1>{meta[1]}</h1>
+  <p>{meta[2]}</p>
+</header>
+
+<div class="deep-content" data-demo-view={`${role}/${view}`}>
+  {role === "student" && <>
+    <aside class="publication-sync publication-sync--held" data-center-publication-held><strong>Same-event update held at Center review</strong><span>Current work and course progress remain available while the new story awaits release.</span></aside>
+    <aside class="publication-sync publication-sync--published" data-center-published-event hidden><strong>Same-event update published</strong><span>The Center-reviewed story now appears consistently in Student and Family views.</span></aside>
+  </>}
+  {role === "center" && section === "schedule" && !item && (
+    selectedContextSessions.length ? <section class="record-list" aria-label={`${selectedContext.name} sessions`}>
+      {selectedContextSessions.map((session) => {
+        const course = findCourse(session.courseId); const coach = findCoach(session.coachId);
+        return <article class="record-row"><div><span>{session.label}</span><h2>{course.name}</h2><p>{findContext(session.contextId).name}</p></div><div><strong>{coach.name}</strong><span>{session.studentIds.length} learners</span></div><span class={`state ${session.status}`}>{session.status.replaceAll("_", " ")}</span>{session.id === "demo-session-creative-today" ? <a href="/learninghub/demo/center/schedule/creative">Inspect session →</a> : <span>Scheduled context</span>}</article>;
+      })}
+    </section> : <section class="empty-state" aria-labelledby="empty-schedule"><span>Scoped schedule</span><h2 id="empty-schedule">No sessions in {selectedContext.name}</h2><p>This context has no scheduled sessions in the current demo window.</p></section>
+  )}
+
+  {role === "center" && section === "schedule" && item === "creative" && (
+    <section class="detail-card"><span class="eyebrow">In progress · Northfield Studio</span><h2>Creative App Lab</h2><p>{data.sessions[0].learningFocus}</p><dl><div><dt>Coach</dt><dd>Jordan Ellis</dd></div><div><dt>Time</dt><dd>{data.sessions[0].label}</dd></div><div><dt>Learners</dt><dd>Eli Morgan · Lena Grant</dd></div></dl><a class="primary-link" href="/learninghub/demo/center/students/eli">Open Eli’s learner context →</a></section>
+  )}
+
+  {role === "center" && section === "students" && !item && (
+    selectedContextStudents.length ? <section class="card-grid three" aria-label={`${selectedContext.name} learner roster`}>{selectedContextStudents.map((student) => { const activeEnrollments = selectedContextEnrollments.filter((entry) => entry.studentId === student.id); return <a class="entity-card" href={`/learninghub/demo/center/students/${studentSlug(student.id)}`}><DemoImage image={getDemoStudentImage(student.id)} size="avatar-md" /><span>Learner</span><h2>{student.name}</h2><p>{activeEnrollments.map((entry) => findCourse(entry.courseId).name).join(" · ")}</p><small>{selectedContext.name}</small><b>Open learner →</b></a>; })}</section> : <section class="empty-state" aria-labelledby="empty-students"><span>Scoped learners</span><h2 id="empty-students">No learners in {selectedContext.name}</h2><p>No active learner enrollments exist in this operating context.</p></section>
+  )}
+
+  {role === "center" && section === "students" && selectedStudent && (
+    <section class="detail-stack"><article class="detail-card"><div class="profile-heading"><DemoImage image={getDemoStudentImage(selectedStudent.id)} size="profile-lg" loading="eager" /><div><span class="eyebrow">One learner identity</span><h2>{selectedStudent.name}</h2></div></div><div class="fact-grid">{learnerEnrollments.map((enrollment) => <div><span>{enrollment.status}</span><strong>{findCourse(enrollment.courseId).name}</strong><small>{findContext(enrollment.contextId).name} · {enrollment.source.replaceAll("_", " ")}</small></div>)}</div></article><article class="detail-card"><h2>Course-specific learning</h2>{learnerProgress.map((progress) => <div class="progress-record"><div><strong>{findCourse(progress.courseId).name}</strong><span>{progress.completed} of {progress.total} steps</span></div><p>Current: {progress.current}</p><small>Next: {progress.next}</small></div>)}</article></section>
+  )}
+
+  {role === "center" && section === "families" && !item && (
+    selectedContextFamilies.length ? <section class="card-grid three">{selectedContextFamilies.map((family) => <a class="entity-card" href={`/learninghub/demo/center/families/${familySlug(family.id)}`}>{getDemoFamilyImage(family.id) && <DemoImage image={getDemoFamilyImage(family.id)} size="family-card" />}<span>Family</span><h2>{family.name}</h2><p>{family.guardian.name}</p><small>Linked learner: {findStudent(studentSlug(family.studentIds[0])).name}</small><b>Open Family →</b></a>)}</section> : <section class="empty-state" aria-labelledby="empty-families"><span>Scoped Families</span><h2 id="empty-families">No Family relationships in {selectedContext.name}</h2><p>No Family relationships are defined for learners in this context.</p></section>
+  )}
+
+  {role === "center" && section === "families" && selectedFamily && (
+    <section class="detail-card"><div class="profile-heading">{getDemoFamilyImage(selectedFamily.id) && <DemoImage image={getDemoFamilyImage(selectedFamily.id)} size="profile-lg" loading="eager" />}<div><span class="eyebrow">Learning visibility</span><h2>{selectedFamily.name}</h2></div></div><dl><div><dt>Guardian relationship</dt><dd>{selectedFamily.guardian.name}</dd></div><div><dt>Linked learner</dt><dd>{familyStudent.name}</dd></div><div><dt>Visibility</dt><dd>Published learning updates and attendance</dd></div><div><dt>Current action</dt><dd>{selectedFamily.id === "demo-family-reyes" ? "1 makeup available" : "No action needed"}</dd></div></dl></section>
+  )}
+
+  {role === "center" && section === "attendance" && !item && (
+    selectedContextAttendance.length ? <section class="record-list">{selectedContextAttendance.map((record) => <article class="record-row"><div><span>{findCourse(record.courseId).name}</span><h2>{findStudent(studentSlug(record.studentId)).name}</h2></div><span class={`state ${record.status}`}>{record.status}</span>{record.studentId === "demo-student-sofia-reyes" ? <a href="/learninghub/demo/center/attendance/sofia">Inspect makeup →</a> : <a href="/learninghub/demo/center/attendance/eli">Inspect attendance →</a>}</article>)}</section> : <section class="empty-state" aria-labelledby="empty-attendance"><span>Scoped attendance</span><h2 id="empty-attendance">No attendance records in {selectedContext.name}</h2><p>Attendance has not been recorded for this context in the demo window.</p></section>
+  )}
+
+  {role === "center" && section === "attendance" && item && (
+    <section class="detail-card"><span class="eyebrow">Attendance record</span><h2>{item === "sofia" ? "Sofia Reyes" : "Eli Morgan"}</h2><div class="fact-grid">{data.attendance.filter((record) => record.studentId === (item === "sofia" ? "demo-student-sofia-reyes" : "demo-student-eli-morgan")).map((record) => <div><span>{record.status}</span><strong>{findCourse(record.courseId).name}</strong><small>{record.sessionId.includes("prior") ? "Prior session" : "Today"}</small></div>)}</div>{item === "sofia" && <aside class="notice"><strong>1 makeup available</strong><p>Created from the prior absence. No expiration policy is applied.</p></aside>}</section>
+  )}
+
+  {role === "center" && section === "reports" && !item && (
+    selectedContextEvents.length ? <section class="record-list" aria-label={`${selectedContext.name} reports`}>{selectedContextEvents.map((event) => {
+      const isSofia = event.id === "demo-event-sofia-sensor-test";
+      return <a class="record-row" href={`/learninghub/demo/center/reports/${isSofia ? "sofia" : "eli"}`}><div><span>{isSofia ? "Needs clarification" : "No review required"}</span><h2>{findStudent(studentSlug(event.studentId)).name} · {findCourse(event.courseId).name}</h2><p>{isSofia ? event.report.reason : "Learning update processed without Center intervention."}</p></div><b>{isSofia ? "Open review →" : "Open report →"}</b></a>;
+    })}</section> : <section class="empty-state" aria-labelledby="empty-reports"><span>Scoped reports</span><h2 id="empty-reports">No reports in {selectedContext.name}</h2><p>No learning reports are associated with this operating context in the demo window.</p></section>
+  )}
+
+  {role === "center" && section === "reports" && item && (
+    <section class="detail-card"><span class="eyebrow">{item === "sofia" ? "Needs clarification" : "No review required"}</span><h2>{item === "sofia" ? "Sofia Reyes · Robotics Studio" : "Eli Morgan · Creative App Lab"}</h2><p>{item === "sofia" ? sofiaEvent.observation : eliEvent.observation}</p><dl><div><dt>Evidence</dt><dd>{item === "sofia" ? "Sensor trial record · unavailable" : eliEvent.evidence.label}</dd></div><div><dt>Review state</dt><dd>{item === "sofia" ? sofiaEvent.report.reason : "Policy checks satisfied; no Center action."}</dd></div></dl>{item === "sofia" && <a class="primary-link" href="/learninghub/demo/coach/reporting">View Coach clarification →</a>}</section>
+  )}
+
+  {role === "center" && section === "messages" && (
+    selectedContextMessages.length ? <section class="detail-stack" aria-label={`${selectedContext.name} messages`}>{selectedContextMessages.map((message) => <details class="message-thread"><summary><span>{message.status.replaceAll("_", " ")}</span><strong>{message.subject}</strong><small>{message.preview}</small></summary><p>{message.response || "Priya still needs to attach the referenced evidence artifact."}</p></details>)}</section> : <section class="empty-state" aria-labelledby="empty-messages"><span>Scoped messages</span><h2 id="empty-messages">No messages in {selectedContext.name}</h2><p>No operational message threads are associated with this context in the demo window.</p></section>
+  )}
+
+  {role === "center" && section === "settings" && (
+    <section class="detail-card"><h2>{selectedContext.name}</h2><p>{selectedContext.purpose}</p><dl><div><dt>Operating context</dt><dd>{selectedContext.name}</dd></div><div><dt>Learning period language</dt><dd>{data.settings.learningPeriodLabel}</dd></div><div><dt>Report handling</dt><dd>{data.settings.reviewMode}</dd></div><div><dt>Family visibility</dt><dd>{data.settings.familyPublishing}</dd></div></dl><p class="quiet-note">These shared demo policies are shown in the selected operating context; no context-specific settings have been fabricated.</p></section>
+  )}
+
+  {role === "center" && section === "overview" && centerView?.explicitContext && (
+    <section class="detail-stack"><article class="detail-card"><div class="profile-heading">{getDemoContextImage(selectedContext.id) && <DemoImage image={getDemoContextImage(selectedContext.id)} size="profile-lg" loading="eager" />}<div><span class="eyebrow">Scoped operating context</span><h2>{selectedContext.name}</h2><p>{selectedContext.purpose}</p></div></div><div class="fact-grid"><div><span>Learners</span><strong>{selectedContextStudentIds.size}</strong><small>{[...selectedContextStudentIds].map((id) => findStudent(studentSlug(id)).name).join(" · ") || "No active learners"}</small></div><div><span>Sessions</span><strong>{selectedContextSessions.length}</strong><small>{selectedContextSessions.map((entry) => findCourse(entry.courseId).name).join(" · ") || "No session scheduled in this snapshot"}</small></div></div></article>{contextKey === "harbor" && <article class="notice"><strong>Noah Bennett keeps one learner identity</strong><p>His Creative App Lab enrollment is scoped to Harbor Academy Program; switching context does not create another person.</p></article>}</section>
+  )}
+
+  {role === "coach" && section === "class" && (
+    <section class="card-grid three">{roleModel.roster.map((learner) => <a class="entity-card" href={`/learninghub/demo/coach/learners/${studentSlug(learner.id)}`}><DemoImage image={getDemoStudentImage(learner.id)} size="avatar-md" /><span>{learner.status}</span><h2>{learner.name}</h2><p>{learner.current}</p><b>Open learner →</b></a>)}</section>
+  )}
+
+  {role === "coach" && section === "learners" && (
+    <section class="detail-card"><div class="profile-heading"><DemoImage image={getDemoStudentImage(findStudent(item).id)} size="profile-lg" loading="eager" /><div><span class="eyebrow">Creative App Lab</span><h2>{findStudent(item).name}</h2></div></div>{item === "eli" ? <><p class="lead-fact">{eliEvent.challenge}</p><dl><div><dt>Completed</dt><dd>{eliEvent.completed}</dd></div><div><dt>Next</dt><dd>{eliEvent.next}</dd></div><div><dt>Observation</dt><dd>{eliEvent.observation}</dd></div></dl><a class="primary-link" href="/learninghub/demo/coach/evidence/eli">Inspect evidence →</a></> : <p>Continue the current Creative App Lab challenge. Progress remains attached to this learner and course.</p>}</section>
+  )}
+
+  {role === "coach" && section === "learning-plan" && (
+    <section class="detail-stack"><article class="detail-card"><span class="eyebrow">Today’s focus</span><h2>{data.sessions[0].learningFocus}</h2><div class="sequence"><div><b>1</b><span>Map the core habit flow</span></div><div><b>2</b><span>Build the primary screen and navigation</span></div><div><b>3</b><span>Test one interaction and revise it</span></div></div></article><a class="primary-link" href="/learninghub/demo/coach/learners/eli">Open Eli in this plan →</a></section>
+  )}
+
+  {role === "coach" && section === "progress" && !item && (
+    <section class="record-list">{data.courseProgress.filter((progress) => data.sessions[0].studentIds.includes(progress.studentId) && progress.courseId === data.sessions[0].courseId).map((progress) => <article class="record-row"><div class="record-identity"><DemoImage image={getDemoStudentImage(progress.studentId)} size="avatar-sm" /><div><span>{findCourse(progress.courseId).name}</span><h2>{findStudent(studentSlug(progress.studentId)).name}</h2><p>Current: {progress.current}</p></div></div><strong>{progress.completed} of {progress.total}</strong>{progress.studentId === "demo-student-lena-grant" ? <a href="/learninghub/demo/coach/progress/lena">Two-course view →</a> : <a href="/learninghub/demo/coach/learners/eli">Open learner →</a>}</article>)}</section>
+  )}
+
+  {role === "coach" && section === "progress" && item === "lena" && (
+    <section class="detail-card"><div class="compact-identity"><DemoImage image={getDemoStudentImage("demo-student-lena-grant")} size="avatar-md" /><div><span class="eyebrow">One learner · separate progress</span><h2>Lena Grant</h2></div></div><div class="course-progress-grid">{data.courseProgress.filter((progress) => progress.studentId === "demo-student-lena-grant").map((progress) => <article class="course-progress-card"><div class="course-progress-heading"><strong>{findCourse(progress.courseId).name}</strong><span>{progress.completed} of {progress.total} steps</span></div><div class="course-progress-track" role="progressbar" aria-label={`${findCourse(progress.courseId).name}: ${progress.completed} of ${progress.total} steps complete`} aria-valuemin="0" aria-valuemax={progress.total} aria-valuenow={progress.completed}><span style={`width:${(progress.completed / progress.total) * 100}%`}></span></div><dl><div><dt>Current</dt><dd>{progress.current}</dd></div><div><dt>Next</dt><dd>{progress.next}</dd></div></dl></article>)}</div></section>
+  )}
+
+  {role === "coach" && section === "observations" && (
+    <section class="card-grid two">{data.learningEvents.map((event) => <article class="detail-card"><div class="compact-identity"><DemoImage image={getDemoStudentImage(event.studentId)} size="avatar-sm" /><div><span class="eyebrow">{findCourse(event.courseId).name}</span><h2>{findStudent(studentSlug(event.studentId)).name}</h2></div></div><p>“{event.observation}”</p><small>Evidence: {event.evidence.label} · {event.evidence.status.replaceAll("_", " ")}</small>{event.studentId === "demo-student-eli-morgan" && <a class="primary-link" href="/learninghub/demo/coach/evidence/eli">Inspect evidence →</a>}</article>)}</section>
+  )}
+
+  {role === "coach" && section === "evidence" && (
+    <section class="detail-stack"><article class="detail-card evidence-context"><span class="eyebrow">Connected evidence</span><h2>{eliEvent.evidence.label}</h2><dl><div><dt>Learner</dt><dd>Eli Morgan</dd></div><div><dt>Course</dt><dd>Creative App Lab</dd></div><div><dt>Learning focus</dt><dd>{eliEvent.challenge}</dd></div><div><dt>Status</dt><dd>Connected to learning record</dd></div></dl></article><div class="evidence-gallery" aria-label="Representative Habit Tracker evidence media"><figure><div class="artifact-visual" role="img" aria-label="Representative placeholder screenshot of the Habit Tracker Today screen"><span>Habit</span><b>Today</b><i>✓</i></div><figcaption><strong>Prototype screen</strong><span>Screenshot placeholder</span></figcaption></figure><figure><DemoImage image={COGNIT_DEMO_IMAGES.evidence.prototypePhoto} size="evidence-photo" /><figcaption><strong>Prototype testing</strong><span>Photo placeholder</span></figcaption></figure><figure><div class="evidence-video" role="img" aria-label="Representative placeholder thumbnail for a short prototype test video"><span aria-hidden="true">▶</span><strong>Interaction test</strong></div><figcaption><strong>Interaction test</strong><span>Video thumbnail placeholder</span></figcaption></figure></div></section>
+  )}
+
+  {role === "coach" && section === "reporting" && (
+    <section class="card-grid two"><article class="detail-card positive-card"><span class="eyebrow">No review required</span><h2>Eli Morgan</h2><p>{eliEvent.observation}</p><small>Evidence available · update processed</small></article><article class="detail-card attention-card"><span class="eyebrow">Returned for clarification</span><h2>Sofia Reyes</h2><p>{sofiaEvent.report.reason}</p><small>Next: attach the sensor trial record, then resubmit.</small></article></section>
+  )}
+
+  {role === "student" && section === "my-work" && (
+    <section class="detail-stack"><figure class="narrative-figure"><DemoImage image={COGNIT_DEMO_IMAGES.narrative.robotics} size="narrative-card" loading="eager" /><figcaption>Coding and robotics learning context</figcaption></figure><article class="detail-card"><span class="eyebrow">Current project</span><h2>{eliEvent.evidence.label}</h2><p>{eliEvent.challenge}</p><div class="sequence"><div><b>Done</b><span>{eliEvent.completed}</span></div><div><b>Now</b><span>{eliEvent.challenge}</span></div><div><b>Next</b><span>{eliEvent.next}</span></div></div></article><a class="primary-link" href="/learninghub/demo/student/artifact">Open project artifact →</a></section>
+  )}
+
+  {role === "student" && section === "artifact" && (
+    <section class="artifact-detail"><div class="artifact-visual" aria-hidden="true"><span>Habit</span><b>Today</b><i>✓</i></div><div><span class="eyebrow">My latest work</span><h2>{eliEvent.evidence.label}</h2><p>You built the core navigation, tested an interaction, and improved one confusing step.</p><a class="primary-link" href="/learninghub/demo/student/progress">See what comes next →</a></div></section>
+  )}
+
+  {role === "student" && section === "progress" && (
+    <section class="detail-card"><span class="eyebrow">Creative App Lab</span><h2>Completed, current, next</h2><div class="sequence"><div><b>Completed</b><span>{eliEvent.completed}</span></div><div><b>Current</b><span>{eliEvent.challenge}</span></div><div><b>Next</b><span>{eliEvent.next}</span></div></div><div class="accessible-progress"><div><strong>{eliEvent.progression.label}</strong><span>Your next step is ready.</span></div><div role="progressbar" aria-valuemin="0" aria-valuemax={eliEvent.progression.total} aria-valuenow={eliEvent.progression.completed} aria-label={eliEvent.progression.label}><span style="width:66.67%"></span></div></div></section>
+  )}
+
+  {role === "student" && section === "courses" && !item && (
+    <section class="card-grid two"><article class="detail-card"><span class="eyebrow">Active course</span><h2>Creative App Lab</h2><p>{findCourse("demo-course-creative-app-lab").focus}</p><small>Coach: Jordan Ellis</small></article><a class="entity-card" href="/learninghub/demo/student/courses/lena"><DemoImage image={getDemoStudentImage("demo-student-lena-grant")} size="avatar-md" /><span>Multi-course example</span><h2>View Lena Grant</h2><p>See two course paths under one learner identity.</p><b>View Lena →</b></a></section>
+  )}
+
+  {role === "student" && section === "courses" && item === "lena" && (
+    <section class="detail-card"><div class="compact-identity"><DemoImage image={getDemoStudentImage("demo-student-lena-grant")} size="avatar-md" /><div><span class="eyebrow">Lena Grant</span><h2>Two active learning paths</h2></div></div>{data.courseProgress.filter((progress) => progress.studentId === "demo-student-lena-grant").map((progress) => <div class="progress-record"><div><strong>{findCourse(progress.courseId).name}</strong><span>{progress.completed} of {progress.total}</span></div><p>Current: {progress.current}</p><small>Next: {progress.next}</small></div>)}<a class="secondary-link" href="/learninghub/demo/student/courses">Return to Eli →</a></section>
+  )}
+
+  {role === "student" && section === "journey" && !item && (
+    <section class="card-grid"><a class="entity-card" href="/learninghub/demo/student/journey/eli"><span>Latest learning story</span><h2>{eliEvent.publishedStory}</h2><p>Your first working habit-tracker flow improved through testing.</p><b>Open story →</b></a></section>
+  )}
+
+  {role === "student" && section === "journey" && item === "eli" && (
+    <section class="story-detail"><span class="eyebrow">Creative App Lab</span><h2>{eliEvent.publishedStory}</h2><p>You planned the first flow for your habit-tracking app, built the main navigation, and tested one interaction with a classmate. After testing, you changed one confusing step.</p><aside><strong>What comes next</strong><p>{eliEvent.next}</p></aside></section>
+  )}
+
+  {role === "family" && section === "journey" && !item && (
+    <section class="card-grid"><a class="entity-card" href="/learninghub/demo/family/journey/eli"><span>Latest published story</span><h2>{eliEvent.publishedStory}</h2><p>{eliEvent.familyUpdate}</p><b>Open learning story →</b></a></section>
+  )}
+
+  {role === "family" && section === "journey" && item === "eli" && (
+    <section class="story-detail family-story-detail"><div class="compact-identity"><DemoImage image={getDemoStudentImage("demo-student-eli-morgan")} size="avatar-md" loading="eager" /><div><span class="eyebrow">Creative App Lab · Published</span><h2>{eliEvent.publishedStory}</h2></div></div><p>{eliEvent.familyUpdate}</p><blockquote>“{eliEvent.observation}”</blockquote><aside><strong>What comes next</strong><p>{eliEvent.next}</p></aside></section>
+  )}
+
+  {role === "family" && section === "attendance" && !item && (
+    <section class="card-grid two"><a class="entity-card" href="/learninghub/demo/family/attendance/eli"><DemoImage image={getDemoStudentImage("demo-student-eli-morgan")} size="avatar-md" /><span>Morgan Family</span><h2>Eli Morgan</h2><p>Present today · no action needed</p><b>Open attendance →</b></a><a class="entity-card" href="/learninghub/demo/family/attendance/sofia"><DemoImage image={getDemoStudentImage("demo-student-sofia-reyes")} size="avatar-md" /><span>Reyes Family</span><h2>Sofia Reyes</h2><p>Prior absence · 1 makeup available</p><b>Open makeup →</b></a></section>
+  )}
+
+  {role === "family" && section === "attendance" && item && (
+    <section class="detail-card"><div class="profile-heading"><DemoImage image={getDemoStudentImage(item === "sofia" ? "demo-student-sofia-reyes" : "demo-student-eli-morgan")} size="profile-lg" loading="eager" /><div><span class="eyebrow">{item === "sofia" ? "Reyes Family" : "Morgan Family"}</span><h2>{item === "sofia" ? "Sofia Reyes" : "Eli Morgan"}</h2></div></div>{item === "sofia" ? <><div class="fact-grid"><div><span>Prior session</span><strong>Absent</strong><small>Robotics Studio</small></div><div><span>Current entitlement</span><strong>1 makeup available</strong><small>No expiration policy applied</small></div></div><p>No further Family action is required until a makeup session is selected.</p></> : <div class="fact-grid"><div><span>Today</span><strong>Present</strong><small>Creative App Lab</small></div><div><span>Family action</span><strong>No action needed</strong><small>Learning update published</small></div></div>}</section>
+  )}
+
+  {role === "family" && section === "messages" && (
+    <section class="detail-stack"><details class="message-thread" open><summary><span>Answered</span><strong>Robotics Studio makeup</strong><small>Will Sofia’s missed session create a makeup option?</small></summary><p>Yes. One makeup option is available for Sofia.</p></details><p class="quiet-note">This focused thread demonstrates communication continuity without creating a full inbox.</p></section>
+  )}
+
+  {role === "family" && section === "account" && (
+    <section class="detail-card"><h2>Family learning preferences</h2><dl><div><dt>Linked learner</dt><dd>Eli Morgan</dd></div><div><dt>Learning visibility</dt><dd>Published learning updates</dd></div><div><dt>Attendance visibility</dt><dd>Current status and makeup options</dd></div><div><dt>Communication</dt><dd>Learning Hub messages</dd></div></dl><p class="quiet-note">Personal contact information is intentionally omitted from this synthetic demo.</p></section>
+  )}
+</div>
+
+<script>
+  import { applyCenterPublicationState } from "../../demo/cognit-publication-sync.js";
+  document.querySelectorAll('[data-demo-view^="student/"]').forEach((root) => applyCenterPublicationState(root));
+</script>
+
+<style>
+  .deep-heading { max-width: 820px; margin-bottom: 30px; }
+  .deep-heading > a { color: var(--color-muted); font-size: .82rem; font-weight: 850; text-decoration: underline; text-underline-offset: 3px; }
+  .deep-heading > span, .eyebrow, .entity-card > span, .record-row > div > span, .fact-grid span { display: block; margin-top: 16px; color: var(--color-muted); font-size: .72rem; font-weight: 950; letter-spacing: .04em; text-transform: uppercase; }
+  .deep-heading h1 { margin: 6px 0 10px; color: var(--color-ink); font-size: clamp(2.5rem, 5vw, 4.2rem); }
+  .deep-heading p { max-width: 65ch; margin: 0; font-size: 1.04rem; }
+  .deep-content, .detail-stack { display: grid; gap: 18px; }.deep-content [hidden]{display:none!important}.publication-sync{display:grid;gap:4px;padding:15px 18px;border:1px solid var(--color-border);border-left:5px solid var(--cognit-brand-accent);border-radius:12px;background:#fff7e8}.publication-sync--published{border-left-color:var(--cognit-brand-progress);background:#eaf8f5}.publication-sync span{color:var(--color-muted)}
+  .profile-heading, .compact-identity { display: flex; align-items: center; gap: 18px; }
+  .profile-heading > div, .compact-identity > div { min-width: 0; }
+  .profile-heading .eyebrow, .compact-identity .eyebrow { margin-top: 0; }
+  .narrative-figure { justify-self: center; width: 100%; max-width: 900px; margin: 0; padding: 10px; border: 1px solid var(--color-border); border-radius: 16px; background: #fff; box-shadow: var(--shadow-soft); }
+  .narrative-figure figcaption { padding: 9px 5px 2px; color: var(--color-muted); font-size: .78rem; font-weight: 800; }
+  .card-grid { display: grid; gap: 16px; }
+  .card-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .entity-card, .detail-card, .record-row, .message-thread, .story-detail, .artifact-detail, .notice, .empty-state { padding: clamp(20px, 3vw, 30px); border: 1px solid var(--color-border); border-radius: 14px; background: #fff; box-shadow: var(--shadow-soft); }
+  .empty-state { min-height: 210px; align-content: center; border-style: dashed; background: var(--cognit-surface-secondary); }
+  .empty-state > span { color: var(--color-muted); font-size: .72rem; font-weight: 950; letter-spacing: .04em; text-transform: uppercase; }
+  .empty-state h2 { margin: 8px 0; color: var(--color-ink); font-size: clamp(1.35rem, 2.8vw, 2rem); }
+  .empty-state p { max-width: 62ch; margin: 0; }
+  .entity-card { display: grid; align-content: start; min-height: 210px; color: inherit; }
+  .entity-card:hover, .record-row[href]:hover { border-color: var(--color-blue); box-shadow: var(--shadow-card); }
+  .entity-card h2, .detail-card h2, .record-row h2, .story-detail h2, .artifact-detail h2 { margin: 8px 0; color: var(--color-ink); font-size: clamp(1.35rem, 2.8vw, 2rem); }
+  .entity-card p, .record-row p { margin: 4px 0; }
+  .entity-card small { color: var(--color-muted); }
+  .entity-card b { align-self: end; margin-top: 22px; color: var(--color-ink); }
+  .record-list { display: grid; gap: 10px; }
+  .record-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 22px; color: inherit; }
+  .record-row h2 { font-size: 1.2rem; }
+  .record-row > div > span { margin-top: 0; }
+  .record-row > div:nth-child(2) { display: grid; gap: 2px; }
+  .record-identity { display: flex; align-items: center; gap: 14px; }
+  .record-identity > div { min-width: 0; }
+  .record-identity > div > span { display: block; color: var(--color-muted); font-size: .72rem; font-weight: 950; letter-spacing: .04em; text-transform: uppercase; }
+  .record-row > a, .record-row > b { color: var(--color-ink); font-weight: 900; }
+  .state { width: fit-content; padding: 5px 9px; border-radius: 999px; background: var(--color-sky); color: var(--color-ink); font-size: .72rem; font-weight: 950; text-transform: capitalize; }
+  .state.in_progress, .state.present { background: var(--color-mint); color: #08746f; }
+  .detail-card > p, .story-detail > p { max-width: 72ch; line-height: 1.7; }
+  .detail-card dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 24px 0 0; }
+  .detail-card dl > div { padding: 15px; border-radius: 10px; background: var(--cognit-surface-secondary); }
+  dt { color: var(--color-muted); font-size: .72rem; font-weight: 950; text-transform: uppercase; }
+  dd { margin: 4px 0 0; color: var(--color-ink); font-weight: 850; }
+  .primary-link, .secondary-link { display: inline-flex; min-height: 42px; align-items: center; margin-top: 20px; padding: 9px 15px; border-radius: 9px; background: var(--color-ink); color: #fff; font-weight: 900; }
+  .secondary-link { background: var(--color-sky); color: var(--color-ink); }
+  .fact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
+  .fact-grid > div { display: grid; gap: 5px; padding: 18px; border: 1px solid var(--color-border); border-radius: 10px; }
+  .fact-grid span { margin-top: 0; }
+  .fact-grid strong { color: var(--color-ink); }
+  .fact-grid small { color: var(--color-muted); }
+  .progress-record { padding: 18px 0; border-top: 1px solid var(--color-border); }
+  .progress-record:first-of-type { margin-top: 14px; }
+  .progress-record > div { display: flex; justify-content: space-between; gap: 16px; }
+  .progress-record p { margin: 8px 0 2px; }
+  .progress-record small { color: var(--color-muted); }
+  .course-progress-grid { display: grid; gap: 16px; margin-top: 22px; }
+  .course-progress-card { padding: 20px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--cognit-surface-secondary); }
+  .course-progress-heading { display: flex; justify-content: space-between; gap: 16px; color: var(--color-ink); }
+  .course-progress-heading > span { font-weight: 850; }
+  .course-progress-track { height: 11px; overflow: hidden; margin: 14px 0 16px; border-radius: 999px; background: var(--color-sky); }
+  .course-progress-track > span { display: block; height: 100%; background: var(--cognit-brand-progress); }
+  .course-progress-card dl { margin-top: 0; }
+  .notice { border-left: 5px solid var(--cognit-brand-accent); }
+  .notice p { margin: 6px 0 0; }
+  .message-thread { padding: 0; overflow: hidden; }
+  .message-thread summary { display: grid; gap: 6px; padding: 22px; cursor: pointer; }
+  .message-thread summary span { color: var(--color-muted); font-size: .72rem; font-weight: 950; text-transform: uppercase; }
+  .message-thread summary small { color: var(--color-muted); }
+  .message-thread > p { margin: 0; padding: 18px 22px; border-top: 1px solid var(--color-border); background: var(--color-blue-soft); }
+  .sequence { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
+  .sequence > div { display: grid; gap: 8px; padding: 18px; border-radius: 10px; background: var(--cognit-surface-secondary); }
+  .sequence b { color: var(--color-ink); }
+  .positive-card { border-top: 5px solid var(--cognit-brand-progress); }
+  .attention-card { border-top: 5px solid var(--cognit-brand-accent); }
+  .artifact-detail { display: grid; grid-template-columns: minmax(220px, .7fr) minmax(0, 1.3fr); align-items: center; gap: 30px; }
+  .artifact-visual { display: grid; min-height: 240px; align-content: center; justify-items: center; gap: 8px; border-radius: 16px; background: linear-gradient(145deg, #eef5fa, #e8f7f6); color: var(--color-ink); }
+  .artifact-visual span { font-size: 1.1rem; font-weight: 900; }
+  .artifact-visual b { font-size: 2.4rem; }
+  .artifact-visual i { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 50%; background: var(--cognit-brand-progress); color: #fff; font-style: normal; }
+  .evidence-context dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .evidence-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .evidence-gallery figure { overflow: hidden; margin: 0; border: 1px solid var(--color-border); border-radius: 14px; background: #fff; box-shadow: var(--shadow-soft); }
+  .evidence-gallery .artifact-visual { min-height: 240px; border-radius: 0; }
+  .evidence-gallery :global(.evidence-photo) { height: 240px; border-radius: 0; }
+  .evidence-gallery figcaption { display: grid; gap: 3px; padding: 14px 16px; }
+  .evidence-gallery figcaption strong { color: var(--color-ink); }
+  .evidence-gallery figcaption span { color: var(--color-muted); font-size: .8rem; }
+  .evidence-video { display: grid; min-height: 240px; place-content: center; justify-items: center; gap: 10px; background: linear-gradient(145deg, #0f456e, #28749a); color: #fff; }
+  .evidence-video span { display: grid; width: 52px; height: 52px; place-items: center; border: 2px solid #fff; border-radius: 50%; }
+  .accessible-progress { display: grid; gap: 12px; margin-top: 24px; }
+  .accessible-progress > div:first-child { display: flex; justify-content: space-between; gap: 16px; }
+  .accessible-progress [role="progressbar"] { height: 12px; overflow: hidden; border-radius: 999px; background: var(--color-sky); }
+  .accessible-progress [role="progressbar"] span { display: block; height: 100%; background: var(--cognit-brand-progress); }
+  .story-detail { padding: clamp(28px, 6vw, 56px); background: linear-gradient(145deg, #fff, #eef5fa); }
+  .story-detail > p { color: var(--color-ink); font-size: clamp(1.15rem, 2vw, 1.4rem); }
+  .story-detail blockquote { margin: 24px 0; padding: 18px 22px; border-left: 4px solid var(--cognit-brand-progress); background: #fff; color: var(--color-ink); }
+  .story-detail aside { margin-top: 26px; padding: 18px; border-radius: 10px; background: #fff; }
+  .story-detail aside p { margin: 5px 0 0; }
+  .lead-fact { color: var(--color-ink); font-size: 1.15rem; }
+  .quiet-note { color: var(--color-muted); font-size: .9rem; }
+  @media (max-width: 760px) {
+    .card-grid.two, .card-grid.three, .artifact-detail, .evidence-gallery { grid-template-columns: 1fr; }
+    .record-row { grid-template-columns: 1fr; gap: 10px; }
+    .detail-card dl, .fact-grid, .sequence { grid-template-columns: 1fr; }
+    .accessible-progress > div:first-child, .progress-record > div, .course-progress-heading { align-items: flex-start; flex-direction: column; }
+    .profile-heading { align-items: flex-start; }
+  }
+</style>

@@ -1,0 +1,486 @@
+---
+import DemoImage from "./DemoImage.astro";
+import { COGNIT_DEMO_IMAGES, getDemoCoachImage, getDemoStudentImage } from "../../demo/cognit-demo-images.js";
+
+const { model } = Astro.props;
+const eli = model.primary.student;
+const lena = model.roster.find((learner) => learner.id === "demo-student-lena-grant");
+---
+
+<section class="coach-live-demo" data-coach-live-teaching data-synthetic-demo="true">
+  <section class="live-session-banner" aria-labelledby="live-session-title">
+    <div class="coach-session-identity">
+      <DemoImage image={getDemoCoachImage(model.person.id)} size="avatar-md" loading="eager" />
+      <div>
+        <span class="section-kicker">{model.person.name} · {model.context.name}</span>
+        <h2 id="live-session-title">{model.session.course.name}</h2>
+        <p>{model.session.learningFocus}</p>
+      </div>
+    </div>
+    <div class="session-action">
+      <strong>{model.session.label}</strong>
+      <span class="state-chip" data-session-status>Scheduled</span>
+      <button class="primary-action" type="button" data-start-class>Start Class</button>
+    </div>
+  </section>
+
+  <section class="preflight-card" data-preflight aria-labelledby="preflight-title">
+    <div>
+      <span class="section-kicker">Before class</span>
+      <h2 id="preflight-title">Roster and learning plan are ready</h2>
+      <p>Start the session to work through learners and prepare a learning report.</p>
+    </div>
+    <div class="preflight-facts">
+      <article><span>Learning plan</span><strong>Habit-tracking app prototype</strong></article>
+      <article><span>Roster</span><strong>{eli.name} · {lena.name}</strong></article>
+    </div>
+  </section>
+
+  <div class="active-workflow" data-active-workflow hidden>
+    <section class="active-state" aria-labelledby="active-state-title">
+      <div><span class="section-kicker">Active session</span><h2 id="active-state-title">Class in progress</h2></div>
+      <div class="active-session-clock"><span>Scheduled {model.session.label}</span><strong data-class-timer aria-label="Elapsed class time">00:00</strong><small>Elapsed</small></div>
+    </section>
+
+    <fieldset class="learner-selector" data-learner-selector>
+      <legend>Select learner</legend>
+      <button type="button" aria-pressed="true" data-learner-id={eli.id}>
+        <DemoImage image={getDemoStudentImage(eli.id)} size="avatar-sm" />
+        <span><strong>{eli.name}</strong><small>Creative App Lab</small></span>
+      </button>
+      <button type="button" aria-pressed="false" data-learner-id={lena.id}>
+        <DemoImage image={getDemoStudentImage(lena.id)} size="avatar-sm" />
+        <span><strong>{lena.name}</strong><small>Creative App Lab</small></span>
+      </button>
+    </fieldset>
+
+    <section class="learner-workspace" aria-labelledby="selected-learner-title">
+      <header class="workspace-heading">
+        <div><span class="section-kicker">Current learner · Creative App Lab</span><h2 id="selected-learner-title" data-selected-learner>Eli Morgan</h2></div>
+        <span class="state-chip neutral" data-report-state>Report in progress</span>
+      </header>
+
+      <section class="workflow-card progress-work" aria-labelledby="coach-progress-title">
+        <div class="card-heading">
+          <div><span class="step-number">1</span><div><span class="section-kicker">Creative App Lab</span><h3 id="coach-progress-title">Course progression</h3></div></div>
+          <strong data-progress-count>2 of 3 complete</strong>
+        </div>
+        <div class="progress-track" role="progressbar" aria-label="Eli Morgan Creative App Lab progress" aria-valuemin="0" aria-valuemax="3" aria-valuenow="2" data-progressbar><span data-progress-fill style="width:66.67%"></span></div>
+        <div class="learning-sequence">
+          <article><span>Completed</span><strong data-progress-completed>{model.primary.completed}</strong></article>
+          <article><span>Current</span><strong data-progress-current>{model.primary.challenge}</strong></article>
+          <article><span>Next</span><strong data-progress-next>{model.primary.next}</strong></article>
+        </div>
+        <button class="secondary-action" type="button" data-update-progress>Complete current step</button>
+      </section>
+
+      <section class="workflow-card evidence-work" aria-labelledby="coach-evidence-title">
+        <div class="card-heading">
+          <div><span class="step-number">2</span><div><span class="section-kicker">Evidence</span><h3 id="coach-evidence-title">Connect evidence</h3></div></div>
+          <span class="state-chip neutral" data-evidence-state>Not attached</span>
+        </div>
+        <div class="artifact-summary" data-artifact-summary>
+          <div class="artifact-mark" aria-hidden="true">✓</div>
+          <div><strong data-artifact-title>{model.primary.evidence.label}</strong><span>Interaction-flow project artifact</span></div>
+        </div>
+        <p class="bounded-note" data-evidence-note>This evidence belongs to Eli’s current Creative App Lab learning focus.</p>
+        <div class="action-row">
+          <button class="secondary-action" type="button" data-attach-evidence>Attach existing demo evidence</button>
+          <button class="text-button" type="button" data-inspect-evidence disabled>Inspect evidence</button>
+        </div>
+        <div class="artifact-inspection" data-artifact-inspection hidden>
+          <h4 data-inspection-title>{model.primary.evidence.label}</h4>
+          <div class="evidence-gallery" aria-label="Representative evidence media">
+            <figure>
+              <div class="evidence-screen" role="img" aria-label="Representative placeholder screenshot of the Habit Tracker Today screen"><span>Habit</span><strong>Today</strong><i>✓</i></div>
+              <figcaption><strong>Prototype screen</strong><span>Screenshot placeholder</span></figcaption>
+            </figure>
+            <figure>
+              <DemoImage image={COGNIT_DEMO_IMAGES.evidence.prototypePhoto} size="evidence-photo" />
+              <figcaption><strong>Prototype testing</strong><span>Photo placeholder</span></figcaption>
+            </figure>
+            <figure>
+              <div class="evidence-video" role="img" aria-label="Representative placeholder thumbnail for a short prototype test video"><span aria-hidden="true">▶</span><strong>Interaction test</strong></div>
+              <figcaption><strong>Interaction test</strong><span>Video thumbnail placeholder</span></figcaption>
+            </figure>
+          </div>
+          <dl>
+            <div><dt>Evidence type</dt><dd>Screenshot, photo, and video placeholders</dd></div>
+            <div><dt>Learner</dt><dd data-inspection-learner>Eli Morgan</dd></div>
+            <div><dt>Course</dt><dd>Creative App Lab</dd></div>
+            <div><dt>Learning focus</dt><dd>{model.session.learningFocus}</dd></div>
+            <div><dt>Status</dt><dd>Connected to learning record</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="workflow-card observation-work" aria-labelledby="coach-observation-title">
+        <div class="card-heading">
+          <div><span class="step-number">3</span><div><span class="section-kicker">Coach observation</span><h3 id="coach-observation-title">Record what happened</h3></div></div>
+          <span class="state-chip neutral" data-observation-state>Draft loaded</span>
+        </div>
+        <label for="coach-demo-observation">Observation for <span data-observation-learner>Eli Morgan</span></label>
+        <textarea id="coach-demo-observation" rows="5" data-observation-input>{model.primary.observation}</textarea>
+        <div class="action-row">
+          <button class="text-button" type="button" data-improve-wording>Improve wording</button>
+          <button class="secondary-action" type="button" data-save-observation>Save observation</button>
+          <span class="inline-feedback" data-observation-feedback>Save this draft to include it in report readiness.</span>
+        </div>
+        <section class="wording-suggestion" data-wording-suggestion hidden aria-labelledby="wording-suggestion-title">
+          <span class="section-kicker" id="wording-suggestion-title">Suggested revision</span>
+          <p data-suggested-wording></p>
+          <div class="action-row">
+            <button class="secondary-action" type="button" data-accept-wording>Accept suggestion</button>
+            <button class="text-button" type="button" data-keep-original>Reject suggestion · keep original</button>
+          </div>
+          <small>Wording assistance only. The Coach remains the author, and nothing is saved automatically.</small>
+        </section>
+      </section>
+
+      <section class="readiness-card" aria-labelledby="readiness-title">
+        <div class="readiness-heading"><div><span class="section-kicker">Report readiness</span><h3 id="readiness-title">Complete the learning record</h3></div><strong data-readiness-summary>3 items remaining</strong></div>
+        <ul class="readiness-list" aria-label="Report readiness checklist">
+          <li data-readiness-item="progress"><span aria-hidden="true">○</span><strong>Progress updated</strong></li>
+          <li data-readiness-item="evidence"><span aria-hidden="true">○</span><strong>Evidence attached</strong></li>
+          <li data-readiness-item="observation"><span aria-hidden="true">○</span><strong>Observation saved</strong></li>
+        </ul>
+        <button class="primary-action submit-action" type="button" data-submit-report disabled>Submit report</button>
+      </section>
+
+      <section class="submission-confirmation" data-submission-confirmation tabindex="-1" hidden aria-labelledby="submission-title">
+        <span class="section-kicker">Submission receipt</span>
+        <h3 id="submission-title">Report submitted for Center review.</h3>
+        <dl>
+          <div><dt>Learner</dt><dd data-receipt-learner>Eli Morgan</dd></div>
+          <div><dt>Course</dt><dd>Creative App Lab</dd></div>
+          <div><dt>Progress</dt><dd data-receipt-progress>3 of 3 complete</dd></div>
+          <div><dt>Evidence</dt><dd data-receipt-evidence>Habit Tracker — interaction flow prototype</dd></div>
+          <div><dt>Observation</dt><dd data-receipt-observation></dd></div>
+          <div><dt>Status</dt><dd>Submitted</dd></div>
+        </dl>
+        <p>Center has not reviewed this report, and nothing has been published to Family.</p>
+      </section>
+    </section>
+  </div>
+
+  <p class="visually-hidden" role="status" aria-live="polite" aria-atomic="true" data-coach-live-status></p>
+</section>
+
+<script>
+  import {
+    createCoachInteractionState,
+    getCoachReportReadiness,
+    getSelectedCoachLearner,
+    isCoachReportReady,
+    reduceCoachInteraction
+  } from "../../demo/cognit-coach-interaction.js";
+
+  const root = document.querySelector("[data-coach-live-teaching]");
+  if (root instanceof HTMLElement) {
+    let state = createCoachInteractionState();
+    const find = (selector) => root.querySelector(selector);
+    const learnerButtons = Array.from(root.querySelectorAll("[data-learner-id]"));
+    const startButton = find("[data-start-class]");
+    const observationInput = find("[data-observation-input]");
+    const confirmation = find("[data-submission-confirmation]");
+    const liveStatus = find("[data-coach-live-status]");
+    const arrivalHero = document.querySelector('[data-coach-arrival-hero="true"]');
+    let timerInterval;
+
+    const announce = (message) => {
+      if (liveStatus) liveStatus.textContent = message;
+    };
+
+    const setText = (selector, value) => {
+      const element = find(selector);
+      if (element) element.textContent = value;
+    };
+
+    const render = () => {
+      const learner = getSelectedCoachLearner(state);
+      const readiness = getCoachReportReadiness(state);
+      const ready = isCoachReportReady(state);
+      const remaining = Object.values(readiness).filter((value) => !value).length;
+      const started = state.classStarted;
+
+      if (arrivalHero instanceof HTMLElement) arrivalHero.classList.toggle("is-receded", started);
+      const elapsedMinutes = Math.floor(state.elapsedSeconds / 60);
+      const elapsedSeconds = state.elapsedSeconds % 60;
+      setText("[data-class-timer]", `${String(elapsedMinutes).padStart(2, "0")}:${String(elapsedSeconds).padStart(2, "0")}`);
+
+      const workflow = find("[data-active-workflow]");
+      const preflight = find("[data-preflight]");
+      if (workflow instanceof HTMLElement) workflow.hidden = !started;
+      if (preflight instanceof HTMLElement) preflight.hidden = started;
+      if (startButton instanceof HTMLButtonElement) {
+        startButton.disabled = started;
+        startButton.textContent = started ? "Class started" : "Start Class";
+      }
+      setText("[data-session-status]", started ? "Class in progress" : "Scheduled");
+
+      learnerButtons.forEach((button) => {
+        const selected = button.getAttribute("data-learner-id") === learner.id;
+        button.setAttribute("aria-pressed", String(selected));
+        if (button instanceof HTMLButtonElement) button.disabled = !started;
+      });
+
+      setText("[data-selected-learner]", learner.name);
+      setText("[data-observation-learner]", learner.name);
+      setText("[data-progress-count]", `${learner.progress.completed} of ${learner.progress.total} complete`);
+      setText("[data-progress-completed]", learner.progress.completedLabel);
+      setText("[data-progress-current]", learner.progress.current);
+      setText("[data-progress-next]", learner.progress.next);
+
+      const progressbar = find("[data-progressbar]");
+      if (progressbar) {
+        progressbar.setAttribute("aria-valuemax", String(learner.progress.total));
+        progressbar.setAttribute("aria-valuenow", String(learner.progress.completed));
+        progressbar.setAttribute("aria-label", `${learner.name} Creative App Lab progress: ${learner.progress.completed} of ${learner.progress.total}`);
+      }
+      const progressFill = find("[data-progress-fill]");
+      if (progressFill instanceof HTMLElement) progressFill.style.width = `${(learner.progress.completed / learner.progress.total) * 100}%`;
+
+      const progressButton = find("[data-update-progress]");
+      if (progressButton instanceof HTMLButtonElement) {
+        progressButton.disabled = learner.progress.progressUpdated || learner.submitted;
+        progressButton.textContent = learner.progress.progressUpdated ? "Progress updated" : "Complete current step";
+      }
+
+      const hasArtifact = Boolean(learner.artifact);
+      setText("[data-artifact-title]", hasArtifact ? learner.artifact.label : "No demo evidence available");
+      setText("[data-evidence-state]", learner.evidenceAttached ? "Attached" : "Not attached");
+      setText("[data-evidence-note]", hasArtifact
+        ? `This evidence belongs to ${learner.name}’s current Creative App Lab learning focus.`
+        : "No evidence is available for this learner in the current session.");
+      setText("[data-inspection-title]", hasArtifact ? learner.artifact.label : "No evidence available");
+      setText("[data-inspection-learner]", learner.name);
+      const attachButton = find("[data-attach-evidence]");
+      if (attachButton instanceof HTMLButtonElement) {
+        attachButton.disabled = !hasArtifact || learner.evidenceAttached || learner.submitted;
+        attachButton.textContent = learner.evidenceAttached ? "Evidence attached" : hasArtifact ? "Attach existing demo evidence" : "No demo evidence available";
+      }
+      const inspectButton = find("[data-inspect-evidence]");
+      if (inspectButton instanceof HTMLButtonElement) inspectButton.disabled = !learner.evidenceAttached;
+      const inspection = find("[data-artifact-inspection]");
+      if (inspection instanceof HTMLElement && !learner.evidenceAttached) inspection.hidden = true;
+
+      if (observationInput instanceof HTMLTextAreaElement && observationInput.value !== learner.observationDraft) observationInput.value = learner.observationDraft;
+      if (observationInput instanceof HTMLTextAreaElement) observationInput.disabled = learner.submitted;
+      setText("[data-observation-state]", learner.observationSaved ? "Saved · ready" : learner.observationDraft.trim() ? "Draft · save needed" : "Not entered");
+      setText("[data-observation-feedback]", learner.observationSaved ? "Observation saved for report readiness." : "Save this draft to include it in report readiness.");
+      const saveButton = find("[data-save-observation]");
+      if (saveButton instanceof HTMLButtonElement) saveButton.disabled = !learner.observationDraft.trim() || learner.observationSaved || learner.submitted;
+      const improveButton = find("[data-improve-wording]");
+      if (improveButton instanceof HTMLButtonElement) improveButton.disabled = !learner.observationDraft.trim() || learner.submitted;
+      const wordingSuggestion = find("[data-wording-suggestion]");
+      if (wordingSuggestion instanceof HTMLElement) wordingSuggestion.hidden = !learner.observationSuggestion;
+      setText("[data-suggested-wording]", learner.observationSuggestion);
+
+      for (const [key, complete] of Object.entries(readiness)) {
+        const item = find(`[data-readiness-item="${key}"]`);
+        if (item) {
+          item.classList.toggle("complete", complete);
+          const marker = item.querySelector("span");
+          if (marker) marker.textContent = complete ? "✓" : "○";
+        }
+      }
+      setText("[data-readiness-summary]", learner.submitted ? "Submitted" : ready ? "Ready to submit" : `${remaining} item${remaining === 1 ? "" : "s"} remaining`);
+      setText("[data-report-state]", learner.submitted ? "Submitted" : ready ? "Ready" : "Report in progress");
+      const submitButton = find("[data-submit-report]");
+      if (submitButton instanceof HTMLButtonElement) submitButton.disabled = !ready || learner.submitted;
+
+      if (confirmation instanceof HTMLElement) confirmation.hidden = !learner.submitted;
+      if (learner.submitted) {
+        setText("[data-receipt-learner]", learner.name);
+        setText("[data-receipt-progress]", `${learner.progress.completed} of ${learner.progress.total} complete`);
+        setText("[data-receipt-evidence]", learner.artifact?.label || "No evidence attached");
+        setText("[data-receipt-observation]", learner.observationDraft);
+      }
+    };
+
+    startButton?.addEventListener("click", () => {
+      state = reduceCoachInteraction(state, { type: "start-class" });
+      if (!timerInterval) timerInterval = window.setInterval(() => {
+        state = reduceCoachInteraction(state, { type: "tick" });
+        render();
+      }, 1000);
+      render();
+      announce("Class started. Learner workflow is available.");
+      if (learnerButtons[0] instanceof HTMLElement) learnerButtons[0].focus();
+    });
+
+    learnerButtons.forEach((button) => button.addEventListener("click", () => {
+      state = reduceCoachInteraction(state, { type: "select-learner", learnerId: button.getAttribute("data-learner-id") });
+      render();
+      announce(`${getSelectedCoachLearner(state).name} selected.`);
+    }));
+
+    find("[data-update-progress]")?.addEventListener("click", () => {
+      state = reduceCoachInteraction(state, { type: "update-progress" });
+      render();
+      announce(`Progress updated for ${getSelectedCoachLearner(state).name} in Creative App Lab.`);
+    });
+
+    find("[data-attach-evidence]")?.addEventListener("click", () => {
+      state = reduceCoachInteraction(state, { type: "attach-evidence" });
+      render();
+      announce("Habit Tracker interaction-flow evidence attached.");
+    });
+
+    find("[data-inspect-evidence]")?.addEventListener("click", () => {
+      const inspection = find("[data-artifact-inspection]");
+      if (inspection instanceof HTMLElement) {
+        inspection.hidden = !inspection.hidden;
+        announce(inspection.hidden ? "Evidence details closed." : "Evidence details opened.");
+      }
+    });
+
+    if (observationInput instanceof HTMLTextAreaElement) {
+      observationInput.addEventListener("input", () => {
+        state = reduceCoachInteraction(state, { type: "update-observation", value: observationInput.value });
+        render();
+      });
+    }
+
+    find("[data-save-observation]")?.addEventListener("click", () => {
+      state = reduceCoachInteraction(state, { type: "save-observation" });
+      render();
+      announce(getSelectedCoachLearner(state).observationSaved ? "Observation saved." : "Enter an observation before saving.");
+    });
+
+    find("[data-improve-wording]")?.addEventListener("click", () => {
+      state = reduceCoachInteraction(state, { type: "request-wording-suggestion" });
+      render();
+      announce(getSelectedCoachLearner(state).observationSuggestion ? "Wording suggestion ready for Coach review." : "Write an observation before requesting a suggestion.");
+    });
+
+    find("[data-accept-wording]")?.addEventListener("click", () => {
+      state = reduceCoachInteraction(state, { type: "accept-wording-suggestion" });
+      render();
+      announce("Suggestion accepted as editable draft wording. Nothing has been saved.");
+      if (observationInput instanceof HTMLTextAreaElement) observationInput.focus();
+    });
+
+    find("[data-keep-original]")?.addEventListener("click", () => {
+      state = reduceCoachInteraction(state, { type: "keep-original-wording" });
+      render();
+      announce("Original Coach wording kept.");
+      if (observationInput instanceof HTMLTextAreaElement) observationInput.focus();
+    });
+
+    find("[data-submit-report]")?.addEventListener("click", () => {
+      state = reduceCoachInteraction(state, { type: "submit-report" });
+      render();
+      if (getSelectedCoachLearner(state).submitted) {
+        announce("Report submitted for Center review.");
+        if (confirmation instanceof HTMLElement) confirmation.focus();
+      }
+    });
+
+    render();
+  }
+</script>
+
+<style>
+  [hidden] { display: none !important; }
+  .coach-live-demo { display: grid; gap: 22px; }
+  .live-session-banner, .active-state, .workspace-heading, .card-heading, .readiness-heading, .action-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+  .bounded-note { color: var(--color-muted); }
+  .live-session-banner { align-items: flex-end; padding: clamp(24px, 4vw, 38px); border-radius: 16px; background: linear-gradient(135deg, #eef5fa, #e8f7f6); }
+  .coach-session-identity { display: flex; align-items: center; gap: 16px; }
+  .coach-session-identity > div { min-width: 0; }
+  .section-kicker { color: var(--color-muted); font-size: .72rem; font-weight: 950; letter-spacing: .045em; text-transform: uppercase; }
+  h2, h3, h4 { color: var(--color-ink); }
+  .live-session-banner h2, .preflight-card h2, .active-state h2, .workspace-heading h2 { margin: 4px 0 0; font-size: clamp(1.45rem, 3vw, 2rem); }
+  .live-session-banner p { max-width: 62ch; margin: 10px 0 0; }
+  .session-action { display: grid; justify-items: end; gap: 10px; color: var(--color-ink); text-align: right; }
+  .state-chip { display: inline-flex; width: fit-content; min-height: 30px; align-items: center; padding: 5px 10px; border-radius: 999px; background: var(--color-mint); color: #08746f; font-size: .74rem; font-weight: 950; }
+  .state-chip.neutral { background: var(--color-sky); color: var(--color-ink); }
+  button { min-height: 44px; border: 0; border-radius: 9px; font: inherit; font-weight: 900; cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .55; }
+  .primary-action { padding: 10px 17px; background: var(--color-ink); color: #fff; }
+  .secondary-action { padding: 9px 15px; border: 2px solid var(--color-ink); background: #fff; color: var(--color-ink); }
+  .text-button { padding: 8px 11px; background: transparent; color: var(--color-ink); text-decoration: underline; text-underline-offset: 3px; }
+  .preflight-card { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: clamp(22px, 3vw, 30px); border: 1px solid var(--color-border); border-radius: 14px; background: #fff; box-shadow: var(--shadow-soft); }
+  .preflight-card p { margin: 8px 0 0; }
+  .preflight-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .preflight-facts article { display: grid; gap: 6px; padding: 16px; border-radius: 10px; background: var(--cognit-surface-secondary); }
+  .preflight-facts span { color: var(--color-muted); font-size: .74rem; font-weight: 900; text-transform: uppercase; }
+  .preflight-facts strong { color: var(--color-ink); }
+  .active-workflow { display: grid; gap: 20px; }
+  .active-state { padding: 18px 22px; border-left: 5px solid var(--cognit-brand-progress); border-radius: 10px; background: #f5fbfb; }
+  .active-session-clock { display: grid; grid-template-columns: auto auto; align-items: baseline; justify-items: end; gap: 2px 12px; color: var(--color-ink); }
+  .active-session-clock span { grid-column: 1 / -1; color: var(--color-muted); font-size: .78rem; font-weight: 850; }
+  .active-session-clock strong { font-variant-numeric: tabular-nums; font-size: 1.4rem; }
+  .active-session-clock small { color: var(--color-muted); font-weight: 800; text-transform: uppercase; }
+  .learner-selector { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 18px; border: 1px solid var(--color-border); border-radius: 14px; }
+  .learner-selector legend { padding: 0 8px; color: var(--color-ink); font-weight: 950; }
+  .learner-selector button { display: flex; flex: 1 1 260px; align-items: center; justify-content: flex-start; gap: 12px; padding: 12px 16px; border: 2px solid transparent; background: var(--cognit-surface-secondary); color: var(--color-ink); text-align: left; }
+  .learner-selector button[aria-pressed="true"] { border-color: var(--cognit-brand-secondary); background: #eef5fa; }
+  .learner-selector button > span { display: grid; gap: 2px; }
+  .learner-selector small { color: var(--color-muted); }
+  .learner-workspace { display: grid; gap: 16px; }
+  .workspace-heading { padding: 4px 2px 8px; }
+  .workflow-card, .readiness-card, .submission-confirmation { padding: clamp(22px, 3vw, 30px); border: 1px solid var(--color-border); border-radius: 14px; background: #fff; box-shadow: var(--shadow-soft); }
+  .card-heading { align-items: flex-start; margin-bottom: 18px; }
+  .card-heading > div { display: flex; align-items: center; gap: 12px; }
+  .card-heading h3, .readiness-heading h3, .submission-confirmation h3 { margin: 3px 0 0; font-size: clamp(1.25rem, 2.4vw, 1.65rem); }
+  .step-number { display: grid; width: 34px; height: 34px; place-items: center; flex: 0 0 auto; border-radius: 50%; background: var(--color-blue-soft); color: var(--color-ink); font-weight: 950; }
+  .progress-track { height: 11px; overflow: hidden; border-radius: 999px; background: var(--color-sky); }
+  .progress-track span { display: block; height: 100%; background: var(--cognit-brand-progress); transition: width .2s ease; }
+  .learning-sequence { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
+  .learning-sequence article { display: grid; align-content: start; gap: 7px; padding: 16px; border-radius: 10px; background: var(--cognit-surface-secondary); }
+  .learning-sequence span, dt { color: var(--color-muted); font-size: .72rem; font-weight: 950; text-transform: uppercase; }
+  .learning-sequence strong { color: var(--color-ink); line-height: 1.45; }
+  .artifact-summary { display: flex; align-items: center; gap: 14px; padding: 17px; border-radius: 12px; background: #f5fbfb; }
+  .artifact-mark { display: grid; width: 46px; height: 46px; place-items: center; flex: 0 0 auto; border-radius: 50%; background: var(--cognit-brand-progress); color: #fff; font-weight: 950; }
+  .artifact-summary > div:last-child { display: grid; gap: 3px; }
+  .artifact-summary strong { color: var(--color-ink); }
+  .artifact-summary span { color: var(--color-muted); font-size: .84rem; }
+  .bounded-note { margin: 12px 0; font-size: .86rem; }
+  .action-row { justify-content: flex-start; flex-wrap: wrap; margin-top: 14px; }
+  .artifact-inspection { margin-top: 18px; padding: 18px; border: 1px solid var(--color-border); border-radius: 10px; }
+  .artifact-inspection h4 { margin: 0 0 14px; }
+  .evidence-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .evidence-gallery figure { overflow: hidden; margin: 0; border: 1px solid var(--color-border); border-radius: 11px; background: #fff; }
+  .evidence-gallery figcaption { display: grid; gap: 2px; padding: 11px 12px; }
+  .evidence-gallery figcaption strong { color: var(--color-ink); font-size: .86rem; }
+  .evidence-gallery figcaption span { color: var(--color-muted); font-size: .75rem; }
+  .evidence-screen, .evidence-video { display: grid; height: 148px; place-content: center; justify-items: center; gap: 6px; background: linear-gradient(145deg, #eef5fa, #e8f7f6); color: var(--color-ink); }
+  .evidence-screen span { font-weight: 850; }
+  .evidence-screen strong { font-size: 1.65rem; }
+  .evidence-screen i { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 50%; background: var(--cognit-brand-progress); color: #fff; font-style: normal; }
+  .evidence-video { background: linear-gradient(145deg, #0f456e, #28749a); color: #fff; }
+  .evidence-video span { display: grid; width: 44px; height: 44px; place-items: center; border: 2px solid #fff; border-radius: 50%; }
+  .artifact-inspection dl, .submission-confirmation dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
+  .artifact-inspection dl > div, .submission-confirmation dl > div { padding: 13px; border-radius: 8px; background: var(--cognit-surface-secondary); }
+  dd { margin: 4px 0 0; color: var(--color-ink); font-weight: 850; }
+  .observation-work label { display: block; margin-bottom: 8px; color: var(--color-ink); font-weight: 900; }
+  textarea { width: 100%; min-height: 130px; resize: vertical; padding: 13px; border: 1px solid var(--color-border); border-radius: 9px; background: #fff; color: var(--color-ink); font: inherit; line-height: 1.55; }
+  .inline-feedback { color: var(--color-muted); font-size: .84rem; }
+  .wording-suggestion { margin-top: 16px; padding: 18px; border: 1px solid #b9dedb; border-radius: 11px; background: #f0fbfa; }
+  .wording-suggestion p { margin: 8px 0 0; color: var(--color-ink); line-height: 1.55; }
+  .wording-suggestion small { color: var(--color-muted); }
+  .readiness-card { border-top: 5px solid var(--cognit-brand-progress); }
+  .readiness-heading { align-items: flex-end; }
+  .readiness-heading > strong { color: var(--color-ink); }
+  .readiness-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 20px 0; padding: 0; list-style: none; }
+  .readiness-list li { display: flex; align-items: center; gap: 9px; padding: 14px; border: 1px solid var(--color-border); border-radius: 9px; color: var(--color-muted); }
+  .readiness-list li.complete { border-color: #b9dedb; background: #f0fbfa; color: #08746f; }
+  .readiness-list li span { font-size: 1.1rem; }
+  .submit-action { width: 100%; }
+  .submission-confirmation { border-left: 6px solid var(--cognit-brand-progress); background: linear-gradient(135deg, #f5fbfb, #fff); }
+  .submission-confirmation dl { margin-top: 20px; }
+  .submission-confirmation p { margin: 18px 0 0; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  @media (max-width: 760px) {
+    .live-session-banner, .active-state, .workspace-heading, .card-heading, .readiness-heading { align-items: flex-start; flex-direction: column; }
+    .session-action { justify-items: start; text-align: left; }
+    .preflight-card, .preflight-facts, .learning-sequence, .readiness-list, .evidence-gallery, .artifact-inspection dl, .submission-confirmation dl { grid-template-columns: 1fr; }
+    .coach-session-identity { align-items: flex-start; }
+    .active-session-clock { justify-items: start; }
+    .learner-selector button { flex-basis: 100%; }
+    .action-row { align-items: stretch; flex-direction: column; }
+    .action-row button { width: 100%; }
+  }
+</style>

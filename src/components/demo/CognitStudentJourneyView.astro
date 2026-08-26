@@ -1,0 +1,230 @@
+---
+import DemoImage from "./DemoImage.astro";
+import DemoLoopNav from "./DemoLoopNav.astro";
+import { COGNIT_DEMO_IMAGES, getDemoStudentImage } from "../../demo/cognit-demo-images.js";
+import { getCognitDemoPerspectiveModel } from "../../demo/cognit-demo-model.js";
+
+const { view = "today" } = Astro.props;
+const model = getCognitDemoPerspectiveModel("student");
+const isHome = view === "today";
+const isLesson = view === "lesson";
+const isWorkspace = ["active", "reflection", "complete"].includes(view);
+const initialPhase = view === "reflection" ? "reflection" : view === "complete" ? "complete" : "active";
+const resources = [
+  { id: "walkthrough", kind: "Walkthrough", title: "Interaction-flow walkthrough", detail: "A short, silent representative walkthrough shell." },
+  { id: "reference", kind: "Reference", title: "Sample interaction-flow pattern", detail: "A synthetic reference for moving between Habit Tracker screens." },
+  { id: "checklist", kind: "Guide", title: "Design testing checklist", detail: "A compact checklist for noticing and revising one confusing step." }
+];
+---
+
+<div class="student-journey" data-student-journey data-initial-phase={initialPhase}>
+  {!isWorkspace && <DemoLoopNav role="student" active="today" />}
+  {!isWorkspace && <>
+    <aside class="publication-sync publication-sync--held" data-center-publication-held><strong>Same-event update held at Center review</strong><span>Your current work remains visible; the new published story is not released yet.</span></aside>
+    <aside class="publication-sync publication-sync--published" data-center-published-event hidden><strong>Same-event update published</strong><span>Your newest Center-reviewed learning story is now available across Student and Family views.</span></aside>
+  </>}
+
+  {isHome && (
+    <div class="student-home" data-student-home>
+      <header class="home-heading">
+        <div><span class="eyebrow">Student perspective</span><h1>Good afternoon, Eli.</h1><p>Your Creative App Lab work is ready when you are.</p></div>
+        <DemoImage image={getDemoStudentImage(model.person.id)} size="profile-lg" loading="eager" />
+      </header>
+
+      <section class="learning-hero" aria-labelledby="today-work-title">
+        <div class="learning-copy">
+          <span class="course-pill">{model.course.name} · {model.session.label}</span>
+          <h2 id="today-work-title">Build and improve your Habit Tracker flow.</h2>
+          <p>{model.session.learningFocus}</p>
+          <div class="coach-line"><span>Coach</span><strong>{model.coach.name}</strong></div>
+          <a class="primary-button" href="/learninghub/demo/student/lesson">Start today’s work →</a>
+        </div>
+        <figure><DemoImage image={COGNIT_DEMO_IMAGES.narrative.robotics} size="narrative-card" loading="eager" /><figcaption>Representative creative technology workspace</figcaption></figure>
+      </section>
+
+      <section class="continuity" aria-labelledby="continuity-title">
+        <h2 id="continuity-title">Your learning path today</h2>
+        <ol>
+          <li class="complete"><span>Where you’ve been</span><strong>{model.completed}</strong></li>
+          <li class="current" aria-current="step"><span>Where you are</span><strong>{model.challenge}</strong></li>
+          <li><span>Where you’re going</span><strong>{model.next}</strong></li>
+        </ol>
+      </section>
+
+      <div class="home-grid">
+        <section class="panel" aria-labelledby="courses-title"><h2 id="courses-title">Your courses</h2><article><span class="state-word">Active</span><div><strong>Creative App Lab</strong><small>Habit Tracker · current learning focus</small></div><a href="/learninghub/demo/student/courses">View courses →</a></article><article><span class="state-word upcoming">Continuity</span><div><strong>Lena’s multi-course example</strong><small>Separate course paths remain separate.</small></div><a href="/learninghub/demo/student/courses/lena">Explore example →</a></article></section>
+        <section class="panel" aria-labelledby="coach-note-title"><h2 id="coach-note-title">A note from Jordan</h2><blockquote>“Keep the core flow simple, test it with someone else, and notice where they hesitate.”</blockquote><p class="boundary-note">This is established synthetic guidance, not a new Coach-loop event.</p></section>
+      </div>
+    </div>
+  )}
+
+  {isLesson && (
+    <div class="lesson-context" data-lesson-context>
+      <div class="active-strip"><span>Today’s work</span><strong>Creative App Lab · Habit Tracker</strong></div>
+      <a class="quiet-link" href="/learninghub/demo/student">← Back to Today</a>
+      <section class="lesson-card" aria-labelledby="lesson-title">
+        <span class="eyebrow">Lesson context</span><h1 id="lesson-title">Prototype and improve the interaction flow.</h1>
+        <p class="objective"><strong>Objective:</strong> Build the core Habit Tracker flow, then test one interaction and revise a confusing step.</p>
+        <div class="context-grid"><article><span>Previous session</span><strong>{model.completed}</strong></article><article><span>Expected learning</span><strong>Explain one design choice and improve it after testing.</strong></article><article><span>Learning environment</span><strong>Your existing app-building workspace</strong></article></div>
+        <div class="resource-grid" aria-label="Today’s resources">{resources.map((resource) => <button type="button" data-open-resource={resource.id}><span>{resource.kind}</span><strong>{resource.title}</strong><small>Open preview →</small></button>)}</div>
+        <a class="primary-button centered" href="/learninghub/demo/student/active">Open the learning workspace →</a>
+        <p class="quiet-copy">The Learning Hub stays available for guidance; it does not replace the app-building environment.</p>
+      </section>
+    </div>
+  )}
+
+  {isWorkspace && (
+    <div class="student-workspace-shell" data-workspace-shell>
+      <header class="active-session-header"><div><span>Active lesson</span><strong>Creative App Lab · Habit Tracker</strong></div><div><span data-session-phase>{initialPhase === "reflection" ? "Wrapping up" : initialPhase === "complete" ? "Lesson complete" : "Learning in progress"}</span><strong data-student-timer aria-label="Elapsed lesson time">00:00</strong></div></header>
+
+      <section class:list={["active-workspace", initialPhase !== "active" && "is-hidden"]} data-phase-panel="active" aria-labelledby="workspace-title">
+        <div class="workspace-main">
+          <div class="workspace-heading"><div><span class="eyebrow">Active learning</span><h1 id="workspace-title">Build the Habit Tracker interaction flow.</h1><p>Complete one bounded step, use the references when needed, and keep personal notes as you work.</p></div><span class="progress-badge" data-progress-count>2 of 3 complete</span></div>
+          <ol class="step-list" aria-label="Lesson steps">
+            <li class="complete" data-step="complete"><span aria-hidden="true">✓</span><div><strong>Set up the primary screen and basic navigation.</strong><small>Complete</small></div></li>
+            <li class="current" aria-current="step" data-step="current"><span aria-hidden="true">2</span><div><strong>Prototype the core habit-tracking flow.</strong><small data-current-state>Current step</small></div><button type="button" data-complete-step>Mark this step complete</button></li>
+            <li data-step="next"><span aria-hidden="true">3</span><div><strong>Test the interaction flow and revise one confusing step.</strong><small>Up next</small></div></li>
+          </ol>
+          <div class="workspace-actions"><button class="secondary-button" type="button" data-request-help>Ask Jordan for help</button><button class="primary-button" type="button" data-finish-lesson disabled>I'm done with today’s work</button></div>
+          <p class="help-state" data-help-state hidden><strong>Help requested in this lesson.</strong> This local state does not claim Jordan received a persistent message.</p>
+        </div>
+        <aside class="workspace-side">
+          <section class="scratchpad"><span class="eyebrow">Your scratchpad</span><label for="student-scratchpad">Quick notes for yourself</label><textarea id="student-scratchpad" data-scratchpad rows="7" placeholder="Add a reminder, idea, or question…"></textarea><small>Student-owned and local to this demo. It is not a Coach observation or Family update.</small></section>
+          <section class="resource-panel"><h2>Helpful resources</h2>{resources.map((resource) => <button type="button" data-open-resource={resource.id}><span>{resource.kind}</span><strong>{resource.title}</strong></button>)}</section>
+        </aside>
+      </section>
+
+      <section class:list={["reflection-panel", initialPhase !== "reflection" && "is-hidden"]} data-phase-panel="reflection" aria-labelledby="reflection-title">
+        <span class="eyebrow">Optional reflection</span><h1 id="reflection-title" tabindex="-1">How did today’s work feel?</h1><p>Share as much or as little as you want.</p>
+        <fieldset><legend>Energy or mood</legend><div class="choice-grid" data-choice-group="mood"><button type="button" data-choice="Great">Great</button><button type="button" data-choice="Okay">Okay</button><button type="button" data-choice="Struggled">Struggled</button></div></fieldset>
+        <fieldset><legend>What happened?</legend><div class="choice-grid" data-choice-group="outcome"><button type="button" data-choice="I finished the bounded step">I finished the step</button><button type="button" data-choice="I got stuck">I got stuck</button><button type="button" data-choice="I need more time">I need more time</button></div></fieldset>
+        <label for="student-reflection">Anything else you want to remember? <span>(optional)</span></label><textarea id="student-reflection" data-reflection-text rows="5" placeholder="Write a short reflection…"></textarea>
+        <p class="boundary-note">This reflection remains Student-local in this slice. It is not automatically sent to Jordan or published to Family.</p>
+        <div class="reflection-actions"><button class="text-button" type="button" data-skip-reflection>Skip reflection</button><button class="primary-button" type="button" data-submit-reflection>Save reflection and finish</button></div>
+      </section>
+
+      <section class:list={["complete-panel", initialPhase !== "complete" && "is-hidden"]} data-phase-panel="complete" aria-labelledby="complete-title">
+        <DemoImage image={getDemoStudentImage(model.person.id)} size="avatar-md" loading="eager" /><div class="completion-mark" aria-hidden="true">✓</div><span class="eyebrow">Lesson complete</span><h1 id="complete-title" tabindex="-1">Today’s bounded learning step is complete.</h1><p>Creative App Lab · Habit Tracker interaction flow</p>
+        <dl><div><dt>Duration</dt><dd data-complete-duration>00:00</dd></div><div><dt>Status</dt><dd>Local lesson step completed</dd></div><div data-mood-summary hidden><dt>Your mood</dt><dd data-complete-mood></dd></div><div data-outcome-summary hidden><dt>What happened</dt><dd data-complete-outcome></dd></div><div data-reflection-summary hidden><dt>Your reflection</dt><dd data-complete-reflection></dd></div></dl>
+        <aside><span>What comes next</span><strong>{model.next}</strong><small>No Learning Journey entry was published by this interaction.</small></aside>
+        <a class="primary-button" href="/learninghub/demo/student">Back to Student Today</a>
+      </section>
+    </div>
+  )}
+
+  {resources.map((resource) => (
+    <dialog class="resource-dialog" data-resource-dialog={resource.id} aria-labelledby={`resource-${resource.id}-title`}>
+      <form method="dialog"><button class="dialog-close" value="close" aria-label={`Close ${resource.title}`}>×</button></form>
+      <span class="eyebrow">{resource.kind} preview</span><h2 id={`resource-${resource.id}-title`}>{resource.title}</h2><p>{resource.detail}</p>
+      {resource.id === "walkthrough" && <div class="video-shell" role="img" aria-label="Representative silent walkthrough preview"><span aria-hidden="true">▶</span><strong>Walkthrough preview</strong><small>No streaming or autoplay</small></div>}
+      {resource.id === "reference" && <pre aria-label="Synthetic interaction-flow reference"><code>{`screen = "Today"\nif action == "add_habit":\n    screen = "New habit"\n\n# Test whether the next screen is clear.`}</code></pre>}
+      {resource.id === "checklist" && <ul class="guide-list"><li>Can someone identify the next action?</li><li>Does the screen explain what changed?</li><li>Which step caused hesitation?</li></ul>}
+      <form method="dialog"><button class="primary-button" value="close">Return to lesson</button></form>
+    </dialog>
+  ))}
+</div>
+
+<script>
+  import { applyCenterPublicationState } from "../../demo/cognit-publication-sync.js";
+  const root = document.querySelector("[data-student-journey]");
+  if (root instanceof HTMLElement) {
+    applyCenterPublicationState(root);
+    const initialPhase = root.dataset.initialPhase || "active";
+    const state = { phase: initialPhase, elapsed: initialPhase === "complete" ? 0 : 0, stepAdvanced: initialPhase !== "active", scratchpad: "", helpRequested: false, mood: "", outcome: "", reflection: "" };
+    let timerId;
+    const formatTime = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+    const timer = root.querySelector("[data-student-timer]");
+    const finish = root.querySelector("[data-finish-lesson]");
+    const panels = [...root.querySelectorAll("[data-phase-panel]")];
+    const phaseLabel = root.querySelector("[data-session-phase]");
+
+    function showPhase(phase) {
+      state.phase = phase;
+      panels.forEach((panel) => panel.classList.toggle("is-hidden", panel.getAttribute("data-phase-panel") !== phase));
+      if (phaseLabel) phaseLabel.textContent = phase === "active" ? "Learning in progress" : phase === "reflection" ? "Wrapping up" : "Lesson complete";
+      const route = phase === "active" ? "/learninghub/demo/student/active" : `/learninghub/demo/student/${phase}`;
+      if (window.location.pathname !== route) history.pushState({}, "", route);
+      if (phase !== "active" && timerId) window.clearInterval(timerId);
+      root.querySelector(`[data-phase-panel="${phase}"] h1`)?.focus({ preventScroll: true });
+    }
+    function renderTimer() {
+      if (timer) timer.textContent = formatTime(state.elapsed);
+    }
+    if (initialPhase === "active") timerId = window.setInterval(() => { state.elapsed += 1; renderTimer(); }, 1000);
+
+    root.querySelector("[data-complete-step]")?.addEventListener("click", (event) => {
+      if (state.stepAdvanced) return;
+      state.stepAdvanced = true;
+      const button = event.currentTarget;
+      if (button instanceof HTMLButtonElement) { button.disabled = true; button.textContent = "Step complete"; }
+      root.querySelector('[data-step="current"]')?.classList.replace("current", "complete");
+      root.querySelector('[data-step="current"]')?.removeAttribute("aria-current");
+      root.querySelector('[data-step="next"]')?.classList.add("current");
+      root.querySelector('[data-step="next"]')?.setAttribute("aria-current", "step");
+      const count = root.querySelector("[data-progress-count]"); if (count) count.textContent = "3 of 3 complete";
+      if (finish instanceof HTMLButtonElement) finish.disabled = false;
+    });
+    root.querySelector("[data-scratchpad]")?.addEventListener("input", (event) => { if (event.target instanceof HTMLTextAreaElement) state.scratchpad = event.target.value; });
+    root.querySelector("[data-request-help]")?.addEventListener("click", (event) => {
+      state.helpRequested = true;
+      const help = root.querySelector("[data-help-state]"); if (help instanceof HTMLElement) help.hidden = false;
+      if (event.currentTarget instanceof HTMLButtonElement) { event.currentTarget.disabled = true; event.currentTarget.textContent = "Help requested"; }
+    });
+    finish?.addEventListener("click", () => { if (state.stepAdvanced) showPhase("reflection"); });
+
+    root.querySelectorAll("[data-choice-group]").forEach((group) => group.addEventListener("click", (event) => {
+      const button = event.target instanceof Element ? event.target.closest("[data-choice]") : null;
+      if (!(button instanceof HTMLButtonElement)) return;
+      group.querySelectorAll("button").forEach((choice) => choice.setAttribute("aria-pressed", String(choice === button)));
+      const key = group.getAttribute("data-choice-group"); if (key === "mood") state.mood = button.dataset.choice || ""; if (key === "outcome") state.outcome = button.dataset.choice || "";
+    }));
+    root.querySelector("[data-reflection-text]")?.addEventListener("input", (event) => { if (event.target instanceof HTMLTextAreaElement) state.reflection = event.target.value; });
+    function completeLesson(skip = false) {
+      if (skip) { state.mood = ""; state.outcome = ""; state.reflection = ""; }
+      const duration = root.querySelector("[data-complete-duration]"); if (duration) duration.textContent = formatTime(state.elapsed);
+      const summaries = [["mood", "[data-mood-summary]", "[data-complete-mood]"], ["outcome", "[data-outcome-summary]", "[data-complete-outcome]"], ["reflection", "[data-reflection-summary]", "[data-complete-reflection]"]];
+      summaries.forEach(([key, rowSelector, valueSelector]) => { const value = state[key]; const row = root.querySelector(rowSelector); const target = root.querySelector(valueSelector); if (value && row instanceof HTMLElement) { row.hidden = false; if (target) target.textContent = value; } });
+      showPhase("complete");
+    }
+    root.querySelector("[data-skip-reflection]")?.addEventListener("click", () => completeLesson(true));
+    root.querySelector("[data-submit-reflection]")?.addEventListener("click", () => completeLesson(false));
+
+    root.querySelectorAll("[data-open-resource]").forEach((button) => button.addEventListener("click", () => {
+      const id = button.getAttribute("data-open-resource");
+      const dialog = root.querySelector(`[data-resource-dialog="${id}"]`);
+      if (dialog instanceof HTMLDialogElement) dialog.showModal();
+    }));
+  }
+</script>
+
+<style>
+  .student-journey { color: var(--color-ink); }.student-journey [hidden]{display:none!important}.publication-sync{display:grid;gap:4px;margin:18px 0 28px;padding:15px 18px;border:1px solid var(--color-border);border-left:5px solid var(--cognit-brand-accent);border-radius:12px;background:#fff7e8}.publication-sync--published{border-left-color:var(--cognit-brand-progress);background:#eaf8f5}.publication-sync span{color:var(--color-muted)}
+  .student-journey h1, .student-journey h2, .student-journey p { margin-top: 0; }
+  .student-journey h1 { max-width: 15ch; margin-bottom: 12px; font-size: clamp(2.5rem, 6vw, 5rem); line-height: .98; }
+  .student-journey h2 { font-size: clamp(1.35rem, 3vw, 2rem); }
+  .eyebrow { color: #60819a; font-size: .72rem; font-weight: 950; letter-spacing: .05em; text-transform: uppercase; }
+  .home-heading { display: flex; align-items: center; justify-content: space-between; gap: 28px; margin-bottom: 28px; }
+  .home-heading p, .lesson-card > p, .workspace-heading p { color: var(--color-muted); font-size: 1.05rem; }
+  .learning-hero { display: grid; grid-template-columns: 1.25fr .75fr; overflow: hidden; border-radius: 20px; background: linear-gradient(135deg, #0f4267, #5f9ecd); color: #fff; }
+  .learning-copy { padding: clamp(28px, 5vw, 54px); }
+  .learning-copy h2 { max-width: 18ch; margin: 20px 0 12px; color: #fff; font-size: clamp(2rem, 4vw, 3rem); }
+  .learning-copy p { max-width: 55ch; color: #dcedf8; }
+  .course-pill { display: inline-flex; padding: 7px 11px; border: 1px solid rgba(255,255,255,.5); border-radius: 999px; font-size: .78rem; font-weight: 900; }
+  .coach-line { display: flex; gap: 8px; margin: 20px 0; }.coach-line span { color: #c8dfed; }.coach-line strong { color: #fff; }
+  .learning-hero figure { position: relative; min-height: 330px; margin: 0; }.learning-hero :global(img) { width: 100%; height: 100%; object-fit: cover; }.learning-hero figcaption { position: absolute; left: 14px; bottom: 14px; padding: 5px 8px; border-radius: 6px; background: rgba(9,49,78,.8); font-size: .7rem; }
+  .primary-button, .secondary-button, .text-button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 20px; border-radius: 10px; font-weight: 900; }
+  .primary-button { border: 0; background: var(--color-ink); color: #fff; }.learning-copy .primary-button { background: var(--cognit-brand-accent); color: var(--color-ink); }
+  .primary-button:disabled { cursor: not-allowed; background: #a8b9c6; }.secondary-button { border: 2px solid var(--color-ink); background: #fff; color: var(--color-ink); }.text-button { border: 0; background: transparent; color: var(--color-ink); text-decoration: underline; }
+  .continuity { padding: 38px 0 28px; }.continuity ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0; list-style: none; }.continuity li { display: grid; gap: 7px; padding: 18px; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; }.continuity li::before { content: "Upcoming"; color: var(--color-muted); font-size: .72rem; font-weight: 900; }.continuity li.complete::before { content: "Complete ✓"; color: #08746f; }.continuity li.current { border: 2px solid var(--cognit-brand-accent); }.continuity li.current::before { content: "Current step"; color: #965600; }.continuity li span { color: var(--color-muted); font-size: .72rem; font-weight: 900; text-transform: uppercase; }
+  .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }.panel, .lesson-card, .scratchpad, .resource-panel, .reflection-panel, .complete-panel { padding: clamp(24px, 4vw, 40px); border: 1px solid var(--color-border); border-radius: 16px; background: #fff; box-shadow: var(--shadow-soft); }.panel article { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 16px 0; border-top: 1px solid var(--color-border); }.panel article div { display: grid; gap: 4px; }.panel small, .boundary-note, .quiet-copy { color: var(--color-muted); }.panel a { font-weight: 900; text-decoration: underline; }.state-word { color: #08746f; font-size: .7rem; font-weight: 950; text-transform: uppercase; }.state-word.upcoming { color: #7c5a1b; }.panel blockquote { margin: 20px 0; font-size: 1.05rem; line-height: 1.7; }
+  .active-strip, .active-session-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; padding: 14px clamp(18px, 4vw, 34px); border-bottom: 2px solid var(--cognit-brand-accent); background: linear-gradient(90deg, #0f4267, #18717b); color: #fff; }.active-strip span, .active-session-header span { color: #d5edf2; font-size: .75rem; font-weight: 900; text-transform: uppercase; }.quiet-link { display: inline-flex; margin-bottom: 18px; font-weight: 900; text-decoration: underline; }
+  .lesson-card h1 { max-width: 20ch; }.objective { font-size: 1.1rem; }.context-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 28px 0; }.context-grid article { display: grid; gap: 8px; padding: 18px; border-radius: 10px; background: var(--cognit-surface-secondary); }.context-grid span, .resource-grid span, .resource-panel span { color: var(--color-muted); font-size: .7rem; font-weight: 900; text-transform: uppercase; }.resource-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 28px 0; }.resource-grid button, .resource-panel button { display: grid; gap: 6px; padding: 18px; border: 1px solid var(--color-border); border-radius: 10px; background: #fff; color: var(--color-ink); text-align: left; }.resource-grid button:hover, .resource-panel button:hover { border-color: var(--color-blue); }.resource-grid small { color: var(--color-muted); }.centered { display: flex; width: fit-content; margin: 28px auto 10px; }.quiet-copy { text-align: center; }
+  .student-workspace-shell { min-width: 0; }
+  .active-session-header { position: sticky; top: 90px; z-index: 4; width: 100%; box-sizing: border-box; }.active-session-header > div { display: grid; gap: 4px; }.active-session-header > div:last-child { text-align: right; }
+  .active-workspace { display: grid; grid-template-columns: 1.55fr .75fr; gap: 20px; }.workspace-main { padding: clamp(22px, 4vw, 38px); border: 1px solid var(--color-border); border-radius: 16px; background: #fff; box-shadow: var(--shadow-soft); }.workspace-heading { display: flex; align-items: start; justify-content: space-between; gap: 18px; }.workspace-heading h1 { max-width: 18ch; font-size: clamp(2rem, 4vw, 3.4rem); }.progress-badge { flex: 0 0 auto; padding: 7px 10px; border-radius: 999px; background: var(--color-mint); color: #08746f; font-size: .75rem; font-weight: 950; }.step-list { display: grid; gap: 12px; padding: 24px 0; list-style: none; }.step-list li { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 18px; border: 1px solid var(--color-border); border-radius: 12px; }.step-list li > span { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #dfe8ee; font-weight: 950; }.step-list li div { display: grid; gap: 5px; }.step-list small { color: var(--color-muted); }.step-list li.complete { background: #f4fbf9; }.step-list li.complete > span { background: var(--color-mint); color: #08746f; }.step-list li.current { border: 2px solid var(--cognit-brand-accent); }.step-list li.current > span { background: var(--color-ink); color: #fff; }.step-list button { min-height: 40px; padding: 8px 12px; border: 1px solid var(--color-ink); border-radius: 8px; background: #fff; color: var(--color-ink); font-weight: 900; }.workspace-actions, .reflection-actions { display: flex; justify-content: space-between; gap: 12px; }.help-state { margin: 18px 0 0; padding: 14px; border-radius: 10px; background: #fff4dc; }.workspace-side { display: grid; align-content: start; gap: 18px; }.scratchpad label { display: block; margin: 10px 0 8px; font-weight: 900; }.scratchpad textarea, .reflection-panel textarea { width: 100%; padding: 14px; border: 1px solid var(--color-border); border-radius: 10px; resize: vertical; }.scratchpad small { display: block; margin-top: 10px; color: var(--color-muted); line-height: 1.5; }.resource-panel { display: grid; gap: 10px; }.resource-panel h2 { margin-bottom: 4px; }.resource-panel button { padding: 14px; }
+  .reflection-panel, .complete-panel { max-width: 800px; margin: 34px auto; }.reflection-panel h1, .complete-panel h1 { max-width: 16ch; }.reflection-panel fieldset { margin: 26px 0; padding: 0; border: 0; }.reflection-panel legend, .reflection-panel > label { display: block; margin-bottom: 10px; font-weight: 900; }.reflection-panel label span { color: var(--color-muted); font-weight: 700; }.choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }.choice-grid button { min-height: 54px; border: 1px solid var(--color-border); border-radius: 10px; background: #fff; color: var(--color-ink); font-weight: 900; }.choice-grid button[aria-pressed="true"] { border: 2px solid var(--cognit-brand-accent); background: #fff7e8; }.boundary-note { margin: 16px 0; font-size: .84rem; line-height: 1.55; }
+  .complete-panel { display: grid; justify-items: center; text-align: center; }.completion-mark { display: grid; place-items: center; width: 68px; height: 68px; margin: 16px 0; border-radius: 50%; background: var(--cognit-brand-progress); color: #fff; font-size: 2rem; font-weight: 950; }.complete-panel dl { width: 100%; margin: 26px 0; }.complete-panel dl div { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0; border-top: 1px solid var(--color-border); text-align: left; }.complete-panel dt { color: var(--color-muted); font-weight: 900; }.complete-panel dd { margin: 0; font-weight: 900; text-align: right; }.complete-panel aside { display: grid; gap: 8px; width: 100%; margin-bottom: 26px; padding: 18px; border-radius: 10px; background: var(--cognit-surface-secondary); }.complete-panel aside span { color: var(--color-muted); font-size: .72rem; font-weight: 900; text-transform: uppercase; }.complete-panel aside small { color: var(--color-muted); }
+  .resource-dialog { width: min(760px, calc(100vw - 32px)); padding: clamp(24px, 4vw, 38px); border: 0; border-radius: 18px; box-shadow: 0 24px 80px rgba(10,49,77,.28); color: var(--color-ink); }.resource-dialog::backdrop { background: rgba(11,48,74,.5); }.resource-dialog h2 { margin: 8px 42px 10px 0; }.dialog-close { position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border: 1px solid var(--color-border); border-radius: 50%; background: #fff; color: var(--color-ink); font-size: 1.4rem; }.video-shell { display: grid; place-items: center; gap: 10px; min-height: 300px; margin: 24px 0; border-radius: 12px; background: #0d3857; color: #fff; }.video-shell > span { display: grid; place-items: center; width: 62px; height: 62px; border: 2px solid #fff; border-radius: 50%; font-size: 1.5rem; }.video-shell small { color: #c8dfed; }.resource-dialog pre { overflow: auto; margin: 24px 0; padding: 22px; border-radius: 12px; background: #0d3857; color: #c7fff1; line-height: 1.7; }.guide-list { display: grid; gap: 12px; margin: 24px 0; padding-left: 24px; }.is-hidden { display: none !important; }
+  @media (max-width: 820px) { .learning-hero, .active-workspace, .home-grid { grid-template-columns: 1fr; }.learning-hero figure { min-height: 240px; }.context-grid, .resource-grid { grid-template-columns: 1fr; }.active-session-header { top: 72px; }.workspace-heading { display: grid; }.progress-badge { width: fit-content; }.workspace-side { grid-row: 1; }.continuity ol { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .student-journey h1 { font-size: 2.55rem; }.home-heading { align-items: flex-start; }.home-heading :global(img) { width: 72px; height: 72px; }.learning-copy { padding: 26px 20px; }.learning-hero figure { min-height: 190px; }.panel article { grid-template-columns: 1fr; }.active-session-header { top: 64px; align-items: start; }.active-session-header > div:last-child { text-align: left; }.step-list li { grid-template-columns: auto 1fr; }.step-list li button { grid-column: 1 / -1; }.workspace-actions, .reflection-actions { flex-direction: column-reverse; }.workspace-actions > *, .reflection-actions > * { width: 100%; }.choice-grid { grid-template-columns: 1fr; }.complete-panel dl div { display: grid; }.complete-panel dd { text-align: left; }.resource-dialog { max-height: calc(100vh - 24px); overflow: auto; }.video-shell { min-height: 210px; } }
+</style>
