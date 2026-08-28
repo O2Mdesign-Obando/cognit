@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from "react-router";
+import { createBrowserRouter, Navigate, type RouteObject } from "react-router";
 import Landing from "./pages/Landing";
 import Placeholder from "./pages/Placeholder";
 import { TopNavLayout } from "./components/shell/TopNavLayout";
@@ -53,9 +53,9 @@ import HqSupport from "./pages/hq/Support";
 import Deployment from "./pages/hq/Deployment";
 import ModuleControl from "./pages/shared/ModuleControl";
 
-const ph = (title: string, note?: string) => ({ element: <Placeholder title={title} note={note} /> });
+export const DEMO2_BASENAME = "/learninghub/demo2";
 
-export const router = createBrowserRouter([
+export const routeObjects: RouteObject[] = [
   { path: "/", element: <Landing /> },
   { path: "/login", element: <Navigate to="/" replace /> },
   { path: "/support", element: <Placeholder title="Support Hub" note="Role-specific support hub — contact form and FAQ. Building next." /> },
@@ -148,6 +148,8 @@ export const router = createBrowserRouter([
   },
 
   { path: "*", element: <Navigate to="/" replace /> },
-], {
-  basename: "/learninghub/demo2",
-});
+];
+
+export const router = typeof document === "undefined"
+  ? undefined
+  : createBrowserRouter(routeObjects, { basename: DEMO2_BASENAME });

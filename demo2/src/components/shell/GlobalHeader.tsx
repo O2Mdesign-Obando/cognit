@@ -29,6 +29,10 @@ export function GlobalHeader({ role }: { role: RoleConfig }) {
       <div className="relative" ref={ref}>
         <button
           onClick={() => setOpen((v) => !v)}
+          aria-label={`Open ${role.user} account menu`}
+          aria-expanded={open}
+          aria-controls="demo2-account-menu"
+          aria-haspopup="true"
           className="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 transition hover:bg-cool-100"
         >
           <Avatar name={role.user} size={32} />
@@ -37,7 +41,7 @@ export function GlobalHeader({ role }: { role: RoleConfig }) {
         </button>
 
         {open && (
-          <div className="absolute right-0 mt-2 w-[200px] overflow-hidden rounded-[10px] border border-cool-300/60 bg-white py-1.5 [box-shadow:var(--shadow-pop)]">
+          <div id="demo2-account-menu" className="absolute right-0 mt-2 w-[200px] overflow-hidden rounded-[10px] border border-cool-300/60 bg-white py-1.5 [box-shadow:var(--shadow-pop)]">
             <MenuItem icon={<LifeBuoy size={16} />} onClick={() => navigate("/support")}>
               Support
             </MenuItem>
