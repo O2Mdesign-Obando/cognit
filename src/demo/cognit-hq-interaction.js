@@ -16,7 +16,7 @@ if (root) {
 
   const centerFeedback = root.querySelector("[data-hq-center-feedback]");
   root.querySelector("[data-hq-add-center]")?.addEventListener("click", () => {
-    centerFeedback.textContent = "Demo only: the Center onboarding shell opened locally; no Center was created.";
+    centerFeedback.textContent = "Center onboarding preview opened; no Center was created.";
   });
 
   const caseFeedback = root.querySelector("[data-hq-case-feedback]");
@@ -43,7 +43,7 @@ if (root) {
       if (input && !input.disabled) input.checked = true;
     });
     applyState(JSON.parse(localStorage.getItem(storageKey) || "null") || defaults);
-    form.addEventListener("change", () => { statusLine.textContent = "Unsaved browser-local demo changes."; });
+    form.addEventListener("change", () => { statusLine.textContent = "Unsaved configuration changes."; });
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       localStorage.setItem(storageKey, JSON.stringify(readForm()));
@@ -62,7 +62,7 @@ if (root) {
       localStorage.removeItem(storageKey);
       form.reset();
       applyState(defaults);
-      statusLine.textContent = "Demo configuration reset to its deterministic fixture.";
+      statusLine.textContent = "Configuration restored to its presentation baseline.";
     });
   }
 }

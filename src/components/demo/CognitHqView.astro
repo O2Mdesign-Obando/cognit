@@ -30,7 +30,7 @@ const [eyebrow, heading] = titleMap[view] || titleMap.home;
 
 <div class="hq-shell" data-hq-view={view}>
   <div class="hq-local-topline">
-    <div><strong>Cognit HQ</strong><span>Synthetic network demo</span></div>
+    <div><strong>Cognit HQ</strong><span>Network operations</span></div>
     <details class="hq-profile"><summary aria-label="HQ profile menu"><span class="avatar">AC</span><span>{d.meta.steward}<small>{d.meta.role}</small></span></summary><nav><a href="/learninghub/demo/hq/support">Support</a><a href="/learninghub/demo/hq/governance">Settings</a><button type="button" data-hq-logout>Log out</button></nav></details>
   </div>
   <nav class="hq-nav" aria-label="HQ demo sections">
@@ -45,43 +45,43 @@ const [eyebrow, heading] = titleMap[view] || titleMap.home;
 
   {view === "home" && <>
     <section class="attention-stack" aria-label="Network attention queue">{d.attention.map((item) => <article><span>{item.type}</span><div><h2>{item.title}</h2><p>{item.detail}</p></div><a href={item.href}>Review →</a></article>)}</section>
-    <section class="healthy-banner"><span aria-hidden="true">✓</span><strong>All clear:</strong><p>Demo platform health · internal standards · deployment protection</p></section>
+    <section class="healthy-banner"><span aria-hidden="true">✓</span><strong>All clear:</strong><p>Platform health · internal standards · deployment protection</p></section>
   </>}
 
   {view === "network" && <>
-    <section class="metric-grid five" aria-label="Synthetic network metrics">
+    <section class="metric-grid five" aria-label="Network metrics">
       <article><span>Active Centers</span><strong>{activeCenters.length}</strong></article><article><span>Active learners</span><strong>{totalLearners}</strong></article><article><span>Active Coaches</span><strong>{totalCoaches}</strong></article><article><span>Programs running</span><strong>11</strong></article><article><span>Needs attention</span><strong>{attentionCenters.length}</strong></article>
     </section>
-    <div class="split-grid"><section class="panel"><h2>Demo platform health</h2><div class="health-state"><strong>System operational</strong><span>Fixture sync: 12 minutes ago</span></div><p>All displayed status values come from the bounded HQ fixture, not production telemetry.</p></section><section class="panel"><h2>Recent network activity</h2><ul class="activity"><li>Riverton adopted Creative App Foundations Demo 2.4</li><li>Oak Harbor completed its internal standards review</li><li>Cedar Grove advanced to Coach training</li><li>Bluewater entered a lifecycle decision state</li></ul></section></div>
+    <div class="split-grid"><section class="panel"><h2>Platform health</h2><div class="health-state"><strong>System operational</strong><span>Last updated: 12 minutes ago</span></div><p>Presentation data only; not production telemetry.</p></section><section class="panel"><h2>Recent network activity</h2><ul class="activity"><li>Riverton adopted Creative App Foundations 2.4</li><li>Oak Harbor completed its internal standards review</li><li>Cedar Grove advanced to Coach training</li><li>Bluewater entered a lifecycle decision state</li></ul></section></div>
   </>}
 
   {view === "centers" && <>
     <section class="filter-bar" data-hq-center-filters><label><span>Search Centers</span><input type="search" placeholder="Search name or city" data-hq-center-search /></label><label><span>Status</span><select aria-label="Center status" data-hq-center-status><option value="All">All</option><option value="Active">Active</option><option value="Onboarding">Onboarding</option><option value="Inactive">Inactive</option></select></label><button type="button" data-hq-add-center>Add new Center</button></section>
     <p class="demo-feedback" data-hq-center-feedback role="status" aria-live="polite"></p>
-    <section class="table-card"><table><caption>Six synthetic Centers and network-management metadata only</caption><thead><tr><th>Center</th><th>Status</th><th>Learners</th><th>Coaches</th><th>Last sync</th><th>Action</th></tr></thead><tbody>{d.centers.map((c) => <tr data-center-row data-name={`${c.name} ${c.city}`.toLowerCase()} data-status={c.status}><td><strong>{c.name}</strong><small>{c.city}</small></td><td><span class={`status ${c.status.toLowerCase()}`}>{c.status}</span></td><td>{c.learners}</td><td>{c.coaches}</td><td>{c.sync}</td><td><a href={`/learninghub/demo/hq/allocation?center=${c.id}`}>Manage</a></td></tr>)}</tbody></table></section>
-    <section class="panel lifecycle"><h2>Synthetic Cognit network lifecycle</h2><ol>{["Application","Onboarding","Configuration","Training","Activation","Active"].map((stage) => <li>{stage}</li>)}</ol></section>
+    <section class="table-card"><table><caption>Six Centers and network-management metadata</caption><thead><tr><th>Center</th><th>Status</th><th>Learners</th><th>Coaches</th><th>Last sync</th><th>Action</th></tr></thead><tbody>{d.centers.map((c) => <tr data-center-row data-name={`${c.name} ${c.city}`.toLowerCase()} data-status={c.status}><td><strong>{c.name}</strong><small>{c.city}</small></td><td><span class={`status ${c.status.toLowerCase()}`}>{c.status}</span></td><td>{c.learners}</td><td>{c.coaches}</td><td>{c.sync}</td><td><a href={`/learninghub/demo/hq/allocation?center=${c.id}`}>Manage</a></td></tr>)}</tbody></table></section>
+    <section class="panel lifecycle"><h2>Cognit network lifecycle</h2><ol>{["Application","Onboarding","Configuration","Training","Activation","Active"].map((stage) => <li>{stage}</li>)}</ol></section>
   </>}
 
   {view === "curriculum" && <>
     <section class="boundary-note"><strong>HQ template governance</strong><span>HQ distributes templates and standards. Each Center retains its permitted delivery configuration.</span></section>
     <section class="card-grid four">{d.curriculum.map((item) => <article><div class="card-top"><span>{item.category}</span><b>{item.status}</b></div><h2>{item.name}</h2><p>{item.version}</p><div class="adoption"><span>Adoption</span><strong>{item.adoption}</strong></div></article>)}</section>
-    <div class="split-grid"><section class="panel"><h2>Learning Journey templates</h2>{d.journeyTemplates.map((item) => <div class="list-row"><div><strong>{item.name}</strong><small>{item.duration} · {item.centers} Centers</small></div><span>{item.status}</span></div>)}</section><section class="panel"><h2>Latest curriculum push</h2><p>Creative App Foundations Demo 2.4</p><strong>4 adopted · 2 need local review</strong><p class="muted">No real deployment action is performed.</p></section></div>
+    <div class="split-grid"><section class="panel"><h2>Learning Journey templates</h2>{d.journeyTemplates.map((item) => <div class="list-row"><div><strong>{item.name}</strong><small>{item.duration} · {item.centers} Centers</small></div><span>{item.status}</span></div>)}</section><section class="panel"><h2>Latest curriculum push</h2><p>Creative App Foundations 2.4</p><strong>4 adopted · 2 need local review</strong><p class="muted">Review is required before rollout.</p></section></div>
   </>}
 
   {view === "insights" && <>
-    <section class="metric-grid four"><article><span>Total enrollment</span><strong>{totalLearners}</strong><small>+8% synthetic trend</small></article><article><span>Average attendance</span><strong>88%</strong><small>Aggregate fixture</small></article><article><span>Coach activity</span><strong>{totalCoaches}</strong><small>Active in fixture</small></article><article><span>Journey completion</span><strong>74%</strong><small>+3 points</small></article></section>
+    <section class="metric-grid four"><article><span>Total enrollment</span><strong>{totalLearners}</strong><small>+8% trend</small></article><article><span>Average attendance</span><strong>88%</strong><small>Network average</small></article><article><span>Coach activity</span><strong>{totalCoaches}</strong><small>Active Coaches</small></article><article><span>Journey completion</span><strong>74%</strong><small>+3 points</small></article></section>
     <div class="split-grid"><section class="panel"><h2>Enrollment by Center</h2>{d.centers.slice(0,5).map((c) => <div class="bar-row"><span>{c.name}</span><div><i style={`width:${Math.max(8,c.learners)}%`}></i></div><strong>{c.learners}</strong></div>)}</section><div class="stack"><section class="panel"><h2>Family engagement</h2><div class="list-row"><span>Published stories viewed</span><strong>86%</strong></div><div class="list-row"><span>Monthly portal visits</span><strong>3.1</strong></div></section><section class="panel"><h2>Evidence capture</h2><div class="list-row"><span>Observations this month</span><strong>318</strong></div><div class="list-row"><span>Photos/videos attached</span><strong>742</strong></div></section></div></div>
   </>}
 
   {view === "performance" && <>
     <section class="metric-grid four"><article><span>Operational health</span><strong>91/100</strong></article><article><span>Enrollment growth</span><strong>+8%</strong></article><article><span>Retention</span><strong>90%</strong></article><article><span>Average Center health</span><strong>89/100</strong></article></section>
-    <div class="split-grid wide-left"><section class="table-card"><table><caption>Center comparison using synthetic operating indicators</caption><thead><tr><th>Center</th><th>Adoption</th><th>Readiness</th><th>Health</th></tr></thead><tbody>{d.centers.map((c, i) => <tr><td>{c.name}</td><td>{c.adoption}%</td><td>{c.readiness}</td><td>{94-i*4}/100</td></tr>)}</tbody></table></section><section class="panel"><h2>Needs attention</h2>{attentionCenters.map((c) => <div class="notice"><strong>{c.name}</strong><p>{c.readiness}; network stewardship decision required.</p></div>)}</section></div>
-    <section class="panel"><h2>Six-month operational trend</h2><div class="trend" role="img" aria-label="Synthetic health trend rises from 76 in March to 91 in August"><span>Mar 76</span><i></i><span>Apr 80</span><i></i><span>May 83</span><i></i><span>Jun 86</span><i></i><span>Jul 88</span><i></i><span>Aug 91</span></div></section>
+    <div class="split-grid wide-left"><section class="table-card"><table><caption>Center comparison using operating indicators</caption><thead><tr><th>Center</th><th>Adoption</th><th>Readiness</th><th>Health</th></tr></thead><tbody>{d.centers.map((c, i) => <tr><td>{c.name}</td><td>{c.adoption}%</td><td>{c.readiness}</td><td>{94-i*4}/100</td></tr>)}</tbody></table></section><section class="panel"><h2>Needs attention</h2>{attentionCenters.map((c) => <div class="notice"><strong>{c.name}</strong><p>{c.readiness}; network stewardship decision required.</p></div>)}</section></div>
+    <section class="panel"><h2>Six-month operational trend</h2><div class="trend" role="img" aria-label="Health trend rises from 76 in March to 91 in August"><span>Mar 76</span><i></i><span>Apr 80</span><i></i><span>May 83</span><i></i><span>Jun 86</span><i></i><span>Jul 88</span><i></i><span>Aug 91</span></div></section>
   </>}
 
   {view === "governance" && <>
-    <div class="split-grid wide-left"><section class="panel"><h2>Internal network standards</h2>{d.policies.map((p) => <div class="list-row"><div><strong>{p.name}</strong><small>{p.version}</small></div><span>{p.status}</span></div>)}</section><section class="panel"><h2>Synthetic program configuration</h2><div class="list-row"><span>Coach-to-learner planning ratio</span><strong>1:8</strong></div><div class="list-row"><span>Observation planning target</span><strong>2/month</strong></div><div class="list-row"><span>Family story cadence</span><strong>Monthly</strong></div><div class="list-row"><span>Journey review cycle</span><strong>Quarterly</strong></div></section></div>
-    <div class="split-grid"><section class="panel"><h2>Center standards review</h2>{d.centers.slice(0,5).map((c,i) => <div class="list-row"><span>{c.name}</span><strong>{96-i*3}% · Internal status</strong></div>)}</section><section class="panel"><h2>Demo audit history</h2><ul class="activity"><li>Data handling standard marked active</li><li>Center readiness fixture reviewed</li><li>Demo module envelope initialized</li></ul><p class="muted">These are local demo events, not signed production audit records.</p></section></div>
+    <div class="split-grid wide-left"><section class="panel"><h2>Internal network standards</h2>{d.policies.map((p) => <div class="list-row"><div><strong>{p.name}</strong><small>{p.version}</small></div><span>{p.status}</span></div>)}</section><section class="panel"><h2>Program configuration</h2><div class="list-row"><span>Coach-to-learner planning ratio</span><strong>1:8</strong></div><div class="list-row"><span>Observation planning target</span><strong>2/month</strong></div><div class="list-row"><span>Family story cadence</span><strong>Monthly</strong></div><div class="list-row"><span>Journey review cycle</span><strong>Quarterly</strong></div></section></div>
+    <div class="split-grid"><section class="panel"><h2>Center standards review</h2>{d.centers.slice(0,5).map((c,i) => <div class="list-row"><span>{c.name}</span><strong>{96-i*3}% · Internal status</strong></div>)}</section><section class="panel"><h2>Audit history</h2><ul class="activity"><li>Data handling standard marked active</li><li>Center readiness reviewed</li><li>Module configuration initialized</li></ul><p class="muted">These entries illustrate the audit structure; they are not signed production audit records.</p></section></div>
   </>}
 
   {view === "support" && <>
@@ -90,9 +90,9 @@ const [eyebrow, heading] = titleMap[view] || titleMap.home;
   </>}
 
   {view === "deployment" && <>
-    <section class="metric-grid three"><article><span>Demo platform version</span><strong>2.4</strong><small>Stable fixture</small></article><article><span>Synthetic release date</span><strong>Aug 2026</strong></article><article><span>Centers on latest</span><strong>4 / 6</strong></article></section>
-    <div class="split-grid wide-left"><section class="panel"><h2>Upcoming demo releases</h2>{d.releases.map((r) => <div class="list-row"><div><strong>{r.version} · {r.name}</strong><small>{r.target}</small></div><span>{r.stage}</span></div>)}</section><section class="panel"><h2>Feature rollout</h2><div class="rollout"><strong>Family journey refinements</strong><span>Active fixture</span><i style="width:100%"></i></div><div class="rollout"><strong>AI-assisted observation editing</strong><span>Beta fixture</span><i style="width:35%"></i></div><div class="rollout"><strong>Mobile Coach capture</strong><span>Alpha fixture</span><i style="width:12%"></i></div></section></div>
-    <section class="table-card"><table><caption>Center readiness for the synthetic demo release</caption><thead><tr><th>Center</th><th>Version</th><th>Configuration</th><th>Last sync</th></tr></thead><tbody>{d.centers.map((c) => <tr><td>{c.name}</td><td>{c.version}</td><td>{c.readiness}</td><td>{c.sync}</td></tr>)}</tbody></table></section>
+    <section class="metric-grid three"><article><span>Platform version</span><strong>2.4</strong><small>Stable</small></article><article><span>Release date</span><strong>Aug 2026</strong></article><article><span>Centers on latest</span><strong>4 / 6</strong></article></section>
+    <div class="split-grid wide-left"><section class="panel"><h2>Upcoming releases</h2>{d.releases.map((r) => <div class="list-row"><div><strong>{r.version} · {r.name}</strong><small>{r.target}</small></div><span>{r.stage}</span></div>)}</section><section class="panel"><h2>Feature rollout</h2><div class="rollout"><strong>Family journey refinements</strong><span>Active</span><i style="width:100%"></i></div><div class="rollout"><strong>AI-assisted observation editing</strong><span>Beta</span><i style="width:35%"></i></div><div class="rollout"><strong>Mobile Coach capture</strong><span>Alpha</span><i style="width:12%"></i></div></section></div>
+    <section class="table-card"><table><caption>Center readiness for the current release</caption><thead><tr><th>Center</th><th>Version</th><th>Configuration</th><th>Last sync</th></tr></thead><tbody>{d.centers.map((c) => <tr><td>{c.name}</td><td>{c.version}</td><td>{c.readiness}</td><td>{c.sync}</td></tr>)}</tbody></table></section>
   </>}
 
   {(view === "modules" || view === "allocation") && <section class="module-workspace" data-hq-modules data-mode={view}>
@@ -108,10 +108,10 @@ const [eyebrow, heading] = titleMap[view] || titleMap.home;
       </div></fieldset>)}
       <div class="module-actions"><p data-module-status role="status" aria-live="polite">No unsaved demo changes.</p><button type="button" class="secondary" data-module-reset>Reset</button><button type="reset" class="secondary" data-module-discard>Discard changes</button><button type="submit">Save configuration</button></div>
     </form>
-    <section class="demo-audit" aria-label="Demo configuration audit"><h2>Local demo event history</h2><ul data-module-audit><li>Demo module envelope initialized.</li></ul></section>
+    <section class="demo-audit" aria-label="Configuration audit"><h2>Configuration history</h2><ul data-module-audit><li>Module envelope initialized.</li></ul></section>
   </section>}
 
-  <footer class="hq-boundary"><strong>{d.meta.authorizationPrinciple}</strong><span>Network metadata visibility does not imply downstream record access. All interactions on this page are browser-local and resettable.</span></footer>
+  <footer class="hq-boundary"><strong>{d.meta.authorizationPrinciple}</strong><span>Network metadata visibility does not imply downstream record access. Displayed interactions do not affect operational systems.</span></footer>
 </div>
 
 <script src="/src/demo/cognit-hq-interaction.js"></script>

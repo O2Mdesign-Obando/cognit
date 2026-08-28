@@ -12,7 +12,8 @@ const centerView = role === "center" ? parseCenterDemoView(view) : null;
 const [roleSection, roleItem = ""] = view.split("/");
 const section = centerView?.section ?? roleSection;
 const item = centerView?.item ?? roleItem;
-const active = section;
+const studentMyWorkSections = new Set(["my-work", "artifact", "progress"]);
+const active = role === "student" && studentMyWorkSections.has(section) ? "my-work" : section;
 const contextKey = centerView?.context || "northfield";
 const studentSlug = (studentId) => studentId.replace("demo-student-", "").split("-")[0];
 const findStudent = (slug) => data.people.students.find((person) => studentSlug(person.id) === slug);
@@ -63,7 +64,7 @@ const meta = {
   family: {
     journey: ["Learning Journey", item === "eli" ? "A working first flow, improved through testing" : "Published learning updates", "The Family-facing story translated from the same learning event."],
     attendance: ["Attendance", item === "sofia" ? "Sofia Reyes · makeup available" : item === "eli" ? "Eli Morgan · present" : "Attendance and makeup", "Clear current status and any Family action."],
-    messages: ["Messages", "Family communication", "A bounded synthetic exchange about Sofia’s makeup option."],
+    messages: ["Messages", "Family communication", "A private exchange about Sofia’s makeup option."],
     account: ["Account", "Learning visibility preferences", "Safe Family-level settings without fabricated personal contact information."]
   }
 }[role][section];
@@ -76,6 +77,13 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
 ---
 
 <DemoLoopNav role={role} active={active} context={contextKey} />
+{role === "student" && studentMyWorkSections.has(section) && (
+  <nav class="student-work-nav" aria-label="My Work sections">
+    <a href="/learninghub/demo/student/my-work" aria-current={section === "my-work" ? "page" : undefined}>Overview</a>
+    <a href="/learninghub/demo/student/artifact" aria-current={section === "artifact" ? "page" : undefined}>Latest work</a>
+    <a href="/learninghub/demo/student/progress" aria-current={section === "progress" ? "page" : undefined}>Progress</a>
+  </nav>
+)}
 
 <header class="deep-heading">
   <a href={`/learninghub/demo/${role}`}>{role[0].toUpperCase() + role.slice(1)} overview</a>
@@ -230,7 +238,7 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   )}
 
   {role === "family" && section === "account" && (
-    <section class="detail-card"><h2>Family learning preferences</h2><dl><div><dt>Linked learner</dt><dd>Eli Morgan</dd></div><div><dt>Learning visibility</dt><dd>Published learning updates</dd></div><div><dt>Attendance visibility</dt><dd>Current status and makeup options</dd></div><div><dt>Communication</dt><dd>Learning Hub messages</dd></div></dl><p class="quiet-note">Personal contact information is intentionally omitted from this synthetic demo.</p></section>
+    <section class="detail-card"><h2>Family learning preferences</h2><dl><div><dt>Linked learner</dt><dd>Eli Morgan</dd></div><div><dt>Learning visibility</dt><dd>Published learning updates</dd></div><div><dt>Attendance visibility</dt><dd>Current status and makeup options</dd></div><div><dt>Communication</dt><dd>Learning Hub messages</dd></div></dl><p class="quiet-note">Personal contact information is intentionally omitted from this presentation.</p></section>
   )}
 </div>
 
@@ -246,6 +254,9 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   .deep-heading h1 { margin: 6px 0 10px; color: var(--color-ink); font-size: clamp(2.5rem, 5vw, 4.2rem); }
   .deep-heading p { max-width: 65ch; margin: 0; font-size: 1.04rem; }
   .deep-content, .detail-stack { display: grid; gap: 18px; }.deep-content [hidden]{display:none!important}.publication-sync{display:grid;gap:4px;padding:15px 18px;border:1px solid var(--color-border);border-left:5px solid var(--cognit-brand-accent);border-radius:12px;background:#fff7e8}.publication-sync--published{border-left-color:var(--cognit-brand-progress);background:#eaf8f5}.publication-sync span{color:var(--color-muted)}
+  .student-work-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: -8px 0 28px; padding: 8px; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; box-shadow: var(--shadow-soft); }
+  .student-work-nav a { padding: 10px 15px; border-radius: 9px; color: var(--color-ink); font-weight: 850; text-decoration: none; }
+  .student-work-nav a[aria-current="page"] { background: var(--color-ink); color: #fff; }
   .profile-heading, .compact-identity { display: flex; align-items: center; gap: 18px; }
   .profile-heading > div, .compact-identity > div { min-width: 0; }
   .profile-heading .eyebrow, .compact-identity .eyebrow { margin-top: 0; }
@@ -336,6 +347,9 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   .story-detail blockquote { margin: 24px 0; padding: 18px 22px; border-left: 4px solid var(--cognit-brand-progress); background: #fff; color: var(--color-ink); }
   .story-detail aside { margin-top: 26px; padding: 18px; border-radius: 10px; background: #fff; }
   .story-detail aside p { margin: 5px 0 0; }
+  .family-story-detail .compact-identity { align-items: flex-start; }
+  .family-story-detail .compact-identity > div { flex: 1 1 28rem; min-width: 0; }
+  .family-story-detail h2 { max-width: 16ch; overflow-wrap: normal; word-break: normal; hyphens: none; font-size: clamp(2.4rem, 6vw, 4.8rem); line-height: .98; }
   .lead-fact { color: var(--color-ink); font-size: 1.15rem; }
   .quiet-note { color: var(--color-muted); font-size: .9rem; }
   @media (max-width: 760px) {
@@ -344,5 +358,8 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
     .detail-card dl, .fact-grid, .sequence { grid-template-columns: 1fr; }
     .accessible-progress > div:first-child, .progress-record > div, .course-progress-heading { align-items: flex-start; flex-direction: column; }
     .profile-heading { align-items: flex-start; }
+    .family-story-detail .compact-identity { flex-direction: column; }
+    .family-story-detail .compact-identity > div { flex-basis: auto; width: 100%; }
+    .family-story-detail h2 { max-width: 12ch; font-size: clamp(2.2rem, 12vw, 3.6rem); }
   }
 </style>
