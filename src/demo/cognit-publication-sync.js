@@ -1,8 +1,11 @@
-export const CENTER_STATE_KEY = "cognit:center-demo-state:v1";
+export const CENTER_STATE_KEY = "cognit:center-demo-state:v2";
+const LEGACY_CENTER_STATE_KEY = "cognit:center-demo-state:v1";
 
 export function readCenterPublication() {
   try {
-    return Boolean(JSON.parse(localStorage.getItem(CENTER_STATE_KEY) || "{}").eliPublished);
+    const current = JSON.parse(localStorage.getItem(CENTER_STATE_KEY) || "{}");
+    if (typeof current.eliPublished === "boolean") return current.eliPublished;
+    return Boolean(JSON.parse(localStorage.getItem(LEGACY_CENTER_STATE_KEY) || "{}").eliPublished);
   } catch {
     return false;
   }

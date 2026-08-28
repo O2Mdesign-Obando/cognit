@@ -8,6 +8,7 @@ const { view = "today" } = Astro.props;
 const model = getCognitDemoPerspectiveModel("student");
 const isHome = view === "today";
 const isLesson = view === "lesson";
+const isJourneyDetail = view === "journey/eli";
 const isWorkspace = ["active", "reflection", "complete"].includes(view);
 const initialPhase = view === "reflection" ? "reflection" : view === "complete" ? "complete" : "active";
 const resources = [
@@ -72,6 +73,26 @@ const resources = [
       </section>
     </div>
   )}
+
+  {isJourneyDetail && <>
+    <section class="journey-held panel" data-center-publication-held aria-labelledby="student-held-story-title">
+      <span class="eyebrow">Current work · publication held</span>
+      <h1 id="student-held-story-title">Your Creative App Lab story is still being reviewed.</h1>
+      <p>Your learning remains connected while the newest story waits for the Center’s publication decision.</p>
+      <ol class="journey-spine">
+        <li><span>Completed</span><strong>{model.completed}</strong></li>
+        <li><span>Current learning focus</span><strong>{model.challenge}</strong></li>
+        <li><span>What comes next</span><strong>{model.next}</strong></li>
+      </ol>
+      <p class="boundary-note">Coach observation and connected evidence are not exposed here before publication.</p>
+    </section>
+    <article class="published-journey" data-center-published-event hidden aria-labelledby="student-published-story-title">
+      <header><span class="eyebrow">Published Learning Journey · {model.course.name}</span><h1 id="student-published-story-title">{model.publishedStory}</h1><p>{model.familyUpdate}</p></header>
+      <section class="panel" aria-labelledby="student-story-spine-title"><h2 id="student-story-spine-title">How this learning moved</h2><ol class="journey-spine"><li><span>Completed</span><strong>{model.completed}</strong></li><li><span>Learning focus</span><strong>{model.challenge}</strong></li><li><span>Coach observation</span><strong>{model.observation}</strong></li><li><span>What comes next</span><strong>{model.next}</strong></li></ol></section>
+      <section class="panel evidence-summary" aria-labelledby="student-evidence-title"><div class="artifact-preview" aria-hidden="true"><b>Habit</b><strong>Today</strong><span>✓</span></div><div><span class="eyebrow">Connected evidence</span><h2 id="student-evidence-title">{model.artifact.label}</h2><p>{model.artifact.type.replace("_", " ")} · {model.artifact.status}</p></div></section>
+      <p class="boundary-note">Private or unfinished Student reflection remains outside this published story.</p>
+    </article>
+  </>}
 
   {isWorkspace && (
     <div class="student-workspace-shell" data-workspace-shell>
@@ -227,4 +248,8 @@ const resources = [
   .resource-dialog { width: min(760px, calc(100vw - 32px)); padding: clamp(24px, 4vw, 38px); border: 0; border-radius: 18px; box-shadow: 0 24px 80px rgba(10,49,77,.28); color: var(--color-ink); }.resource-dialog::backdrop { background: rgba(11,48,74,.5); }.resource-dialog h2 { margin: 8px 42px 10px 0; }.dialog-close { position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border: 1px solid var(--color-border); border-radius: 50%; background: #fff; color: var(--color-ink); font-size: 1.4rem; }.video-shell { display: grid; place-items: center; gap: 10px; min-height: 300px; margin: 24px 0; border-radius: 12px; background: #0d3857; color: #fff; }.video-shell > span { display: grid; place-items: center; width: 62px; height: 62px; border: 2px solid #fff; border-radius: 50%; font-size: 1.5rem; }.video-shell small { color: #c8dfed; }.resource-dialog pre { overflow: auto; margin: 24px 0; padding: 22px; border-radius: 12px; background: #0d3857; color: #c7fff1; line-height: 1.7; }.guide-list { display: grid; gap: 12px; margin: 24px 0; padding-left: 24px; }.is-hidden { display: none !important; }
   @media (max-width: 820px) { .learning-hero, .active-workspace, .home-grid { grid-template-columns: 1fr; }.learning-hero figure { min-height: 240px; }.context-grid, .resource-grid { grid-template-columns: 1fr; }.active-session-header { top: 72px; }.workspace-heading { display: grid; }.progress-badge { width: fit-content; }.workspace-side { grid-row: 1; }.continuity ol { grid-template-columns: 1fr; } }
   @media (max-width: 560px) { .student-journey h1 { font-size: 2.55rem; }.home-heading { align-items: flex-start; }.home-heading :global(img) { width: 72px; height: 72px; }.learning-copy { padding: 26px 20px; }.learning-hero figure { min-height: 190px; }.panel article { grid-template-columns: 1fr; }.active-session-header { top: 64px; align-items: start; }.active-session-header > div:last-child { text-align: left; }.step-list li { grid-template-columns: auto 1fr; }.step-list li button { grid-column: 1 / -1; }.workspace-actions, .reflection-actions { flex-direction: column-reverse; }.workspace-actions > *, .reflection-actions > * { width: 100%; }.choice-grid { grid-template-columns: 1fr; }.complete-panel dl div { display: grid; }.complete-panel dd { text-align: left; }.resource-dialog { max-height: calc(100vh - 24px); overflow: auto; }.video-shell { min-height: 210px; } }
+</style>
+
+<style>
+  .published-journey{display:grid;gap:22px}.published-journey>header{padding:clamp(22px,5vw,48px);border-radius:20px;background:linear-gradient(135deg,#0f4267,#267d87);color:#fff}.published-journey>header .eyebrow,.published-journey>header p{color:#d8edf1}.journey-held{border-top:5px solid var(--cognit-brand-accent)}.journey-spine{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0 0;padding:0;list-style:none}.journey-spine li{display:grid;gap:6px;padding:16px;border:1px solid var(--color-border);border-radius:12px;background:#f7fafb}.journey-spine li span{color:var(--color-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}.evidence-summary{display:grid;grid-template-columns:180px 1fr;align-items:center;gap:22px}.artifact-preview{display:grid;place-content:center;min-height:150px;border-radius:14px;background:linear-gradient(135deg,#eef8fb,#e8f7f3);text-align:center}.artifact-preview strong{font-size:2rem}.artifact-preview span{display:grid;place-items:center;width:38px;height:38px;margin:10px auto 0;border-radius:50%;background:#20aaa5;color:#fff}@media(max-width:620px){.journey-spine,.evidence-summary{grid-template-columns:1fr}}
 </style>
