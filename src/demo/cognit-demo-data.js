@@ -38,40 +38,91 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         id: "demo-coach-jordan-ellis",
         name: "Jordan Ellis",
         focus: "Creative technology and app development",
+        role: "Lead Coach",
+        status: "active",
+        workEmail: "jordan.ellis@northfield.demo",
+        workPhone: "(555) 014-2011",
+        availability: "Monday–Thursday · 2:30–7:30 PM",
+        expertise: ["App design", "Creative coding", "Interaction design"],
+        assignmentHistory: "3 active classes · 4 completed course deliveries",
+        centerNote: "Strong fit for multi-course learners and prototype critique. Available for Saturday coverage with advance confirmation.",
         contextIds: ["demo-context-northfield-studio", "demo-context-harbor-academy"]
       },
       {
         id: "demo-coach-priya-nair",
         name: "Priya Nair",
         focus: "Robotics and physical computing",
+        role: "Coach",
+        status: "active",
+        workEmail: "priya.nair@northfield.demo",
+        workPhone: "(555) 014-2024",
+        availability: "Tuesday–Friday · 4:00–8:00 PM",
+        expertise: ["Robotics", "Physical computing", "Sensor systems"],
+        assignmentHistory: "1 active class · 3 completed course deliveries",
+        centerNote: "Primary robotics Coach. Protect setup time before sessions that require arena or sensor calibration.",
+        contextIds: ["demo-context-northfield-studio"]
+      },
+      {
+        id: "demo-coach-avery-cole",
+        name: "Avery Cole",
+        focus: "Digital storytelling and creative media",
+        role: "Coach",
+        status: "on_leave",
+        workEmail: "avery.cole@northfield.demo",
+        workPhone: "(555) 014-2038",
+        availability: "On leave through September 8",
+        expertise: ["Digital storytelling", "Creative media", "Narrative design"],
+        assignmentHistory: "0 active classes · 2 completed course deliveries",
+        centerNote: "Keep inactive for new assignments until the recorded return date is confirmed.",
         contextIds: ["demo-context-northfield-studio"]
       }
     ],
     students: [
-      { id: "demo-student-eli-morgan", name: "Eli Morgan" },
-      { id: "demo-student-sofia-reyes", name: "Sofia Reyes" },
-      { id: "demo-student-noah-bennett", name: "Noah Bennett" },
-      { id: "demo-student-mina-park", name: "Mina Park" },
-      { id: "demo-student-lena-grant", name: "Lena Grant" },
-      { id: "demo-student-ava-thompson", name: "Ava Thompson" }
+      { id: "demo-student-eli-morgan", name: "Eli Morgan", operatingStatus: "active", centerNote: "Keep the Morgan Family included when schedule changes affect Creative App Lab." },
+      { id: "demo-student-sofia-reyes", name: "Sofia Reyes", operatingStatus: "active", centerNote: "One open report clarification; normal participation continues." },
+      { id: "demo-student-noah-bennett", name: "Noah Bennett", operatingStatus: "active", centerNote: "Harbor Academy relationship only; do not expose Northfield records." },
+      { id: "demo-student-mina-park", name: "Mina Park", operatingStatus: "active", centerNote: "Historical Community Discovery participation is preserved separately." },
+      { id: "demo-student-lena-grant", name: "Lena Grant", operatingStatus: "active", centerNote: "Two active course relationships require course-scoped progress." },
+      { id: "demo-student-ava-thompson", name: "Ava Thompson", operatingStatus: "waitlist", centerNote: "Waitlist state applies to the next course request; current Storytelling enrollment remains active." }
     ],
     families: [
       {
         id: "demo-family-morgan",
         name: "Morgan Family",
         guardian: { id: "demo-guardian-rachel-morgan", name: "Rachel Morgan" },
+        primaryContact: { name: "Rachel Morgan", relationship: "Parent", email: "rachel.morgan@family.demo", phone: "(555) 013-1101" },
+        secondaryContact: { name: "Sam Morgan", relationship: "Parent", email: "sam.morgan@family.demo", phone: "(555) 013-1102" },
+        preferredEmail: "rachel.morgan@family.demo",
+        preferredPhone: "(555) 013-1101",
+        communicationPreference: "Email first · text for same-day changes",
+        billingResponsibleContact: "Rachel Morgan",
+        accountStatus: "active",
         studentIds: ["demo-student-eli-morgan"]
       },
       {
         id: "demo-family-reyes",
         name: "Reyes Family",
         guardian: { id: "demo-guardian-daniel-reyes", name: "Daniel Reyes" },
+        primaryContact: { name: "Daniel Reyes", relationship: "Parent", email: "daniel.reyes@family.demo", phone: "(555) 013-1201" },
+        secondaryContact: null,
+        preferredEmail: "daniel.reyes@family.demo",
+        preferredPhone: "(555) 013-1201",
+        communicationPreference: "Email",
+        billingResponsibleContact: "Daniel Reyes",
+        accountStatus: "active",
         studentIds: ["demo-student-sofia-reyes"]
       },
       {
         id: "demo-family-park",
         name: "Park Family",
         guardian: { id: "demo-guardian-jin-park", name: "Jin Park" },
+        primaryContact: { name: "Jin Park", relationship: "Parent", email: "jin.park@family.demo", phone: "(555) 013-1301" },
+        secondaryContact: { name: "Alex Park", relationship: "Authorized adult", email: "alex.park@family.demo", phone: "(555) 013-1302" },
+        preferredEmail: "jin.park@family.demo",
+        preferredPhone: "(555) 013-1301",
+        communicationPreference: "Phone for schedule changes · email otherwise",
+        billingResponsibleContact: "Jin Park",
+        accountStatus: "review_needed",
         studentIds: ["demo-student-mina-park"]
       }
     ]
