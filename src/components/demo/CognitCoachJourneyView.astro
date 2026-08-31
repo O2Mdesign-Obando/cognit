@@ -34,7 +34,6 @@ const releases = [
   {journeyView === "today" && (
     <>
       <header class="journey-hero compact"><span class="eyebrow">Coach perspective</span><h1>Good afternoon, Jordan.</h1><p>Everything needed for today’s teaching is in one place.</p></header>
-      <section class="mode-strip"><span aria-hidden="true">●</span><strong>Operational modes</strong><p>Prepare before class · capture notes and evidence during class · complete learner observations after class.</p></section>
       <section class="primary-session card accent" aria-labelledby="next-class-title">
         <div class="identity"><DemoImage image={getDemoCoachImage(model.person.id)} size="avatar-md" loading="eager" /><div><span class="eyebrow">Next class · {model.context.name}</span><h2 id="next-class-title">{model.session.course.name} starts at 4:00 PM</h2><p>{model.session.learningFocus}</p></div></div>
         <div class="session-cta"><strong>{model.session.label}</strong><a class="button primary" href="/learninghub/demo/coach/readiness">Review readiness →</a></div>
@@ -43,7 +42,7 @@ const releases = [
         <section class="card"><div class="section-heading"><div><span class="eyebrow">Today’s teaching</span><h2>Assigned classes</h2></div><a href="/learninghub/demo/coach/end-of-day">End-of-day review</a></div><div class="class-list"><article><div><strong>Creative App Lab</strong><span>4:00–5:30 PM · {eli.name}, {lena.name}</span></div><span class="status ready">Ready</span></article><article><div><strong>Digital Storytelling Lab</strong><span>Saturday · 10:00–11:30 AM · Mina Park, Ava Thompson</span></div><span class="status">Upcoming</span></article><article><div><strong>Harbor Academy · Creative App Lab</strong><span>Wednesday · 3:30–5:00 PM · Noah Bennett</span></div><span class="status">Upcoming</span></article></div></section>
         <section class="card"><span class="eyebrow">My learners</span><h2>Today’s roster</h2><div class="student-list"><a href="/learninghub/demo/coach/learners/eli"><DemoImage image={getDemoStudentImage(eli.id)} size="avatar-sm" /><span><strong>{eli.name}</strong><small>Creative App Lab · current focus ready</small></span></a><a href="/learninghub/demo/coach/progress/lena"><DemoImage image={getDemoStudentImage(lena.id)} size="avatar-sm" /><span><strong>{lena.name}</strong><small>Two active course paths</small></span></a></div></section>
       </div>
-	      <section class="card communication"><div><span class="eyebrow">Coach correspondence</span><h2>Keep each follow-up in the right relationship.</h2><p>Prepare a scoped note for the Center or Eli’s authorized Family without mixing recipients or inventing history.</p></div><div class="button-stack"><a class="button secondary" href="/learninghub/demo/coach/correspondence">Open correspondence</a><a class="button text" href="/learninghub/demo/coach/releases">What’s new</a></div></section>
+	      <section class="card communication"><div class="content-stack"><span class="eyebrow">Coach correspondence</span><h2>Keep each follow-up in the right relationship.</h2><p>Prepare a scoped note for the Center or Eli’s authorized Family without mixing recipients or inventing history.</p></div><div class="button-stack"><a class="button secondary" href="/learninghub/demo/coach/correspondence">Open correspondence</a><a class="button text" href="/learninghub/demo/coach/releases">What’s new</a></div></section>
     </>
   )}
 
@@ -126,7 +125,7 @@ const releases = [
       </nav>
 
       {workspaceTab === "overview" && (
-        <section class="workspace-panel" aria-labelledby="workspace-overview-title"><div class="section-heading"><div><span class="eyebrow">One learner · one course record</span><h2 id="workspace-overview-title">Current learning record</h2></div><strong>2 of 3 steps</strong></div><div class="fact-grid three"><article><span>Completed</span><strong>{model.primary.completed}</strong></article><article class="current"><span>Current</span><strong>{model.primary.challenge}</strong></article><article><span>Next</span><strong>{model.primary.next}</strong></article></div><div class="two-column"><article class="inset"><span class="eyebrow">Latest Coach observation</span><p>{model.primary.observation}</p><a href="/learninghub/demo/coach/learners/eli/observations">Review observations →</a></article><article class="inset"><span class="eyebrow">Connected evidence</span><p><strong>{model.primary.evidence.label}</strong><br/>{model.primary.evidence.type.replace("_", " ")} · {model.primary.evidence.status}</p><a href="/learninghub/demo/coach/learners/eli/evidence">Inspect evidence →</a></article></div></section>
+        <section class="workspace-panel" aria-labelledby="workspace-overview-title"><div class="section-heading"><div><span class="eyebrow">One learner · one course record</span><h2 id="workspace-overview-title">Current learning record</h2></div><strong>2 of 3 steps</strong></div><div class="fact-grid three"><article><span>Completed</span><strong>{model.primary.completed}</strong></article><article class="current"><span>Current</span><strong>{model.primary.challenge}</strong></article><article><span>Next</span><strong>{model.primary.next}</strong></article></div><div class="two-column supporting-records"><article class="inset"><span class="eyebrow">Latest Coach observation</span><p>{model.primary.observation}</p><a href="/learninghub/demo/coach/learners/eli/observations">Review observations →</a></article><article class="inset"><span class="eyebrow">Connected evidence</span><p><strong>{model.primary.evidence.label}</strong><br/>{model.primary.evidence.type.replace("_", " ")} · {model.primary.evidence.status}</p><a href="/learninghub/demo/coach/learners/eli/evidence">Inspect evidence →</a></article></div></section>
       )}
 
       {workspaceTab === "progress" && (
@@ -134,18 +133,43 @@ const releases = [
       )}
 
       {workspaceTab === "evidence" && (
-        <section class="workspace-panel" aria-labelledby="workspace-evidence-title"><div class="section-heading"><div><span class="eyebrow">Connected evidence</span><h2 id="workspace-evidence-title">{model.primary.evidence.label}</h2></div><span class="status ready">Available</span></div><p>Evidence connected to Eli’s Creative App Lab record. These representative demo assets show the supported photo, screenshot, and video relationships without uploading anything.</p><div class="evidence-gallery"><figure><DemoImage image={COGNIT_DEMO_IMAGES.evidence.prototypePhoto} size="evidence-photo" loading="eager" /><figcaption>Photo · interaction testing moment</figcaption></figure><figure><div class="screen-evidence">Habit<br/><strong>Today</strong><span aria-hidden="true">✓</span></div><figcaption>Screenshot · prototype state</figcaption></figure><figure><div class="video-evidence"><span aria-hidden="true">▶</span><strong>Interaction test</strong></div><figcaption>Video · representative demo clip</figcaption></figure></div><dl class="evidence-metadata"><div><dt>Type</dt><dd>{model.primary.evidence.type.replace("_", " ")}</dd></div><div><dt>Status</dt><dd>{model.primary.evidence.status}</dd></div><div><dt>Source</dt><dd>Creative App Lab teaching event</dd></div></dl></section>
+        <section class="workspace-panel" aria-labelledby="workspace-evidence-title"><div class="section-heading"><div><span class="eyebrow">Connected evidence</span><h2 id="workspace-evidence-title">{model.primary.evidence.label}</h2></div><span class="status ready" aria-label="Evidence status: available">Available</span></div><p>Evidence connected to Eli’s Creative App Lab record. These representative demo assets show the supported photo, screenshot, and video relationships without uploading anything.</p><div class="evidence-gallery" aria-label="Illustrative evidence previews"><figure><DemoImage image={COGNIT_DEMO_IMAGES.evidence.prototypePhoto} size="evidence-photo" loading="eager" /><figcaption>Photo preview · interaction testing moment</figcaption></figure><figure><div class="screen-evidence">Habit<br/><strong>Today</strong><span aria-hidden="true">✓</span></div><figcaption>Screenshot preview · prototype state</figcaption></figure><figure><div class="video-evidence"><span aria-hidden="true">▶</span><strong>Interaction test</strong></div><figcaption>Video preview · representative demo clip</figcaption></figure></div><dl class="evidence-metadata"><div><dt>Type</dt><dd>{model.primary.evidence.type.replace("_", " ")}</dd></div><div><dt>Status</dt><dd>{model.primary.evidence.status}</dd></div><div><dt>Source</dt><dd>Creative App Lab teaching event</dd></div></dl></section>
       )}
 
       {workspaceTab === "observations" && (
-        <section class="workspace-panel" aria-labelledby="workspace-observations-title"><div class="section-heading"><div><span class="eyebrow">Coach-authored interpretation</span><h2 id="workspace-observations-title">Observation connected to the work</h2></div><span class="status">Draft source record</span></div><blockquote>{model.primary.observation}</blockquote><div class="fact-grid"><article><span>Evidence reference</span><strong>{model.primary.evidence.label}</strong></article><article><span>Where learning continues</span><strong>{model.primary.next}</strong></article></div><p class="record-boundary">Private quick-note drafts and learner reflections are not included in the Center submission package.</p></section>
+        <section class="workspace-panel observations-panel" aria-labelledby="workspace-observations-title"><div class="section-heading"><div><span class="eyebrow">Coach-authored interpretation</span><h2 id="workspace-observations-title">Observation connected to the work</h2></div><span class="status">Draft source record</span></div><blockquote>{model.primary.observation}</blockquote><div class="fact-grid"><article><span>Evidence reference</span><strong>{model.primary.evidence.label}</strong></article><article><span>Where learning continues</span><strong>{model.primary.next}</strong></article></div><p class="record-boundary">Private quick-note drafts and learner reflections are not included in the Center submission package.</p></section>
       )}
 
-      <section class="submission-panel card" aria-labelledby="submit-center-title">
-        <div><span class="eyebrow">Coach → Center handoff</span><h2 id="submit-center-title">Submit this learning record to Center review</h2><p>Submission sends this learning record into Center review. It does not publish to Student or Family.</p></div>
-        <ul><li>Course progress and next step</li><li>Connected evidence reference</li><li>Coach observation</li><li>Excluded: private reflections and unsaved quick-note drafts</li></ul>
-        <div class="submission-lifecycle" aria-label="Learning record lifecycle"><span class="current">Coach draft</span><span>Center review</span><span>Center publication</span><span>Student & Family visibility</span></div>
-        <div class="section-heading"><p class="record-boundary">Post-submission editing is intentionally not represented in this demo.</p><button class="button primary" type="button" data-open-center-submit>Submit to Center</button></div>
+      <section class="submission-panel" aria-labelledby="submit-center-title">
+        <div class="submission-action card">
+          <div class="submission-copy">
+            <span class="eyebrow">Coach → Center handoff</span>
+            <h2 id="submit-center-title">Submit this learning record to Center review</h2>
+            <p>Submission sends this learning record into Center review. It does not publish to Student or Family.</p>
+          </div>
+          <div class="submission-readiness" aria-labelledby="report-readiness-title">
+            <h3 id="report-readiness-title">Report readiness</h3>
+            <ul class="readiness-list">
+              <li><span class="readiness-icon" aria-hidden="true">✓</span><span>Course Progress and Next Step</span></li>
+              <li><span class="readiness-icon" aria-hidden="true">✓</span><span>Coach Observation</span></li>
+              <li><span class="readiness-icon" aria-hidden="true">✓</span><span>Connected Evidence Reference</span></li>
+              <li><span class="readiness-icon" aria-hidden="true">✓</span><span>Private reflections and unsaved quick-note drafts excluded</span></li>
+            </ul>
+          </div>
+          <div class="submission-action-row">
+            <p class="record-boundary">Post-submission editing is intentionally not represented in this demo.</p>
+            <button class="button primary" type="button" data-open-center-submit>Submit to Center</button>
+          </div>
+        </div>
+        <div class="submission-lifecycle-block card">
+          <span class="lifecycle-label">Report status</span>
+          <ol class="submission-lifecycle" aria-label="Learning record lifecycle">
+            <li class="complete"><span class="lifecycle-marker" aria-hidden="true">✓</span><span class="lifecycle-copy"><strong>Coach draft</strong><small>Complete</small></span></li>
+            <li class="next"><span class="lifecycle-marker" aria-hidden="true">2</span><span class="lifecycle-copy"><strong>Center review</strong><small>Next after submission</small></span></li>
+            <li class="future"><span class="lifecycle-marker" aria-hidden="true">3</span><span class="lifecycle-copy"><strong>Center publication</strong><small>Future</small></span></li>
+            <li class="future"><span class="lifecycle-marker" aria-hidden="true">4</span><span class="lifecycle-copy"><strong>Student &amp; Family visibility</strong><small>Future</small></span></li>
+          </ol>
+        </div>
         <section class="submission-receipt" data-center-submit-receipt hidden tabindex="-1"><span class="eyebrow">Local submission receipt</span><h3>Submitted for Center review.</h3><p>Progress, evidence reference, observation, and next step were included. Student and Family visibility remains held until a separate Center publication decision.</p></section>
       </section>
       <div class="modal-backdrop" data-center-submit-backdrop hidden></div><section class="release-modal" data-center-submit-dialog role="dialog" aria-modal="true" aria-labelledby="center-submit-dialog-title" hidden><button class="modal-close" type="button" data-close-center-submit aria-label="Cancel submission">×</button><span class="eyebrow">Confirm Center handoff</span><h2 id="center-submit-dialog-title">Submit Eli’s Creative App Lab record?</h2><p>The Center will receive the scoped record for review. This action does not publish anything to the Student or Family views.</p><div class="actions"><button class="button secondary" type="button" data-close-center-submit>Cancel</button><button class="button primary" type="button" data-confirm-center-submit>Confirm submission</button></div></section>
@@ -156,7 +180,7 @@ const releases = [
     <section class="correspondence" data-correspondence>
       <header class="journey-hero compact"><span class="eyebrow">Coach correspondence</span><h1>Send the right note to the right relationship.</h1><p>Center operations and authorized Family communication remain distinct. No prior message history is invented.</p></header>
       <div class="recipient-grid" role="group" aria-label="Choose correspondence recipient"><button class="recipient-card selected" type="button" data-correspondence-target="center" aria-pressed="true"><span class="eyebrow">Operational</span><strong>Northfield Studio Center team</strong><small>Creative App Lab · scheduling, equipment, or Center follow-up</small></button><button class="recipient-card" type="button" data-correspondence-target="family" aria-pressed="false"><span class="eyebrow">Authorized learner relationship</span><strong>Morgan Family</strong><small>Eli Morgan · Creative App Lab only</small></button></div>
-      <section class="card"><form data-correspondence-form><div class="form-grid"><label>Recipient<input data-correspondence-recipient readonly value="Northfield Studio Center team" /></label><label>Context<input readonly value="Eli Morgan · Creative App Lab" /></label></div><label>Subject<input required data-correspondence-subject value="Creative App Lab follow-up" /></label><label>Message<textarea required rows="7" data-correspondence-message placeholder="Write a scoped Coach message."></textarea></label><p class="record-boundary" data-correspondence-boundary>Center correspondence is operational. It does not publish a learning story.</p><div class="section-heading"><p data-correspondence-status role="status">Ready for a scoped note.</p><button class="button primary" type="submit">Save note</button></div></form></section>
+      <section class="card correspondence-form"><form data-correspondence-form><div class="form-grid"><label>Recipient<input data-correspondence-recipient readonly value="Northfield Studio Center team" /></label><label>Context<input readonly value="Eli Morgan · Creative App Lab" /></label></div><label>Subject<input required data-correspondence-subject value="Creative App Lab follow-up" /></label><label>Message<textarea required rows="7" data-correspondence-message placeholder="Write a scoped Coach message."></textarea></label><p class="record-boundary" data-correspondence-boundary>Center correspondence is operational. It does not publish a learning story.</p><div class="form-status-row"><p data-correspondence-status role="status">Ready for a scoped note.</p><button class="button primary" type="submit">Save note</button></div></form></section>
     </section>
   )}
 
@@ -178,8 +202,8 @@ const releases = [
 
   {journeyView === "support" && (
     <section class="support-demo" data-support-demo>
-      <header class="journey-hero compact"><span class="eyebrow">Coach support</span><h1>Find answers or prepare a request.</h1><p>Requests remain within this presentation environment and are not externally delivered.</p></header>
-      <section class="card"><form data-local-support-form><div class="form-grid"><label>Subject<input required name="subject" placeholder="What do you need help with?" /></label><label>Problem type<select required name="type"><option value="">Select a problem type</option><option>Classes</option><option>Evidence</option><option>Scheduling</option><option>Technical issue</option></select></label></div><label>Message<textarea required name="message" rows="6" placeholder="Describe what happened."></textarea></label><div class="section-heading"><p data-support-status role="status">No request has been created.</p><button class="button primary" type="submit">Preview request</button></div></form></section>
+      <header class="journey-hero compact"><span class="eyebrow">Coach support</span><h1>Find answers or prepare a request.</h1><p>Review common workflow guidance or prepare a support request.</p></header>
+      <section class="card support-form"><form data-local-support-form><div class="form-grid"><label>Subject<input required name="subject" placeholder="What do you need help with?" /></label><label>Problem type<select required name="type"><option value="">Select a problem type</option><option>Classes</option><option>Evidence</option><option>Scheduling</option><option>Technical issue</option></select></label></div><label>Message<textarea required name="message" rows="6" placeholder="Describe what happened."></textarea></label><div class="form-status-row"><p data-support-status role="status">No request has been created.</p><button class="button primary" type="submit">Preview request</button></div></form></section>
       <section class="faq"><div class="section-heading"><div><span class="eyebrow">Frequently asked questions</span><h2>Coach workflow help</h2></div><input type="search" placeholder="Search questions" data-faq-search /></div>{["How do I begin a class?","How do I capture representative evidence?","Can I pause reporting?","How do I switch classes?","What does Family see?"].map((question) => <details data-faq-item><summary>{question}</summary><p>This demo keeps the action local and preserves the learner, course, and class relationship. Family visibility occurs only after a separate publishing decision.</p></details>)}</section>
     </section>
   )}
@@ -236,7 +260,622 @@ const releases = [
   .faq{display:grid;gap:12px}.faq .section-heading input{max-width:360px}.faq details{padding:18px;border:1px solid var(--color-border);border-radius:12px;background:#fff}.faq summary{cursor:pointer;color:var(--color-ink);font-weight:900}.faq details p{color:var(--color-muted);line-height:1.6}
   .evidence-empty{padding:20px;border:1px dashed var(--color-border);border-radius:12px;background:#f7f9fb}.evidence-empty strong{display:block;margin:8px 0}.evidence-empty p{margin:0;color:var(--color-muted)}
   .record-spine{border-top:5px solid var(--coach-accent)}.record-spine ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0;padding:0;list-style:none}.record-spine li{display:grid;gap:6px;padding:16px;border:1px solid var(--color-border);border-radius:12px;background:#f7fafb}.record-spine li span{color:var(--color-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}.record-spine li small,.record-boundary{color:var(--color-muted)}.record-boundary{margin:0}
-  .active-roster{display:flex;justify-content:center;gap:18px;margin:18px 0}.active-roster a{display:flex;align-items:center;gap:8px;color:var(--color-ink);font-weight:900}.note-boundary{color:var(--color-muted);font-size:.86rem;line-height:1.5}.end-class-dialog{width:min(600px,calc(100% - 30px))}.workspace-identity{display:flex;align-items:center;gap:26px;border-top:5px solid var(--coach-accent)}.workspace-identity h1{margin:6px 0;font-size:clamp(2.5rem,5vw,4.5rem);line-height:1}.workspace-identity p{margin:0 0 14px;color:var(--color-muted)}.workspace-tabs{display:flex;gap:6px;padding:8px;overflow-x:auto;border:1px solid var(--color-border);border-radius:12px;background:#fff}.workspace-tabs a{flex:0 0 auto;padding:10px 16px;border-radius:8px;color:var(--color-ink);font-weight:900}.workspace-tabs a[aria-current=page]{background:var(--color-ink);color:#fff}.workspace-panel{padding:clamp(22px,4vw,38px);border:1px solid var(--color-border);border-radius:16px;background:#fff;box-shadow:var(--shadow-soft)}.fact-grid.three{grid-template-columns:repeat(3,1fr)}.fact-grid .current{box-shadow:inset 0 4px 0 #17aaa8}.inset{padding:20px;border-radius:12px;background:#f5f8fa}.inset p{line-height:1.6}.inset a{color:var(--color-ink);font-weight:900;text-decoration:underline;text-underline-offset:3px}.course-progress-track{height:12px;margin:24px 0;overflow:hidden;border-radius:999px;background:#e4ebf0}.course-progress-track span{display:block;height:100%;border-radius:inherit;background:#17aaa8}.progress-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 20px;padding:0;list-style:none}.progress-steps li{display:grid;gap:8px;padding:18px;border:1px solid var(--color-border);border-radius:12px;background:#f7f9fb}.progress-steps li span{color:var(--color-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}.progress-steps .complete{border-top:4px solid #17aaa8}.progress-steps .current{border-top:4px solid var(--coach-accent)}.evidence-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}.evidence-gallery figure{margin:0;overflow:hidden;border:1px solid var(--color-border);border-radius:14px;background:#f5f8fa}.evidence-gallery :global(img){width:100%!important;height:230px!important;border:0!important;border-radius:0!important;object-fit:cover!important}.evidence-gallery figcaption{padding:12px;color:var(--color-muted);font-size:.82rem;font-weight:800}.screen-evidence,.video-evidence{display:grid;place-content:center;height:230px;background:#e8f7f8;text-align:center;font-size:1.5rem}.screen-evidence strong{font-size:2rem}.screen-evidence span{color:#17aaa8}.video-evidence{gap:10px;background:#113f63;color:#fff}.video-evidence span{font-size:2.5rem}.evidence-metadata{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.evidence-metadata div{padding:14px;border-top:1px solid var(--color-border)}.evidence-metadata dt{color:var(--color-muted);font-size:.7rem;font-weight:950;text-transform:uppercase}.evidence-metadata dd{margin:6px 0 0;font-weight:900}.workspace-panel blockquote{margin:22px 0;padding:26px;border-left:5px solid var(--coach-accent);border-radius:0 12px 12px 0;background:#f7f9fb;font-size:1.25rem;line-height:1.6}.submission-panel{display:grid;gap:20px;border-top:5px solid #17aaa8}.submission-panel h2{font-size:1.8rem}.submission-panel>ul{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0;padding-left:22px}.submission-lifecycle{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}.submission-lifecycle span{padding:12px;background:#edf2f6;color:var(--color-muted);font-size:.78rem;font-weight:900;text-align:center}.submission-lifecycle .current{background:#fff2cf;color:var(--color-ink)}.submission-panel .submission-receipt{padding:20px;border-radius:12px;background:#e9f8f5}.submission-panel .submission-receipt h3{margin:6px 0}.recipient-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.recipient-card{display:grid;gap:7px;padding:22px;border:2px solid var(--color-border);border-radius:14px;background:#fff;color:var(--color-ink);font:inherit;text-align:left;cursor:pointer}.recipient-card strong{font-size:1.15rem}.recipient-card small{color:var(--color-muted);line-height:1.5}.recipient-card.selected{border-color:var(--coach-accent);box-shadow:inset 0 0 0 2px #fff3d2}.correspondence form,.correspondence label{display:grid;gap:10px}.correspondence form>label{margin-top:16px}.correspondence input,.correspondence textarea{width:100%;padding:14px;border:1px solid var(--color-border);border-radius:9px;background:#f7f9fb;font:inherit}.correspondence input[readonly]{color:var(--color-muted)}
+  .active-roster{display:flex;justify-content:center;gap:18px;margin:18px 0}.active-roster a{display:flex;align-items:center;gap:8px;color:var(--color-ink);font-weight:900}.note-boundary{color:var(--color-muted);font-size:.86rem;line-height:1.5}.end-class-dialog{width:min(600px,calc(100% - 30px))}.workspace-identity{display:flex;align-items:center;gap:26px;border-top:5px solid var(--coach-accent)}.workspace-identity h1{margin:6px 0;font-size:clamp(2.5rem,5vw,4.5rem);line-height:1}.workspace-identity p{margin:0 0 14px;color:var(--color-muted)}.workspace-tabs{display:flex;gap:6px;padding:8px;overflow-x:auto;border:1px solid var(--color-border);border-radius:12px;background:#fff}.workspace-tabs a{flex:0 0 auto;padding:10px 16px;border-radius:8px;color:var(--color-ink);font-weight:900}.workspace-tabs a[aria-current=page]{background:var(--color-ink);color:#fff}.workspace-panel{padding:clamp(22px,4vw,38px);border:1px solid var(--color-border);border-radius:16px;background:#fff;box-shadow:var(--shadow-soft)}.fact-grid.three{grid-template-columns:repeat(3,1fr)}.fact-grid .current{box-shadow:inset 0 4px 0 #17aaa8}.inset{padding:20px;border-radius:12px;background:#f5f8fa}.inset p{line-height:1.6}.inset a{color:var(--color-ink);font-weight:900;text-decoration:underline;text-underline-offset:3px}.course-progress-track{height:12px;margin:24px 0;overflow:hidden;border-radius:999px;background:#e4ebf0}.course-progress-track span{display:block;height:100%;border-radius:inherit;background:#17aaa8}.progress-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 20px;padding:0;list-style:none}.progress-steps li{display:grid;gap:8px;padding:18px;border:1px solid var(--color-border);border-radius:12px;background:#f7f9fb}.progress-steps li span{color:var(--color-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}.progress-steps .complete{border-top:4px solid #17aaa8}.progress-steps .current{border-top:4px solid var(--coach-accent)}.evidence-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}.evidence-gallery figure{margin:0;overflow:hidden;border:1px solid var(--color-border);border-radius:14px;background:#f5f8fa}.evidence-gallery :global(img){width:100%!important;height:230px!important;border:0!important;border-radius:0!important;object-fit:cover!important}.evidence-gallery figcaption{padding:12px;color:var(--color-muted);font-size:.82rem;font-weight:800}.screen-evidence,.video-evidence{display:grid;place-content:center;height:230px;background:#e8f7f8;text-align:center;font-size:1.5rem}.screen-evidence strong{font-size:2rem}.screen-evidence span{color:#17aaa8}.video-evidence{gap:10px;background:#113f63;color:#fff}.video-evidence span{font-size:2.5rem}.evidence-metadata{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.evidence-metadata div{padding:14px;border-top:1px solid var(--color-border)}.evidence-metadata dt{color:var(--color-muted);font-size:.7rem;font-weight:950;text-transform:uppercase}.evidence-metadata dd{margin:6px 0 0;font-weight:900}.workspace-panel blockquote{margin:22px 0;padding:26px;border-left:5px solid var(--coach-accent);border-radius:0 12px 12px 0;background:#f7f9fb;font-size:1.25rem;line-height:1.6}.submission-panel{display:grid;gap:20px;border-top:5px solid #17aaa8}.submission-panel h2{font-size:1.8rem}.submission-panel>ul{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0;padding-left:22px}.submission-lifecycle{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}.submission-lifecycle span{padding:12px;background:#edf2f6;color:var(--color-muted);font-size:.78rem;font-weight:900;text-align:center}.submission-lifecycle .current{background:#fff2cf;color:var(--color-ink)}.submission-panel .submission-receipt{padding:20px;border-radius:12px;background:#e9f8f5}.submission-panel .submission-receipt h3{margin:6px 0}.recipient-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.recipient-card{display:grid;gap:7px;padding:22px;border:2px solid var(--color-border);border-radius:14px;background:#fff;color:var(--color-ink);font:inherit;text-align:left;cursor:pointer}.recipient-card strong{font-size:1.15rem}.recipient-card small{color:var(--color-muted);line-height:1.5}.recipient-card.selected{border-color:#9bdedb;background:#eef9f8;box-shadow:none}.correspondence form,.correspondence label{display:grid;gap:10px}.correspondence form>label{margin-top:16px}.correspondence input,.correspondence textarea{width:100%;padding:14px;border:1px solid var(--color-border);border-radius:9px;background:#f7f9fb;font:inherit}.correspondence input[readonly]{color:var(--color-muted)}
   .submission-panel .button,.release-modal .button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 18px;border:1px solid transparent;border-radius:10px;font:inherit;font-weight:900;cursor:pointer}.submission-panel .button.primary,.release-modal .button.primary{background:var(--color-ink);color:#fff}.release-modal .button.secondary{border-color:var(--color-border);background:#fff;color:var(--color-ink)}.release-modal .modal-close{position:absolute;top:18px;right:18px;display:grid;width:42px;height:42px;padding:0;place-items:center;border:1px solid var(--color-border);border-radius:50%;background:#fff;color:var(--color-ink);font:inherit;font-size:1.4rem;line-height:1;cursor:pointer}
   [hidden]{display:none!important}@media(max-width:820px){.primary-session,.capture-stage{grid-template-columns:1fr}.two-column,.form-grid,.live-grid,.fact-grid,.progress-steps,.evidence-gallery,.recipient-grid{grid-template-columns:1fr}.communication{align-items:flex-start;flex-direction:column}.capture-preview,.capture-preview :global(img){min-height:480px;height:480px!important}.live-grid{padding:30px 0}.profile-card{align-items:flex-start}.profile-card dl{grid-template-columns:1fr}.eod-card article{grid-template-columns:1fr auto}.eod-card article .button,.eod-card article .status{grid-column:1/-1;justify-self:start}.evidence-gallery :global(img),.screen-evidence,.video-evidence{height:320px!important}.submission-lifecycle{grid-template-columns:1fr 1fr}}@media(max-width:560px){.coach-journey{gap:18px}.loop-navigation+&{} .journey-hero h1{font-size:2.6rem}.section-heading{align-items:flex-start;flex-direction:column}.section-heading .button,.faq .section-heading input{width:100%;max-width:none}.mode-strip{align-items:flex-start;flex-wrap:wrap}.mode-strip p{flex-basis:100%}.primary-session{padding:20px}.identity{align-items:flex-start}.identity :global(.avatar-md){display:none}.session-cta{justify-items:stretch}.fact-grid,.form-grid,.record-spine ol,.evidence-metadata,.submission-panel>ul{grid-template-columns:1fr}.roster-row{align-items:flex-start;flex-wrap:wrap}.actions,.submit-bar,.capture-header,.submission-panel>.section-heading{align-items:stretch;flex-direction:column}.actions .button,.submit-bar .button,.button-stack,.submission-panel>.section-heading .button{width:100%}.button-stack{display:grid}.timer-ring{width:220px;height:220px}.timer-ring strong{font-size:2.8rem}.evidence-picker{overflow-x:auto}.pending-queue{top:4px}.submit-bar{bottom:4px}.capture-stage aside{padding:20px}.capture-preview,.capture-preview :global(img){min-height:420px;height:420px!important}.live-toolbar{align-items:flex-start}.switch-panel{top:76px}.profile-card,.workspace-identity{align-items:flex-start;flex-direction:column}.workspace-identity :global(.profile-lg){width:110px!important;height:110px!important}.submission-lifecycle{grid-template-columns:1fr}.active-roster{flex-direction:column;align-items:center}}
+  /* Coach learner workspace polish: keep the handoff consequential while the lifecycle stays quiet. */
+  .learner-workspace {
+    row-gap: 28px;
+  }
+
+  .submission-panel {
+    display: grid;
+    gap: 20px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .submission-action {
+    display: grid;
+    gap: 24px;
+    padding: 36px 40px;
+    border-radius: 24px;
+  }
+
+  .submission-copy {
+    display: grid;
+    gap: 10px;
+  }
+
+  .submission-copy .eyebrow,
+  .submission-copy h2,
+  .submission-copy p {
+    margin: 0;
+  }
+
+  .submission-copy p {
+    max-width: 760px;
+  }
+
+  .submission-readiness {
+    width: min(100%, 640px);
+    margin: 0 auto;
+  }
+
+  .submission-readiness h3 {
+    margin: 0 0 14px;
+    color: var(--color-muted);
+    font-size: .78rem;
+    font-weight: 900;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .readiness-list {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .readiness-list li {
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    color: var(--color-muted);
+    line-height: 1.35;
+  }
+
+  .readiness-icon {
+    display: inline-grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border-radius: 999px;
+    background: #dff8ee;
+    color: #087d66;
+    font-size: .82rem;
+    font-weight: 900;
+  }
+
+  .submission-action-row {
+    display: flex;
+    gap: 18px;
+    align-items: end;
+    justify-content: space-between;
+  }
+
+  .record-boundary {
+    max-width: 600px;
+    margin: 0;
+    color: var(--color-muted);
+    font-size: .9rem;
+  }
+
+  .submission-action-row .button {
+    min-width: 190px;
+  }
+
+  .submission-lifecycle-block {
+    padding: 0 16px 8px;
+  }
+
+  .lifecycle-label {
+    color: var(--color-muted);
+    font-size: .76rem;
+    font-weight: 900;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .submission-lifecycle {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .submission-lifecycle li {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 9px;
+    align-items: start;
+    padding: 0;
+    background: transparent;
+    color: var(--color-muted);
+  }
+
+  .submission-lifecycle span {
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    text-align: left;
+  }
+
+  .lifecycle-marker {
+    display: inline-grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border: 1px solid #cad5df;
+    border-radius: 999px;
+    font-size: .76rem;
+    font-weight: 900;
+  }
+
+  .lifecycle-copy {
+    display: grid;
+    gap: 2px;
+    padding-top: 3px;
+  }
+
+  .lifecycle-copy strong {
+    color: var(--color-ink);
+    font-size: .86rem;
+  }
+
+  .lifecycle-copy small {
+    font-size: .74rem;
+  }
+
+  .submission-lifecycle .complete .lifecycle-marker {
+    border-color: #bcebdc;
+    background: #dff8ee;
+    color: #087d66;
+  }
+
+  .submission-lifecycle .next .lifecycle-marker {
+    border: 2px solid var(--color-ink);
+    background: var(--color-ink);
+    color: #fff;
+  }
+
+  .submission-lifecycle .future .lifecycle-marker {
+    background: #f7f9fb;
+  }
+
+  /* Coach presentation contract: 8 / 12 / 16 / 24 / 32 / 48px rhythm. */
+  .coach-journey {
+    --coach-space-1: 8px;
+    --coach-space-2: 12px;
+    --coach-space-3: 16px;
+    --coach-space-4: 24px;
+    --coach-space-5: 32px;
+    --coach-space-6: 48px;
+    gap: var(--coach-space-5);
+  }
+
+  .coach-journey .card,
+  .workspace-panel {
+    padding: var(--coach-space-5);
+  }
+
+  .coach-journey > :global(.loop-navigation) {
+    margin-bottom: var(--coach-space-3);
+  }
+
+  .coach-journey :is(h2, h3) {
+    margin-top: 0;
+  }
+
+  .journey-hero {
+    display: grid;
+    gap: var(--coach-space-2);
+  }
+
+  .journey-hero h1,
+  .journey-hero p {
+    margin: 0;
+  }
+
+  .journey-hero .eyebrow + h1 {
+    margin-top: var(--coach-space-1);
+  }
+
+  .content-stack {
+    display: grid;
+    gap: var(--coach-space-2);
+  }
+
+  .content-stack :is(h2, p) {
+    margin: 0;
+  }
+
+  .status {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 30px;
+    align-items: center;
+    padding: 5px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: #f5f8fa;
+    color: var(--color-muted);
+    font-size: .76rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .status.ready {
+    border-color: #bcebdc;
+    background: #dff8ee;
+    color: #087d66;
+  }
+
+  .button.text {
+    min-height: auto;
+    padding: 4px 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .primary-session {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--coach-space-5);
+    align-items: center;
+  }
+
+  .identity {
+    display: flex;
+    gap: var(--coach-space-4);
+    align-items: center;
+  }
+
+  .identity > div {
+    display: grid;
+    gap: var(--coach-space-2);
+  }
+
+  .identity :is(h2, p) {
+    margin: 0;
+  }
+
+  .identity h2 {
+    line-height: 1.15;
+  }
+
+  .session-cta {
+    display: grid;
+    gap: var(--coach-space-3);
+    justify-items: end;
+  }
+
+  .two-column > .card {
+    min-width: 0;
+  }
+
+  .two-column > .card > .eyebrow + h2,
+  .section-heading .eyebrow + h2,
+  .workspace-panel .eyebrow + h2,
+  .faq .eyebrow + h2 {
+    margin-top: var(--coach-space-1);
+    margin-bottom: 0;
+  }
+
+  .class-list,
+  .student-list {
+    display: grid;
+    gap: 0;
+    margin-top: var(--coach-space-4);
+  }
+
+  .class-list article {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--coach-space-3);
+    align-items: center;
+    padding: var(--coach-space-3) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .class-list article:first-child,
+  .student-list a:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .class-list article > div,
+  .student-list a > span {
+    display: grid;
+    gap: 6px;
+  }
+
+  .class-list article > div > span,
+  .student-list small {
+    color: var(--color-muted);
+    line-height: 1.45;
+  }
+
+  .student-list a {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--coach-space-2);
+    align-items: center;
+    padding: var(--coach-space-3) 0;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .student-list a:hover strong {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .communication {
+    display: flex;
+    gap: var(--coach-space-5);
+    align-items: end;
+    justify-content: space-between;
+  }
+
+  .communication .content-stack {
+    max-width: 720px;
+  }
+
+  .button-stack,
+  .form-status-row {
+    display: flex;
+    gap: var(--coach-space-2);
+    align-items: center;
+  }
+
+  .button-stack {
+    flex: 0 0 auto;
+  }
+
+  .workspace-identity,
+  .workspace-tabs,
+  .workspace-panel,
+  .submission-panel {
+    margin: 0;
+  }
+
+  .workspace-panel {
+    display: grid;
+    gap: var(--coach-space-4);
+  }
+
+  .workspace-panel > .section-heading,
+  .workspace-panel > .fact-grid,
+  .workspace-panel > .course-progress-track,
+  .workspace-panel > .progress-steps,
+  .workspace-panel > .evidence-gallery,
+  .workspace-panel > blockquote {
+    margin: 0;
+  }
+
+  .supporting-records {
+    gap: var(--coach-space-3);
+    margin-top: var(--coach-space-2);
+  }
+
+  .inset {
+    display: grid;
+    gap: var(--coach-space-2);
+  }
+
+  .inset :is(p, a) {
+    margin: 0;
+  }
+
+  .evidence-gallery figure {
+    box-shadow: none;
+    cursor: default;
+  }
+
+  .evidence-gallery figcaption::before {
+    content: "Illustrative ";
+    font-weight: 600;
+  }
+
+  .observations-panel blockquote + .fact-grid {
+    margin-top: var(--coach-space-1);
+  }
+
+  .observations-panel .fact-grid + .record-boundary {
+    margin-top: var(--coach-space-1);
+  }
+
+  .submission-panel {
+    gap: var(--coach-space-4);
+  }
+
+  .submission-lifecycle-block {
+    padding: var(--coach-space-4);
+    border-radius: 18px;
+  }
+
+  .submission-receipt {
+    margin-top: 0;
+  }
+
+  .correspondence,
+  .support-demo {
+    display: grid;
+    gap: var(--coach-space-5);
+  }
+
+  .correspondence .journey-hero,
+  .support-demo .journey-hero {
+    margin-bottom: var(--coach-space-2);
+  }
+
+  .recipient-grid {
+    gap: var(--coach-space-3);
+  }
+
+  .correspondence-form form,
+  .support-form form {
+    gap: var(--coach-space-4);
+  }
+
+  .correspondence-form form > label,
+  .correspondence form > label {
+    margin-top: 0;
+  }
+
+  .form-status-row {
+    justify-content: space-between;
+    padding-top: var(--coach-space-2);
+  }
+
+  .form-status-row p {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .faq {
+    gap: var(--coach-space-2);
+  }
+
+  .faq .section-heading {
+    margin-bottom: var(--coach-space-2);
+  }
+
+  .faq details + details {
+    margin-top: 0;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    z-index: 80;
+    inset: 0;
+    background: rgb(15 39 59 / 58%);
+  }
+
+  .release-modal {
+    position: fixed;
+    z-index: 90;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    width: min(620px, calc(100% - 32px));
+    max-height: calc(100vh - 40px);
+    gap: var(--coach-space-3);
+    padding: var(--coach-space-5);
+    overflow: auto;
+    border: 1px solid var(--color-border);
+    border-top: 5px solid var(--coach-accent);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 24px 70px rgb(15 39 59 / 28%);
+    transform: translate(-50%, -50%);
+  }
+
+  .release-modal :is(h2, p) {
+    margin: 0;
+  }
+
+  .release-modal .actions {
+    display: flex;
+    gap: var(--coach-space-2);
+    margin-top: var(--coach-space-2);
+  }
+
+  @media (max-width: 700px) {
+    .coach-journey {
+      gap: var(--coach-space-4);
+    }
+
+    .coach-journey .card,
+    .workspace-panel {
+      padding: var(--coach-space-4);
+    }
+
+    .coach-journey > :global(.loop-navigation) {
+      margin-bottom: var(--coach-space-1);
+    }
+
+    .learner-workspace {
+      row-gap: var(--coach-space-3);
+    }
+
+    .primary-session,
+    .class-list article,
+    .fact-grid.three {
+      grid-template-columns: 1fr;
+    }
+
+    .identity {
+      align-items: flex-start;
+    }
+
+    .session-cta {
+      justify-items: stretch;
+    }
+
+    .communication,
+    .form-status-row {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .button-stack {
+      width: 100%;
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .button-stack .button,
+    .form-status-row .button {
+      width: 100%;
+    }
+
+    .correspondence,
+    .support-demo {
+      gap: var(--coach-space-4);
+    }
+
+    .submission-action {
+      gap: 20px;
+      padding: var(--coach-space-4);
+      border-radius: 18px;
+    }
+
+    .submission-panel h2 {
+      font-size: 1.55rem;
+    }
+
+    .submission-action-row {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .submission-action-row .button {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .submission-lifecycle-block {
+      padding: var(--coach-space-3);
+    }
+
+    .submission-lifecycle {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .release-modal {
+      gap: var(--coach-space-2);
+      padding: var(--coach-space-4);
+    }
+
+    .release-modal .actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  }
 </style>
