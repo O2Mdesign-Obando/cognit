@@ -3,6 +3,8 @@ export const FAMILY_DEMO_INITIAL_STATE = Object.freeze({
   replySent: false,
   absenceSubmitted: false,
   futureNoticeCancelled: false,
+  makeupTokenUsed: false,
+  replacementSession: "",
   registrationPrepared: false,
   supportPrepared: false,
   courseFilters: Object.freeze({ season: "all", category: "all", time: "all" }),
@@ -15,6 +17,7 @@ export function reduceFamilyDemo(state = FAMILY_DEMO_INITIAL_STATE, action = {})
     case "SEND_REPLY": return { ...state, replySent: true };
     case "SUBMIT_ABSENCE": return { ...state, absenceSubmitted: true };
     case "CANCEL_FUTURE_NOTICE": return { ...state, futureNoticeCancelled: true };
+    case "USE_MAKEUP_TOKEN": return { ...state, makeupTokenUsed: true, replacementSession: action.replacementSession || "Selected replacement session" };
     case "PREPARE_REGISTRATION": return { ...state, registrationPrepared: true };
     case "PREPARE_SUPPORT": return { ...state, supportPrepared: true };
     case "SET_COURSE_FILTER": return { ...state, courseFilters: { ...state.courseFilters, [action.key]: action.value } };
