@@ -21,6 +21,7 @@ export function getStaticPaths() {
     "students/morgan", "students/reyes", "students/bennett", "students/park", "students/grant", "students/thompson",
     "families/morgan", "families/reyes", "families/park", "attendance/eli", "attendance/sofia", "attendance/absence/mina-storytelling", "attendance/makeup", "attendance/makeup/mina-storytelling", "attendance/makeup/eli-creative-weather", "attendance/makeup/lena-creative-weather", "attendance/makeup/sofia-robotics", "attendance/makeup/sofia-robotics-redeemed", "attendance/makeup/sofia-robotics-expired", "attendance/override/ava-storytelling", "attendance/cancellation/creative-weather",
     "courses/creative-app-lab", "courses/robotics-studio", "courses/digital-storytelling-lab",
+    "billing/dashboard", "billing/account/morgan", "billing/account/morgan/method", "billing/account/reyes", "billing/account/reyes/method", "billing/account/park", "billing/account/park/method", "billing/account/grant", "billing/account/grant/method", "billing/account/thompson", "billing/account/thompson/method",
     "reports/attention", "reports/ready", "reports/all", "reports/published", "reports/eli", "reports/sofia", "reports/builder", "whats-new/archive",
     "configuration/modules", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/ready"
   ].map((child) => `context/${context}/${child}`));
@@ -31,7 +32,7 @@ export function getStaticPaths() {
       "students", "students/eli", "students/sofia", "students/noah", "students/mina", "students/lena", "students/ava",
       "students/morgan", "students/reyes", "students/bennett", "students/park", "students/grant", "students/thompson",
       "families", "families/morgan", "families/reyes", "families/park", "attendance", "attendance/eli", "attendance/sofia", "attendance/absence/mina-storytelling", "attendance/makeup", "attendance/makeup/mina-storytelling", "attendance/makeup/eli-creative-weather", "attendance/makeup/lena-creative-weather", "attendance/makeup/sofia-robotics", "attendance/makeup/sofia-robotics-redeemed", "attendance/makeup/sofia-robotics-expired", "attendance/override/ava-storytelling", "attendance/cancellation/creative-weather",
-      "courses", "courses/creative-app-lab", "courses/robotics-studio", "courses/digital-storytelling-lab", "billing",
+      "courses", "courses/creative-app-lab", "courses/robotics-studio", "courses/digital-storytelling-lab", "billing", "billing/dashboard", "billing/account/morgan", "billing/account/morgan/method", "billing/account/reyes", "billing/account/reyes/method", "billing/account/park", "billing/account/park/method", "billing/account/grant", "billing/account/grant/method", "billing/account/thompson", "billing/account/thompson/method",
       "reports", "reports/attention", "reports/ready", "reports/all", "reports/published", "reports/eli", "reports/sofia", "reports/builder", "messages", "settings", "configuration", "configuration/modules", "module-control", "support",
       "whats-new", "whats-new/archive", "migration", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/ready", ...contextSectionRoutes, ...contextChildRoutes
     ],

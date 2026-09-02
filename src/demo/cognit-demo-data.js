@@ -457,6 +457,155 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
       response: null
     }
   ],
+  financials: {
+    accounts: [
+      {
+        id: "demo-billing-morgan",
+        accountId: "DEMO-BILL-MORGAN",
+        slug: "morgan",
+        contextId: "demo-context-northfield-studio",
+        studentId: "demo-student-eli-morgan",
+        familyId: "demo-family-morgan",
+        familyName: "Morgan Family",
+        courseId: "demo-course-creative-app-lab",
+        billingContact: { name: "Rachel Morgan" },
+        monthlyTuition: 180,
+        openBalance: 0,
+        status: "current",
+        statusLabel: "Current",
+        reason: "",
+        autoPay: true,
+        paymentMethod: { brand: "Visa", last4: "4242", expiration: "09/28", status: "active", cardholder: "Rachel Morgan", zip: "08540" },
+        lastPayment: "Aug 15, 2026",
+        nextPayment: "Sep 15, 2026",
+        payments: [
+          { id: "demo-receipt-morgan-aug", date: "Aug 15, 2026", description: "Creative App Lab tuition", amount: 180, status: "paid", method: "Visa ending 4242", reference: "DEMO-MOR-0826" },
+          { id: "demo-receipt-morgan-jul", date: "Jul 15, 2026", description: "Creative App Lab tuition", amount: 180, status: "paid", method: "Visa ending 4242", reference: "DEMO-MOR-0726" }
+        ]
+      },
+      {
+        id: "demo-billing-reyes",
+        accountId: "DEMO-BILL-REYES",
+        slug: "reyes",
+        contextId: "demo-context-northfield-studio",
+        studentId: "demo-student-sofia-reyes",
+        familyId: "demo-family-reyes",
+        familyName: "Reyes Family",
+        courseId: "demo-course-robotics-studio",
+        billingContact: { name: "Daniel Reyes" },
+        monthlyTuition: 190,
+        openBalance: 190,
+        status: "past_due",
+        statusLabel: "Past due",
+        reason: "Payment failed",
+        autoPay: true,
+        paymentMethod: { brand: "Visa", last4: "8901", expiration: "11/28", status: "declined", cardholder: "Daniel Reyes", zip: "08542" },
+        lastPayment: "Jul 15, 2026",
+        nextPayment: "Due now",
+        payments: [
+          { id: "demo-attempt-reyes-aug", date: "Aug 15, 2026", description: "Robotics Studio tuition", amount: 190, status: "failed", method: "Visa ending 8901", reference: "DEMO-REY-FAIL-0826" },
+          { id: "demo-receipt-reyes-jul", date: "Jul 15, 2026", description: "Robotics Studio tuition", amount: 190, status: "paid", method: "Visa ending 8901", reference: "DEMO-REY-0726" }
+        ]
+      },
+      {
+        id: "demo-billing-park",
+        accountId: "DEMO-BILL-PARK",
+        slug: "park",
+        contextId: "demo-context-northfield-studio",
+        studentId: "demo-student-mina-park",
+        familyId: "demo-family-park",
+        familyName: "Park Family",
+        courseId: "demo-course-digital-storytelling-lab",
+        billingContact: { name: "Jin Park" },
+        monthlyTuition: 175,
+        openBalance: 175,
+        status: "action_required",
+        statusLabel: "Action required",
+        reason: "Card expired",
+        autoPay: false,
+        paymentMethod: { brand: "Visa", last4: "1020", expiration: "07/26", status: "expired", cardholder: "Jin Park", zip: "08544" },
+        lastPayment: "Jul 5, 2026",
+        nextPayment: "Due now",
+        payments: [{ id: "demo-attempt-park-aug", date: "Aug 5, 2026", description: "Digital Storytelling Lab tuition", amount: 175, status: "failed", method: "Visa ending 1020", reference: "DEMO-PAR-EXP-0826" }]
+      },
+      {
+        id: "demo-billing-grant",
+        accountId: "DEMO-BILL-GRANT",
+        slug: "grant",
+        contextId: "demo-context-northfield-studio",
+        studentId: "demo-student-lena-grant",
+        familyId: null,
+        familyName: "Grant Family",
+        courseId: "demo-course-creative-app-lab",
+        billingContact: { name: "Taylor Grant" },
+        monthlyTuition: 180,
+        openBalance: 0,
+        status: "current",
+        statusLabel: "Current",
+        reason: "",
+        autoPay: false,
+        paymentMethod: { brand: "Mastercard", last4: "6732", expiration: "04/29", status: "active", cardholder: "Taylor Grant", zip: "08540" },
+        lastPayment: "Aug 15, 2026",
+        nextPayment: "Sep 15, 2026",
+        payments: [{ id: "demo-receipt-grant-aug", date: "Aug 15, 2026", description: "Creative App Lab tuition", amount: 180, status: "paid", method: "Mastercard ending 6732", reference: "DEMO-GRA-0826" }]
+      },
+      {
+        id: "demo-billing-thompson",
+        accountId: "DEMO-BILL-THOMPSON",
+        slug: "thompson",
+        contextId: "demo-context-northfield-studio",
+        studentId: "demo-student-ava-thompson",
+        familyId: null,
+        familyName: "Thompson Family",
+        courseId: "demo-course-digital-storytelling-lab",
+        billingContact: { name: "Morgan Thompson" },
+        monthlyTuition: 175,
+        openBalance: 175,
+        status: "action_required",
+        statusLabel: "Action required",
+        reason: "No payment method",
+        autoPay: false,
+        paymentMethod: null,
+        lastPayment: "No payment yet",
+        nextPayment: "Due now",
+        payments: []
+      }
+    ],
+    dashboardByContext: {
+      "demo-context-northfield-studio": {
+        period: "September 2026",
+        totalIncome: 48750,
+        totalExpenses: 31200,
+        netRevenue: 17550,
+        revenueThisMonth: 550,
+        outstandingTuition: 540,
+        trend: [
+          { month: "Apr", income: 42100, expenses: 29800 }, { month: "May", income: 44700, expenses: 30500 },
+          { month: "Jun", income: 46900, expenses: 32100 }, { month: "Jul", income: 43800, expenses: 31800 },
+          { month: "Aug", income: 47200, expenses: 30700 }, { month: "Sep", income: 48750, expenses: 31200 }
+        ],
+        expenseBreakdown: [
+          { name: "Staff and instruction", percent: 58, amount: 18200 }, { name: "Facility and maintenance", percent: 15, amount: 4680 },
+          { name: "Supplies and materials", percent: 12, amount: 3744 }, { name: "Insurance", percent: 8, amount: 2496 }, { name: "Utilities", percent: 7, amount: 2180 }
+        ],
+        upcomingBills: [
+          { name: "Building lease", vendor: "Acme Properties", due: "Sep 5", amount: 4500, action: "Review bill" },
+          { name: "Insurance premium", vendor: "Hartford Demo Co.", due: "Sep 20", amount: 1850, action: "View detail" },
+          { name: "Learning supplies", vendor: "Sample School Supply", due: "Sep 30", amount: 1240, action: "Mark planned" }
+        ],
+        recentTransactions: [
+          { name: "Tuition payments", date: "Sep 1", amount: 550, category: "Tuition" },
+          { name: "Cleaning service", date: "Aug 30", amount: -350, category: "Facility" },
+          { name: "Art supplies", date: "Aug 28", amount: -125, category: "Supplies" }
+        ],
+        budget: [
+          { category: "Staff and instruction", budgeted: 20000, actual: 18200 }, { category: "Facility and maintenance", budgeted: 5000, actual: 4850 },
+          { category: "Educational supplies", budgeted: 2500, actual: 2840 }, { category: "Marketing and administration", budgeted: 1500, actual: 850 },
+          { category: "Utilities", budgeted: 1000, actual: 1120 }
+        ]
+      }
+    }
+  },
   settings: {
     learningPeriodLabel: "Learning focus",
     reviewMode: "Review by exception",
