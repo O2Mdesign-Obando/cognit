@@ -8,15 +8,29 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
     {
       id: "demo-context-northfield-studio",
       name: "Northfield Studio",
+      displayName: "Northfield Studio",
       type: "learning_center",
       status: "active",
+      operationalEmail: "hello@northfield.demo",
+      operationalPhone: "(555) 014-2000",
+      address: "125 Learning Way, Princeton, NJ 08540",
+      primaryContact: "Maya Chen",
+      timezone: "America/New_York",
+      localMark: "Cognit + Northfield Studio",
       purpose: "Primary center for direct-enrollment, after-school, weekend, and Family learning."
     },
     {
       id: "demo-context-harbor-academy",
       name: "Harbor Academy Program",
+      displayName: "Harbor Academy Program",
       type: "school_program",
       status: "active",
+      operationalEmail: "program@harbor.demo",
+      operationalPhone: "(555) 014-2400",
+      address: "40 Harbor Avenue, Princeton, NJ 08540",
+      primaryContact: "Maya Chen",
+      timezone: "America/New_York",
+      localMark: "Cognit at Harbor Academy",
       purpose: "School-based partner program with its own enrollment and teaching context."
     },
     {
@@ -345,8 +359,20 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
     operatingDate: "2026-08-31",
     season: { id: "fall-2026", label: "Fall 2026", startDate: "2026-08-24", endDate: "2026-10-17" },
     roomsByContext: {
-      "demo-context-northfield-studio": ["Studio 2", "Robotics Arena", "Media Studio", "Project Room"],
-      "demo-context-harbor-academy": ["Media Lab", "Innovation Room"]
+      "demo-context-northfield-studio": [
+        { id: "studio-2", name: "Studio 2", capacity: 8, type: "Creative technology", status: "active", availability: "Working hours" },
+        { id: "robotics-arena", name: "Robotics Arena", capacity: 6, type: "Robotics and physical computing", status: "active", availability: "Working hours · setup buffer applies" },
+        { id: "media-studio", name: "Media Studio", capacity: 8, type: "Storytelling and media", status: "active", availability: "Working hours" },
+        { id: "project-room", name: "Project Room", capacity: 5, type: "Small-group project work", status: "inactive", availability: "Unavailable for scheduling" }
+      ],
+      "demo-context-harbor-academy": [
+        { id: "media-lab", name: "Media Lab", capacity: 8, type: "Creative technology", status: "active", availability: "Program hours" },
+        { id: "innovation-room", name: "Innovation Room", capacity: 6, type: "Project and robotics work", status: "active", availability: "Program hours" }
+      ]
+    },
+    workingHoursByContext: {
+      "demo-context-northfield-studio": { weekdays: "2:30–8:00 PM", saturday: "9:00 AM–1:00 PM", sunday: "Closed", schedulingDefault: "90 minutes" },
+      "demo-context-harbor-academy": { weekdays: "3:00–6:30 PM", saturday: "Closed", sunday: "Closed", schedulingDefault: "90 minutes" }
     },
     milestones: [
       { id: "demo-milestone-fall-launch", contextId: "demo-context-northfield-studio", date: "2026-08-31", label: "Fall learning season begins", type: "milestone" },
@@ -724,6 +750,24 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
     learningPeriodLabel: "Learning focus",
     reviewMode: "Review by exception",
     familyPublishing: "Published learning updates only",
-    activeContextIds: ["demo-context-northfield-studio", "demo-context-harbor-academy"]
+    activeContextIds: ["demo-context-northfield-studio", "demo-context-harbor-academy"],
+    modules: [
+      { id: "academic", name: "Academic", detail: "Courses and curriculum visibility", allocation: "required", enabled: true, owner: "HQ" },
+      { id: "scheduling", name: "Scheduling", detail: "Sessions, rooms, seasons, and closures", allocation: "required", enabled: true, owner: "HQ" },
+      { id: "students", name: "Students", detail: "Center learner operations", allocation: "required", enabled: true, owner: "HQ" },
+      { id: "staffing", name: "Staffing", detail: "Coach availability and assignments", allocation: "available", enabled: true, owner: "Center" },
+      { id: "report-review", name: "Report Review", detail: "Center review and publication", allocation: "available", enabled: true, owner: "Center" },
+      { id: "family-reporting", name: "Family Reporting", detail: "Published Family learning updates", allocation: "available", enabled: true, owner: "Center" },
+      { id: "communication", name: "Communication", detail: "Center messages and announcements", allocation: "available", enabled: true, owner: "Center" },
+      { id: "financials", name: "Financials", detail: "Illustrative tuition and planning views", allocation: "available", enabled: true, owner: "Center" },
+      { id: "migration", name: "Migration", detail: "Data transition tooling", allocation: "unavailable", enabled: false, owner: "HQ" }
+    ],
+    systemStatuses: [
+      { name: "Authentication", status: "Platform managed", owner: "Cognit", detail: "Identity and sign-in settings are not configurable by the Center." },
+      { name: "Curriculum library", status: "Managed by HQ", owner: "HQ", detail: "Canonical templates and required modules remain governed by HQ." },
+      { name: "Email delivery", status: "Not connected", owner: "Cognit", detail: "Illustrative messages only; no external delivery occurs in this presentation." },
+      { name: "Payment collection", status: "Not connected", owner: "Cognit", detail: "Illustrative billing only; no processor or real payment method is connected." },
+      { name: "Accounting", status: "Available", owner: "Cognit", detail: "No accounting system is connected in this presentation." }
+    ]
   }
 });

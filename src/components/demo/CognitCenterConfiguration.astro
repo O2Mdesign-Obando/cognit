@@ -1,0 +1,122 @@
+---
+import { SYNTHETIC_COGNIT_DEMO as d } from "../../demo/cognit-demo-data.js";
+
+const { contextKey, mode = "configuration", configHref, moduleHref, schedulingHref, attendanceHref } = Astro.props;
+const context = contextKey === "harbor" ? d.contexts[1] : d.contexts[0];
+const rooms = d.scheduling.roomsByContext[context.id] || [];
+const hours = d.scheduling.workingHoursByContext[context.id];
+const dates = d.scheduling.milestones.filter((entry) => entry.contextId === context.id);
+const policy = d.attendancePolicy.contextId === context.id ? d.attendancePolicy : null;
+const ownership = (owner) => owner === "Center" ? "Center setting" : owner === "HQ" ? "Managed by HQ" : "Managed by Cognit";
+---
+
+<section class="configuration-shell" data-configuration-surface data-context={contextKey}>
+  <header class="configuration-heading">
+    <p class="eyebrow">Center configuration · {context.displayName}</p>
+    <h1>{mode === "module-control" ? "Modules & Capabilities" : "Configuration"}</h1>
+    <p>{mode === "module-control" ? "HQ allocates capability. The Center configures only the optional modules available within that allocation." : "Understand the local settings that shape daily operations—and the standards that remain with HQ or Cognit."}</p>
+  </header>
+
+  <nav class="configuration-tabs" aria-label="Configuration pages">
+    <a href={configHref} aria-current={mode === "configuration" ? "page" : undefined}>Center settings</a>
+    <a href={moduleHref} aria-current={mode === "module-control" ? "page" : undefined}>Modules &amp; Capabilities</a>
+  </nav>
+
+  <section class="ownership-summary" aria-labelledby="ownership-heading">
+    <h2 id="ownership-heading">Who controls what</h2>
+    <article><strong>Center setting</strong><p>Local operating details can be edited for this Center.</p></article>
+    <article><strong>Managed by HQ</strong><p>Network standards are visible here but cannot be overridden locally.</p></article>
+    <article><strong>Managed by Cognit</strong><p>Platform, identity, security, and infrastructure stay outside Center control.</p></article>
+  </section>
+
+  {mode === "configuration" ? <>
+    <nav class="configuration-jump" aria-label="Configuration sections">
+      <a href="#center-profile">Profile</a><a href="#rooms-spaces">Rooms</a><a href="#hours-calendar">Hours &amp; Calendar</a><a href="#operating-policies">Policies</a><a href="#branding">Branding</a><a href="#system-status">System status</a>
+    </nav>
+
+    <section class="configuration-section" id="center-profile">
+      <div class="configuration-section-heading"><div><p class="eyebrow">Local identity</p><h2>Center Profile</h2></div><span class="ownership-tag center">Center setting</span></div>
+      <p class="section-copy">These details identify this operating context in Center workflows and messages.</p>
+      <form class="configuration-form" data-config-profile data-config-key={contextKey}>
+        <label>Center display name<input name="displayName" value={context.displayName} required /></label>
+        <label>Primary Center contact<input name="primaryContact" value={context.primaryContact} required /></label>
+        <label>Operational email<input name="operationalEmail" type="email" value={context.operationalEmail} required /></label>
+        <label>Operational phone<input name="operationalPhone" value={context.operationalPhone} required /></label>
+        <label class="span-all">Address / location<input name="address" value={context.address} required /></label>
+        <label>Timezone<select name="timezone"><option value="America/New_York" selected={context.timezone === "America/New_York"}>Eastern Time</option><option value="America/Chicago" selected={context.timezone === "America/Chicago"}>Central Time</option></select></label>
+        <div class="save-row span-all"><button type="submit">Save Center profile</button><p role="status" aria-live="polite" data-config-status>Profile is up to date.</p></div>
+      </form>
+    </section>
+
+    <section class="configuration-section" id="rooms-spaces">
+      <div class="configuration-section-heading"><div><p class="eyebrow">Shared with Scheduling</p><h2>Rooms &amp; Spaces</h2></div><span class="ownership-tag center">Center setting</span></div>
+      <p class="section-copy">Room names, capacity, and availability come from the same local room records used by Scheduling. Session assignments stay in Scheduling.</p>
+      <div class="room-list">
+        {rooms.map((room) => <form class="room-card" data-config-room data-room-id={room.id} data-room-original={room.name} data-config-key={contextKey}>
+          <div class="room-card-heading"><h3 data-room-heading>{room.name}</h3><span class={`status-chip ${room.status === "active" ? "ready" : "neutral"}`} data-room-status-label>{room.status === "active" ? "Active" : "Inactive"}</span></div>
+          <label>Room name<input name="name" value={room.name} required /></label>
+          <label>Capacity<input name="capacity" type="number" min="1" max="40" value={room.capacity} required /></label>
+          <label>Purpose / type<input name="type" value={room.type} required /></label>
+          <label>Status<select name="status"><option value="active" selected={room.status === "active"}>Active</option><option value="inactive" selected={room.status === "inactive"}>Inactive</option></select></label>
+          <label class="span-all">Availability / default use<input name="availability" value={room.availability} required /></label>
+          <div class="save-row span-all"><button type="submit">Save room</button><p role="status" aria-live="polite" data-config-status></p></div>
+        </form>)}
+      </div>
+      {!rooms.length && <p class="context-empty">No rooms are configured in this operating context.</p>}
+    </section>
+
+    <section class="configuration-section" id="hours-calendar">
+      <div class="configuration-section-heading"><div><p class="eyebrow">Feeds Scheduling</p><h2>Hours &amp; Calendar</h2></div><span class="ownership-tag center">Center setting</span></div>
+      <div class="calendar-layout">
+        <form class="configuration-form" data-config-calendar data-config-key={contextKey}>
+          <label>Weekday hours<input name="weekdays" value={hours.weekdays} required /></label>
+          <label>Saturday<input name="saturday" value={hours.saturday} required /></label>
+          <label>Sunday<input name="sunday" value={hours.sunday} required /></label>
+          <label>Default session length<select name="schedulingDefault"><option selected={hours.schedulingDefault === "90 minutes"}>90 minutes</option><option selected={hours.schedulingDefault === "60 minutes"}>60 minutes</option></select></label>
+          <div class="save-row span-all"><button type="submit">Save hours</button><p role="status" aria-live="polite" data-config-status>Hours are up to date.</p></div>
+        </form>
+        <aside class="calendar-summary"><h3>Active season</h3><strong>{d.scheduling.season.label}</strong><p>{d.scheduling.season.startDate} through {d.scheduling.season.endDate}</p><h3>Important dates</h3>{dates.length ? <ul>{dates.map((date) => <li><strong>{date.label}</strong><span>{date.date} · {date.type}</span></li>)}</ul> : <p>No local closures or milestones.</p>}<a href={schedulingHref}>Open Scheduling →</a></aside>
+      </div>
+    </section>
+
+    <section class="configuration-section" id="operating-policies">
+      <div class="configuration-section-heading"><div><p class="eyebrow">Daily operating rules</p><h2>Academic &amp; Operating Policies</h2></div><span class="ownership-tag mixed">Mixed ownership</span></div>
+      {policy ? <div class="policy-settings">
+        <form class="policy-editor" data-config-policy data-config-key={contextKey}>
+          <span class="ownership-tag center">Center setting</span><h3>Make-Up Token expiration</h3><label>Days after issue<input name="expiryDays" type="number" min="1" max="90" value={policy.expiryDays} required /></label><p>Used consistently by Attendance and Make-Up Tokens.</p><div class="save-row"><button type="submit">Save policy</button><p role="status" aria-live="polite" data-config-status>45-day expiration is active.</p></div>
+        </form>
+        <article class="locked-setting"><span class="ownership-tag hq">Managed by HQ</span><h3>Qualifying absence categories</h3><p>Illness, appointment, and Center cancellation.</p><strong>Visible for reference · locked at Center</strong></article>
+        <article class="locked-setting"><span class="ownership-tag hq">Managed by HQ</span><h3>Attendance confirmation</h3><p>A Coach or Center operator confirms attendance; inactivity alone never confirms absence.</p><strong>Network standard · locked at Center</strong></article>
+      </div> : <p class="context-empty">No local Make-Up Token policy is allocated to this context. Northfield policy details remain protected.</p>}
+      <a class="inline-link" href={attendanceHref}>Review Attendance &amp; Make-Ups →</a>
+    </section>
+
+    <section class="configuration-section" id="branding">
+      <div class="configuration-section-heading"><div><p class="eyebrow">Authorized display fields</p><h2>Branding</h2></div><span class="ownership-tag mixed">Mixed ownership</span></div>
+      <div class="branding-grid"><form class="configuration-form compact" data-config-branding data-config-key={contextKey}><span class="ownership-tag center span-all">Center setting</span><label class="span-all">Local display text<input name="localMark" value={context.localMark} required /></label><div class="save-row span-all"><button type="submit">Save display text</button><p role="status" aria-live="polite" data-config-status></p></div></form><article class="locked-setting"><span class="ownership-tag platform">Managed by Cognit</span><h3>Cognit product identity</h3><p>Global logo, product colors, and interface components are platform managed.</p><strong>Not editable by the Center</strong></article></div>
+    </section>
+
+    <section class="configuration-section" id="system-status">
+      <div class="configuration-section-heading"><div><p class="eyebrow">Read-only connection view</p><h2>Integrations &amp; System Status</h2></div><span class="ownership-tag platform">Managed outside Center</span></div>
+      <p class="section-copy">Illustrative status only—no external system is connected in this presentation.</p>
+      <div class="system-status-list">{d.settings.systemStatuses.map((entry) => <article><div><h3>{entry.name}</h3><p>{entry.detail}</p></div><span class="status-chip neutral">{entry.status}</span><small>{ownership(entry.owner)}</small></article>)}</div>
+    </section>
+  </> : <>
+    <section class="module-boundary"><strong>Hierarchy describes structure. Grants describe access.</strong><p>Required modules cannot be disabled locally. Unavailable modules cannot be enabled. Optional modules can be configured by this Center only when HQ has made them available.</p></section>
+    <form class="capability-list" data-config-modules data-config-key={contextKey}>
+      {d.settings.modules.map((module) => <fieldset data-module-id={module.id}>
+        <legend><strong>{module.name}</strong><span>{module.detail}</span></legend>
+        <div class="capability-state"><span class={`ownership-tag ${module.owner === "Center" ? "center" : "hq"}`}>{module.allocation === "required" ? "Required by HQ" : module.allocation === "unavailable" ? "Unavailable" : "Available from HQ"}</span>{module.allocation === "available" ? <label class="module-toggle"><input type="checkbox" name={module.id} checked={module.enabled} /><span>Enabled by Center</span></label> : <strong>{module.allocation === "required" ? "Always enabled" : "Not available to this Center"}</strong>}</div>
+      </fieldset>)}
+      <div class="module-save"><button type="submit">Save module choices</button><p role="status" aria-live="polite" data-config-status>Module choices are up to date.</p></div>
+    </form>
+  </>}
+
+  <aside class="configuration-boundary"><strong>Presentation-only configuration</strong><span>Changes are stored only in this browser. No Production settings, identity systems, security controls, infrastructure, or external integrations are changed.</span></aside>
+</section>
+
+<style>
+  .configuration-shell{display:grid;gap:24px;min-width:0}.configuration-heading{max-width:850px}.configuration-heading h1{margin:8px 0 10px;color:var(--ink);font-size:clamp(2.5rem,5.5vw,5rem);line-height:.98}.configuration-heading>p:last-child,.section-copy{max-width:72ch;margin:0;color:#536579;line-height:1.6}.configuration-tabs,.configuration-jump{display:flex;flex-wrap:wrap;gap:7px;padding:7px;border:1px solid var(--color-border);border-radius:12px;background:#fff}.configuration-tabs a,.configuration-jump a{padding:10px 13px;border-radius:8px;color:var(--ink);font-weight:900}.configuration-tabs a[aria-current=page]{background:var(--ink);color:#fff}.configuration-jump{padding:0;border:0;background:transparent}.configuration-jump a{border:1px solid var(--color-border);background:#fff}.ownership-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.ownership-summary h2{grid-column:1/-1;margin:0;color:var(--ink)}.ownership-summary article{padding:16px;border-left:4px solid var(--teal);border-radius:9px;background:#effaf7}.ownership-summary article:nth-of-type(2){border-left-color:#4a91c4;background:#f1f7fc}.ownership-summary article:nth-of-type(3){border-left-color:#7b8794;background:#f3f5f7}.ownership-summary p{margin:6px 0 0;color:#536579;line-height:1.45}.configuration-section{display:grid;gap:16px;padding:24px;border:1px solid var(--color-border);border-radius:14px;background:#fff;box-shadow:var(--shadow-soft);scroll-margin-top:20px}.configuration-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.configuration-section-heading h2{margin:4px 0 0;color:var(--ink)}.ownership-tag{display:inline-flex;width:fit-content;padding:6px 9px;border-radius:999px;background:#eef2f5;color:#44566b;font-size:.68rem;font-weight:950}.ownership-tag.center{background:#dff7ee;color:#08785f}.ownership-tag.hq{background:#e7f1fa;color:#174d73}.ownership-tag.platform{background:#eef2f5;color:#44566b}.ownership-tag.mixed{background:#fff0d5;color:#875700}.configuration-form,.room-card{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.configuration-form label,.room-card label,.policy-editor label{display:grid;gap:6px;color:#647286;font-size:.72rem;font-weight:950;text-transform:uppercase}.configuration-form :is(input,select),.room-card :is(input,select),.policy-editor input{box-sizing:border-box;width:100%;min-width:0;min-height:44px;padding:10px;border:1px solid var(--color-border);border-radius:8px;background:#fff;color:var(--ink);font:inherit;text-transform:none}.span-all{grid-column:1/-1}.save-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.save-row button,.module-save button{min-height:44px;padding:10px 16px;border:0;border-radius:9px;background:var(--ink);color:#fff;font:inherit;font-weight:950}.save-row p,.module-save p{margin:0;color:#08785f;font-weight:850}.room-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.room-card{padding:18px;border:1px solid var(--color-border);border-radius:12px;background:#f9fbfc}.room-card-heading{display:flex;align-items:center;justify-content:space-between;grid-column:1/-1;gap:12px}.room-card h3{margin:0;color:var(--ink)}.calendar-layout,.branding-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.7fr);gap:18px}.calendar-summary,.locked-setting{padding:18px;border:1px solid var(--color-border);border-radius:12px;background:#f7fafb}.calendar-summary h3,.locked-setting h3,.policy-editor h3,.system-status-list h3{margin:0;color:var(--ink)}.calendar-summary ul{display:grid;gap:10px;padding:0;list-style:none}.calendar-summary li{display:grid;gap:3px}.calendar-summary span,.calendar-summary p,.locked-setting p,.policy-editor p,.system-status-list p{color:#536579}.calendar-summary a,.inline-link{color:var(--ink);font-weight:900}.policy-settings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.policy-editor{display:grid;align-content:start;gap:12px;padding:18px;border:1px solid var(--color-border);border-radius:12px;background:#f7fafb}.locked-setting{display:grid;align-content:start;gap:10px}.locked-setting strong{font-size:.78rem}.configuration-form.compact{align-content:start;padding:18px;border:1px solid var(--color-border);border-radius:12px;background:#f7fafb}.system-status-list{display:grid;gap:8px}.system-status-list article{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:16px;padding:14px;border-top:1px solid var(--color-border)}.system-status-list article:first-child{border-top:0}.system-status-list p{margin:4px 0 0}.system-status-list small{font-weight:900}.module-boundary,.configuration-boundary{display:grid;gap:6px;padding:17px 19px;border-left:4px solid var(--gold);border-radius:9px;background:#fff9eb}.module-boundary p,.configuration-boundary span{margin:0;color:#536579;line-height:1.55}.capability-list{overflow:hidden;border:1px solid var(--color-border);border-radius:14px;background:#fff;box-shadow:var(--shadow-soft)}.capability-list fieldset{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;margin:0;padding:18px;border:0;border-top:1px solid var(--color-border)}.capability-list fieldset:first-child{border-top:0}.capability-list legend{display:grid;float:left;width:100%}.capability-list legend strong{color:var(--ink)}.capability-list legend span{margin-top:4px;color:#647286;font-size:.82rem}.capability-state{display:flex;align-items:center;justify-content:flex-end;gap:12px}.capability-state>strong{font-size:.78rem}.module-toggle{display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid var(--color-border);border-radius:9px;color:var(--ink);font-size:.78rem;font-weight:900}.module-toggle input{width:18px;height:18px;accent-color:var(--ink)}.module-save{display:flex;align-items:center;gap:14px;padding:18px;border-top:1px solid var(--color-border)}.context-empty{padding:18px;border-radius:9px;background:#f4f7f9;color:#536579}.configuration-boundary{grid-template-columns:auto minmax(0,1fr)}
+  @media(max-width:900px){.ownership-summary,.policy-settings{grid-template-columns:1fr}.ownership-summary h2{grid-column:auto}.room-list,.calendar-layout,.branding-grid{grid-template-columns:1fr}.capability-list fieldset{grid-template-columns:1fr}.capability-list legend{float:none}.capability-state{justify-content:flex-start}}
+  @media(max-width:680px){.configuration-heading h1{font-size:2.55rem}.configuration-section{padding:18px}.configuration-section-heading,.save-row,.module-save,.configuration-boundary{align-items:flex-start;grid-template-columns:1fr;flex-direction:column}.configuration-form,.room-card{grid-template-columns:1fr}.span-all,.room-card-heading{grid-column:auto}.room-card-heading{align-items:flex-start;flex-direction:column}.system-status-list article{grid-template-columns:1fr;gap:8px}.capability-state{align-items:flex-start;flex-direction:column}.configuration-tabs a,.configuration-jump a{flex:1 1 140px;text-align:center}.save-row button,.module-save button{width:100%}}
+</style>
