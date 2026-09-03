@@ -1,7 +1,7 @@
 ---
 import { SYNTHETIC_COGNIT_DEMO as d } from "../../demo/cognit-demo-data.js";
 
-const { contextKey, mode = "configuration", configHref, moduleHref, schedulingHref, attendanceHref } = Astro.props;
+const { contextKey, mode = "configuration", configHref, moduleHref, migrationHref, schedulingHref, attendanceHref } = Astro.props;
 const context = contextKey === "harbor" ? d.contexts[1] : d.contexts[0];
 const rooms = d.scheduling.roomsByContext[context.id] || [];
 const hours = d.scheduling.workingHoursByContext[context.id];
@@ -20,6 +20,7 @@ const ownership = (owner) => owner === "Center" ? "Center setting" : owner === "
   <nav class="configuration-tabs" aria-label="Configuration pages">
     <a href={configHref} aria-current={mode === "configuration" ? "page" : undefined}>Center settings</a>
     <a href={moduleHref} aria-current={mode === "module-control" ? "page" : undefined}>Modules &amp; Capabilities</a>
+    <a href={migrationHref}>Bring It Forward</a>
   </nav>
 
   <section class="ownership-summary" aria-labelledby="ownership-heading">

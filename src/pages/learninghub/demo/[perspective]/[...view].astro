@@ -24,7 +24,7 @@ export function getStaticPaths() {
     "courses/creative-app-lab", "courses/robotics-studio", "courses/digital-storytelling-lab",
     "billing/dashboard", "billing/account/morgan", "billing/account/morgan/method", "billing/account/reyes", "billing/account/reyes/method", "billing/account/park", "billing/account/park/method", "billing/account/grant", "billing/account/grant/method", "billing/account/thompson", "billing/account/thompson/method",
     "reports/attention", "reports/ready", "reports/all", "reports/published", "reports/eli", "reports/sofia", "reports/builder", "whats-new/archive",
-    "configuration/modules", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/ready"
+    "configuration/modules", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/processing", "migration/ready"
   ].map((child) => `context/${context}/${child}`));
   const routes = {
     center: [
@@ -35,7 +35,7 @@ export function getStaticPaths() {
       "families", "families/morgan", "families/reyes", "families/park", "attendance", "attendance/eli", "attendance/sofia", "attendance/absence/mina-storytelling", "attendance/makeup", "attendance/makeup/mina-storytelling", "attendance/makeup/eli-creative-weather", "attendance/makeup/lena-creative-weather", "attendance/makeup/sofia-robotics", "attendance/makeup/sofia-robotics-redeemed", "attendance/makeup/sofia-robotics-expired", "attendance/override/ava-storytelling", "attendance/cancellation/creative-weather",
       "courses", "courses/creative-app-lab", "courses/robotics-studio", "courses/digital-storytelling-lab", "billing", "billing/dashboard", "billing/account/morgan", "billing/account/morgan/method", "billing/account/reyes", "billing/account/reyes/method", "billing/account/park", "billing/account/park/method", "billing/account/grant", "billing/account/grant/method", "billing/account/thompson", "billing/account/thompson/method",
       "reports", "reports/attention", "reports/ready", "reports/all", "reports/published", "reports/eli", "reports/sofia", "reports/builder", "messages", "settings", "configuration", "configuration/modules", "module-control", "support",
-      "whats-new", "whats-new/archive", "migration", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/ready", ...contextSectionRoutes, ...contextChildRoutes
+      "whats-new", "whats-new/archive", "migration", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/processing", "migration/ready", ...contextSectionRoutes, ...contextChildRoutes
     ],
     coach: ["today", "readiness", "live", "capture", "after-class", "end-of-day", "releases", "support", "profile", "class", "learners/eli", "learners/eli/progress", "learners/eli/evidence", "learners/eli/observations", "learners/noah", "learners/lena", "learning-plan", "progress", "progress/eli", "progress/lena", "observations", "observations/eli", "evidence/eli", "reporting", "correspondence"],
     student: ["lesson", "active", "reflection", "complete", "my-work", "artifact", "progress", "courses", "courses/lena", "journey", "journey/eli"],
