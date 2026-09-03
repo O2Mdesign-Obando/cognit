@@ -1,0 +1,123 @@
+---
+import { SYNTHETIC_COGNIT_DEMO as d } from "../../demo/cognit-demo-data.js";
+
+const { contextId, contextKey, item = "", base, title } = Astro.props;
+const href = (child = "") => `${base}/communication${child ? `/${child}` : ""}`;
+const threads = d.communications.threads.filter((thread) => thread.contextId === contextId);
+const announcements = d.communications.announcements.filter((announcement) => announcement.contextId === contextId);
+const audiences = d.communications.audiencesByContext[contextId] || [];
+const students = d.people.students.filter((student) => d.enrollments.some((entry) => entry.contextId === contextId && entry.studentId === student.id));
+const courses = d.courses.filter((course) => d.enrollments.some((entry) => entry.contextId === contextId && entry.courseId === course.id));
+const studentById = (id) => d.people.students.find((student) => student.id === id);
+const courseById = (id) => d.courses.find((course) => course.id === id);
+const aliasSlug = item === "coach" ? (contextKey === "harbor" ? "harbor-jordan" : "priya-evidence") : item === "family" ? "reyes-makeup" : "";
+const requestedSlug = item.startsWith("thread/") ? item.slice(7) : aliasSlug;
+const selectedThread = threads.find((thread) => thread.slug === requestedSlug) || (!requestedSlug && threads[0]);
+const isCompose = item === "compose";
+const isAnnouncements = item === "announcements" || item.startsWith("announcements/");
+const isNewAnnouncement = item === "announcements/new";
+const statusLabel = (value) => value === "ready_to_send" ? "Ready to send" : value[0].toUpperCase() + value.slice(1);
+---
+
+<section class="communication-area" data-communication-root data-context={contextKey} data-context-id={contextId} data-base={base}>
+  <header class="communication-heading">
+    <div><p class="communication-eyebrow">Communication · {title}</p><h1>{isCompose ? "New message" : isNewAnnouncement ? "Create announcement" : isAnnouncements ? "Announcements" : "Messages"}</h1><p>{isCompose ? "Start a conversation with an authorized Coach, Family, or group." : isAnnouncements ? "Keep operational updates visible without burying them in conversations." : "See who needs a response and why the conversation matters."}</p></div>
+    {!isCompose && !isNewAnnouncement && <a class="communication-primary" href={isAnnouncements ? href("announcements/new") : href("compose")}>{isAnnouncements ? "Create announcement" : "New message"}</a>}
+  </header>
+
+  <nav class="communication-tabs" aria-label="Communication views">
+    <a href={href()} aria-current={!isAnnouncements && !isCompose ? "page" : undefined}>Messages <span data-message-count>{threads.length}</span></a>
+    <a href={href("announcements")} aria-current={isAnnouncements ? "page" : undefined}>Announcements <span>{announcements.length}</span></a>
+  </nav>
+
+  <aside class="communication-boundary"><strong>Presentation only — messages are not actually delivered.</strong><span>Sending and publishing update only this presentation state.</span></aside>
+
+  {!isCompose && !isAnnouncements && threads.length > 0 && selectedThread && <>
+    <section class="communication-filters" aria-label="Filter messages">
+      <label>Search conversations<input type="search" placeholder="Person, subject, Student, or Course" data-message-search /></label>
+      <div role="group" aria-label="Message filters">
+        {[['all','All'],['family','Families'],['coach','Coaches'],['unread','Unread'],['reply','Reply needed']].map(([value,label])=><button type="button" data-message-filter={value} aria-pressed={value === "all" ? "true" : "false"}>{label}</button>)}
+      </div>
+      <p role="status" aria-live="polite" data-message-results>{threads.length} conversations shown</p>
+    </section>
+    <div class="communication-inbox">
+      <aside class="conversation-list" aria-label="Conversations">
+        {threads.map((thread) => { const relatedStudent=studentById(thread.relatedStudentId); const relatedCourse=courseById(thread.relatedCourseId); return <a href={href(`thread/${thread.slug}`)} aria-current={thread.id === selectedThread.id ? "page" : undefined} data-thread-card={thread.id} data-thread-type={thread.recipientType} data-thread-read={thread.readState} data-thread-reply={String(thread.replyNeeded)} data-search={`${thread.participantLabel} ${thread.subject} ${relatedStudent?.name || ""} ${relatedCourse?.name || ""}`.toLowerCase()}>
+          <span class="conversation-topline"><strong>{thread.participantLabel}</strong><time>{thread.updatedAt}</time></span>
+          <b>{thread.subject}</b><small>{thread.summary}</small>
+          <span class="state-row">{thread.readState === "unread" && <em data-unread-state>Unread</em>}{thread.replyNeeded && <em data-reply-state>Reply needed</em>}{thread.priority === "high" && <em>High priority</em>}</span>
+        </a>})}
+        <div data-local-thread-list></div>
+      </aside>
+      <article class="conversation-panel" data-thread={selectedThread.id} data-initial-read={selectedThread.readState} data-initial-reply={String(selectedThread.replyNeeded)}>
+        <header><div><span>{selectedThread.recipientType === "coach" ? "Coach" : "Family"} conversation</span><h2>{selectedThread.subject}</h2><p>{selectedThread.participantLabel}</p></div><span class="thread-state" data-thread-state>{selectedThread.replyNeeded ? "Reply needed" : statusLabel(selectedThread.state)}</span></header>
+        <dl class="conversation-context">
+          <div><dt>Contact</dt><dd>{selectedThread.participantLabel}</dd></div>
+          {selectedThread.relatedStudentId && <div><dt>Student</dt><dd>{studentById(selectedThread.relatedStudentId)?.name}</dd></div>}
+          {selectedThread.relatedCourseId && <div><dt>Course</dt><dd>{courseById(selectedThread.relatedCourseId)?.name}</dd></div>}
+          <div><dt>Priority</dt><dd>{selectedThread.priority === "high" ? "High priority" : "Normal"}</dd></div>
+        </dl>
+        <div class="message-history" aria-label="Conversation history">
+          {selectedThread.messages.map((message)=><section class={message.senderId === "demo-director-maya-chen" ? "message outgoing" : "message incoming"}><div><strong>{message.senderLabel}</strong><time>{message.timestamp}</time></div><p>{message.body}</p>{message.attachment && <aside class="attachment"><span aria-hidden="true">▧</span><div><strong>{message.attachment.name}</strong><small>{message.attachment.type} · {message.attachment.size}</small></div></aside>}</section>)}
+          <div data-local-replies></div>
+        </div>
+        <form class="reply-composer" data-reply-form data-thread-id={selectedThread.id} data-participant={selectedThread.participantLabel}>
+          <label>Reply<textarea name="message" rows="4" required placeholder={`Reply to ${selectedThread.participantLabel}`}></textarea></label>
+          <label>Sample attachment<select name="attachment"><option value="">No attachment</option><option value="progress-summary.pdf|PDF progress summary|236 KB">progress-summary.pdf</option><option value="class-material-checklist.pdf|PDF checklist|184 KB">class-material-checklist.pdf</option><option value="session-reference.png|Image reference|420 KB">session-reference.png</option></select></label>
+          <div class="selected-attachment" data-reply-attachment hidden><span></span><button type="button" data-remove-reply-attachment>Remove</button></div>
+          <div class="communication-actions"><button class="secondary" type="button" data-save-reply-draft>Save draft</button><button type="submit">Send reply</button></div>
+          <p role="status" aria-live="polite" data-reply-status></p>
+        </form>
+      </article>
+    </div>
+  </>}
+
+  {!isCompose && !isAnnouncements && (!selectedThread || threads.length === 0) && <section class="communication-empty"><h2>Conversation unavailable in this context</h2><p>No participant, Student, Course, or message detail is disclosed outside its Center context.</p><a href={href()}>Return to Messages</a></section>}
+
+  {isCompose && <>
+    <a class="communication-back" href={href()}>← Messages</a>
+    <form class="communication-form" data-compose-form>
+      <div class="compose-grid">
+        <label>Recipient(s)<select name="recipient" required data-compose-recipient><option value="">Choose an authorized recipient</option>{audiences.map((audience)=><option value={audience.id}>{audience.label}</option>)}</select></label>
+        <label>Priority<select name="priority"><option value="normal">Normal</option><option value="high">High priority</option></select></label>
+        <label>Related Student <small>Optional context; not a recipient</small><select name="student"><option value="">No related Student</option>{students.map((student)=><option value={student.id}>{student.name}</option>)}</select></label>
+        <label>Related Course <small>Optional</small><select name="course"><option value="">No related Course</option>{courses.map((course)=><option value={course.id}>{course.name}</option>)}</select></label>
+      </div>
+      <label>Subject<input name="subject" required /></label>
+      <label>Message<textarea name="message" rows="8" required></textarea></label>
+      <label>Sample attachment<select name="attachment"><option value="">No attachment</option><option value="progress-summary.pdf|PDF progress summary|236 KB">progress-summary.pdf · PDF progress summary</option><option value="class-material-checklist.pdf|PDF checklist|184 KB">class-material-checklist.pdf · PDF checklist</option><option value="session-reference.png|Image reference|420 KB">session-reference.png · Image reference</option></select></label>
+      <div class="selected-attachment" data-compose-attachment hidden><span></span><button type="button" data-remove-compose-attachment>Remove</button></div>
+      <div class="communication-actions"><button class="secondary" type="button" data-save-message-draft>Save draft</button><button type="submit">Send</button></div>
+      <p role="status" aria-live="polite" data-compose-status></p>
+    </form>
+    <section class="sent-confirmation" data-sent-confirmation tabindex="-1" hidden><span aria-hidden="true">✓</span><h2>Sent</h2><p>The conversation is updated in this presentation. Nothing was delivered outside Cognit.</p><dl><div><dt>Recipient</dt><dd data-sent-recipient></dd></div><div><dt>Subject</dt><dd data-sent-subject></dd></div><div><dt>State</dt><dd>Sent</dd></div></dl><a class="communication-primary" href={href()}>Open Messages</a></section>
+  </>}
+
+  {isAnnouncements && !isNewAnnouncement && <section class="announcement-list" data-announcement-list>
+    {announcements.map((announcement)=><article data-announcement-state={announcement.state}><header><span class={`announcement-status ${announcement.state}`}>{statusLabel(announcement.state)}</span><time>{announcement.createdAt}</time></header><h2>{announcement.title}</h2><p>{announcement.body}</p><dl><div><dt>Audience</dt><dd>{announcement.audience}</dd></div><div><dt>Timing</dt><dd>{announcement.visibleAt}</dd></div></dl><div class="communication-actions">{announcement.state === "draft" && <a href={href("announcements/new")}>Continue draft</a>}{announcement.state === "scheduled" && <button class="secondary" type="button" data-announcement-action="review">Review schedule</button>}{announcement.state === "published" && <button class="secondary" type="button" data-announcement-action="view">View announcement</button>}</div></article>)}
+    <div data-local-announcements></div>
+  </section>}
+
+  {isNewAnnouncement && <>
+    <a class="communication-back" href={href("announcements")}>← Announcements</a>
+    <form class="communication-form" data-announcement-form>
+      <label>Title<input name="title" required /></label>
+      <label>Body<textarea name="body" rows="7" required></textarea></label>
+      <label>Audience<select name="audience" required><option value="">Choose an audience</option>{audiences.filter((audience)=>["all_coaches","all_families","course_group"].includes(audience.type)).map((audience)=><option value={audience.id}>{audience.label}</option>)}</select></label>
+      <fieldset><legend>Timing</legend><label><input type="radio" name="timing" value="published" checked /> Publish now</label><label><input type="radio" name="timing" value="scheduled" /> Schedule</label></fieldset>
+      <label data-schedule-field hidden>Publish date and time<input type="datetime-local" name="scheduledAt" value="2026-09-03T09:00" /></label>
+      <div class="communication-actions"><button class="secondary" type="button" data-preview-announcement>Preview</button><button type="button" data-save-announcement-draft>Save draft</button><button type="submit" data-publish-announcement>Publish now</button></div>
+      <p role="status" aria-live="polite" data-announcement-status></p>
+    </form>
+    <dialog class="announcement-dialog" data-announcement-dialog><form method="dialog"><span class="announcement-status draft">Preview</span><h2 data-preview-title>Announcement title</h2><p data-preview-body>Announcement body</p><dl><div><dt>Audience</dt><dd data-preview-audience></dd></div></dl><button type="submit">Return to editing</button></form></dialog>
+  </>}
+</section>
+
+<script src="/src/demo/cognit-center-communication.js"></script>
+
+<style>
+  .communication-area{--communication-ink:#123f63;--communication-teal:#1eaaa5;display:grid;gap:22px;color:#26374a}.communication-heading{display:flex;align-items:end;justify-content:space-between;gap:24px}.communication-heading>div{max-width:760px}.communication-heading h1{margin:7px 0 10px;color:var(--communication-ink);font-size:clamp(2.6rem,5vw,4.7rem);line-height:1}.communication-heading p{margin:0;line-height:1.55}.communication-eyebrow{color:#5898c4;font-size:.72rem;font-weight:950;text-transform:uppercase}.communication-primary,.communication-actions :is(button,a),.announcement-dialog button{display:inline-flex;align-items:center;justify-content:center;width:fit-content;padding:11px 17px;border:1px solid var(--communication-ink);border-radius:999px;background:var(--communication-ink);color:#fff;font:inherit;font-weight:900;text-decoration:none}.communication-actions .secondary,.announcement-dialog button{background:#fff;color:var(--communication-ink)}.communication-primary:focus-visible,.communication-actions :is(button,a):focus-visible,.communication-tabs a:focus-visible,.conversation-list a:focus-visible,.reply-composer :is(input,select,textarea,button):focus-visible,.communication-form :is(input,select,textarea,button):focus-visible{outline:3px solid #79b6d6;outline-offset:3px}.communication-tabs{display:flex;gap:7px;padding-bottom:10px;border-bottom:1px solid var(--color-border)}.communication-tabs a{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;color:var(--communication-ink);font-weight:900}.communication-tabs a[aria-current=page]{background:var(--communication-ink);color:#fff}.communication-tabs span{display:grid;place-items:center;min-width:23px;height:23px;border-radius:50%;background:#eef3f7;color:var(--communication-ink);font-size:.72rem}.communication-boundary{display:flex;gap:12px;padding:15px 18px;border-left:4px solid #f8ae2b;border-radius:8px;background:#fff9eb}.communication-boundary span{color:#647286}.communication-filters{display:grid;grid-template-columns:minmax(260px,1fr) auto;align-items:end;gap:12px}.communication-filters label,.reply-composer label,.communication-form>label,.compose-grid label{display:grid;gap:6px;color:var(--communication-ink);font-size:.73rem;font-weight:900}.communication-filters input,.reply-composer :is(select,textarea),.communication-form :is(input,select,textarea){box-sizing:border-box;width:100%;min-width:0;min-height:44px;padding:11px;border:1px solid var(--color-border);border-radius:9px;background:#fff;font:inherit}.communication-filters>div{display:flex;flex-wrap:wrap;gap:6px}.communication-filters button{padding:9px 12px;border:1px solid var(--color-border);border-radius:999px;background:#fff;color:var(--communication-ink);font-weight:850}.communication-filters button[aria-pressed=true]{border-color:var(--communication-ink);background:var(--communication-ink);color:#fff}.communication-filters>p{grid-column:1/-1;margin:0;color:#647286;font-size:.82rem}.communication-inbox{display:grid;grid-template-columns:minmax(280px,.72fr) minmax(0,1.55fr);gap:16px}.conversation-list,.conversation-panel,.communication-form,.announcement-list article,.communication-empty,.sent-confirmation{padding:20px;border:1px solid var(--color-border);border-radius:14px;background:#fff;box-shadow:var(--shadow-soft)}.conversation-list{display:grid;align-content:start;gap:8px}.conversation-list>a{display:grid;gap:6px;padding:14px;border:2px solid transparent;border-radius:11px;color:inherit}.conversation-list>a[aria-current=page]{border-color:var(--communication-teal);background:#e9f3fa;box-shadow:inset 4px 0 0 var(--communication-ink)}.conversation-list>a[hidden]{display:none}.conversation-topline,.state-row,.conversation-panel>header,.message>div,.communication-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}.conversation-topline time,.conversation-list small,.message time{color:#647286;font-size:.74rem}.conversation-list b{color:var(--communication-ink)}.state-row{justify-content:flex-start;flex-wrap:wrap}.state-row em,.thread-state,.announcement-status{padding:5px 8px;border-radius:999px;background:#eef3f7;color:#44566b;font-size:.66rem;font-style:normal;font-weight:950;text-transform:uppercase}.state-row em:first-child,.thread-state{background:#fff0d5;color:#7b5100}.conversation-panel{display:grid;align-content:start;gap:18px}.conversation-panel h2{margin:5px 0;color:var(--communication-ink)}.conversation-panel header p{margin:0}.conversation-context{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0}.conversation-context div{padding:10px;border-radius:8px;background:#f3f6f8}.conversation-context dt,.announcement-list dt,.sent-confirmation dt{color:#647286;font-size:.65rem;font-weight:950;text-transform:uppercase}.conversation-context dd,.announcement-list dd,.sent-confirmation dd{margin:3px 0 0;font-weight:850}.message-history{display:grid;gap:12px}.message{display:grid;gap:9px;max-width:86%;padding:15px;border-radius:12px;background:#f3f6f8}.message.outgoing{justify-self:end;background:#e8f6f5}.message p{margin:0;line-height:1.55}.attachment,.selected-attachment{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--color-border);border-radius:8px;background:#fff}.attachment div{display:grid}.attachment small{color:#647286}.reply-composer,.communication-form{display:grid;gap:14px}.selected-attachment{justify-content:space-between}.selected-attachment button{padding:6px 10px;border:0;background:transparent;color:#9b3030;font-weight:900}.communication-actions{justify-content:flex-start;flex-wrap:wrap}.reply-composer>p,.communication-form>p{min-height:1.3em;margin:0;color:#08785f;font-weight:850}.communication-back{color:var(--communication-ink);font-weight:900}.compose-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.compose-grid small{color:#647286;text-transform:none}.sent-confirmation{display:grid;justify-items:center;gap:12px;text-align:center}.sent-confirmation>span{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#dff7ee;color:#08785f;font-size:1.7rem}.sent-confirmation dl{width:min(620px,100%);margin:0}.sent-confirmation dl div{display:flex;justify-content:space-between;gap:16px;padding:10px;border-top:1px solid var(--color-border)}.announcement-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.announcement-list article{display:grid;align-content:start;gap:11px}.announcement-list header{display:flex;justify-content:space-between;gap:12px}.announcement-list h2{margin:0;color:var(--communication-ink)}.announcement-list p{margin:0;line-height:1.55}.announcement-list dl{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0}.announcement-list dl div{padding:10px;border-radius:8px;background:#f3f6f8}.announcement-status.published{background:#dff7ee;color:#08785f}.announcement-status.scheduled{background:#e9f3fa;color:#174f77}.announcement-status.draft{background:#fff0d5;color:#7b5100}.communication-form fieldset{display:flex;gap:18px;margin:0;padding:14px;border:1px solid var(--color-border);border-radius:9px}.communication-form fieldset label{display:flex;align-items:center;gap:7px}.communication-form fieldset input{width:18px;min-height:18px}.announcement-dialog{width:min(620px,calc(100% - 32px));padding:0;border:0;border-radius:15px;box-shadow:0 24px 70px rgba(15,48,73,.25)}.announcement-dialog::backdrop{background:rgba(11,35,53,.48)}.announcement-dialog form{display:grid;gap:14px;padding:28px}.announcement-dialog h2{margin:0;color:var(--communication-ink)}.communication-empty{text-align:center}.communication-empty a{color:var(--communication-ink);font-weight:900}
+  :global([data-communication-root] [data-local-replies] .message){display:grid;justify-self:end;gap:9px;max-width:86%;margin-top:12px;padding:15px;border-radius:12px;background:#e8f6f5}:global([data-communication-root] [data-local-replies] .message>div){display:flex;justify-content:space-between;gap:10px}:global([data-communication-root] [data-local-replies] .message p){margin:0;line-height:1.55}:global([data-communication-root] .local-thread-summary){display:grid;gap:5px;padding:14px;border-left:4px solid var(--communication-teal);border-radius:9px;background:#f3f6f8}:global([data-communication-root] .local-thread-summary small){color:#647286}:global([data-communication-root] [data-local-announcements] article){margin-top:14px}
+  @media(max-width:850px){.communication-inbox{grid-template-columns:240px minmax(0,1fr)}.conversation-context{grid-template-columns:repeat(2,minmax(0,1fr))}.announcement-list{grid-template-columns:1fr}}
+  @media(max-width:680px){.communication-heading{align-items:flex-start;flex-direction:column}.communication-heading .communication-primary{width:100%;box-sizing:border-box}.communication-tabs{overflow:visible;flex-wrap:wrap}.communication-boundary{flex-direction:column}.communication-filters{grid-template-columns:1fr}.communication-inbox{grid-template-columns:1fr}.conversation-list{max-height:390px;overflow:auto}.conversation-context,.compose-grid{grid-template-columns:1fr}.message{max-width:100%;box-sizing:border-box}.reply-composer .communication-actions,.communication-form .communication-actions{align-items:stretch;flex-direction:column}.communication-actions :is(button,a){box-sizing:border-box;width:100%}.announcement-list dl{grid-template-columns:1fr}.communication-form fieldset{align-items:flex-start;flex-direction:column}.sent-confirmation dl div{align-items:flex-start;flex-direction:column}.communication-area{min-width:0}}
+</style>

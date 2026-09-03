@@ -439,24 +439,138 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
   cancellationConsequences: [
     { id: "demo-cancellation-creative-weather", sessionId: "demo-session-creative-weather", contextId: "demo-context-northfield-studio", courseId: "demo-course-creative-app-lab", sessionDate: "2026-08-24", reason: "Center closure · severe weather", recordedAt: "2026-08-24T13:05:00-04:00", affectedStudentIds: ["demo-student-eli-morgan", "demo-student-lena-grant"], ruleResult: "eligible", consequenceStatus: "ready_to_process", notificationState: "prepared", financialCreditCreated: false }
   ],
-  messages: [
-    {
-      id: "demo-message-sofia-makeup",
-      parties: ["demo-guardian-daniel-reyes", "demo-director-maya-chen"],
-      subject: "Robotics Studio Make-Up Token",
-      preview: "Did Sofia’s missed session add a Make-Up Token?",
-      status: "answered",
-      response: "Yes. One Make-Up Token is available on the Reyes Family account."
-    },
-    {
-      id: "demo-message-sofia-clarification",
-      parties: ["demo-coach-priya-nair", "demo-director-maya-chen"],
-      subject: "Evidence needed for Sofia’s update",
-      preview: "The referenced sensor trial record is not available for review.",
-      status: "needs_reply",
-      response: null
+  communications: {
+    threads: [
+      {
+        id: "demo-thread-priya-evidence",
+        slug: "priya-evidence",
+        recipientType: "coach",
+        participantIds: ["demo-coach-priya-nair", "demo-director-maya-chen"],
+        participantLabel: "Priya Nair",
+        contextId: "demo-context-northfield-studio",
+        relatedStudentId: "demo-student-sofia-reyes",
+        relatedCourseId: "demo-course-robotics-studio",
+        subject: "Evidence needed for Sofia’s update",
+        summary: "Priya needs clarification before resubmitting Sofia’s learning update.",
+        priority: "high",
+        readState: "unread",
+        replyNeeded: true,
+        state: "ready_to_send",
+        updatedAt: "Today · 9:18 AM",
+        messages: [
+          { id: "demo-thread-priya-evidence-1", senderId: "demo-coach-priya-nair", senderLabel: "Priya Nair", timestamp: "Today · 9:18 AM", body: "The referenced sensor trial record is not available for review. Should I attach the arena screenshot or the full sensor-trial summary?", state: "sent", attachment: { name: "sensor-trial-reference.png", type: "Image reference", size: "420 KB" } }
+        ]
+      },
+      {
+        id: "demo-thread-reyes-makeup",
+        slug: "reyes-makeup",
+        recipientType: "family",
+        participantIds: ["demo-family-reyes", "demo-director-maya-chen"],
+        participantLabel: "Reyes Family",
+        contextId: "demo-context-northfield-studio",
+        relatedStudentId: "demo-student-sofia-reyes",
+        relatedCourseId: "demo-course-robotics-studio",
+        subject: "Sofia’s Robotics Studio Make-Up Token",
+        summary: "Daniel asked whether Sofia’s missed session added a Make-Up Token.",
+        priority: "normal",
+        readState: "read",
+        replyNeeded: false,
+        state: "sent",
+        updatedAt: "Yesterday · 4:42 PM",
+        messages: [
+          { id: "demo-thread-reyes-makeup-1", senderId: "demo-guardian-daniel-reyes", senderLabel: "Daniel Reyes", timestamp: "Yesterday · 4:20 PM", body: "Did Sofia’s missed Robotics Studio session add a Make-Up Token?", state: "sent" },
+          { id: "demo-thread-reyes-makeup-2", senderId: "demo-director-maya-chen", senderLabel: "Maya Chen", timestamp: "Yesterday · 4:42 PM", body: "Yes. One Make-Up Token is available on the Reyes Family account, and your family can choose when to use it before October 2.", state: "sent" }
+        ]
+      },
+      {
+        id: "demo-thread-jordan-materials",
+        slug: "jordan-materials",
+        recipientType: "coach",
+        participantIds: ["demo-coach-jordan-ellis", "demo-director-maya-chen"],
+        participantLabel: "Jordan Ellis",
+        contextId: "demo-context-northfield-studio",
+        relatedStudentId: null,
+        relatedCourseId: "demo-course-creative-app-lab",
+        subject: "Creative App Lab materials check",
+        summary: "Jordan confirmed the prototype kits and needs one adapter decision.",
+        priority: "normal",
+        readState: "read",
+        replyNeeded: true,
+        state: "ready_to_send",
+        updatedAt: "Mon · 2:05 PM",
+        messages: [
+          { id: "demo-thread-jordan-materials-1", senderId: "demo-coach-jordan-ellis", senderLabel: "Jordan Ellis", timestamp: "Mon · 2:05 PM", body: "The prototype kits are ready. May I use the two spare USB-C adapters from Studio 1 for Thursday’s class?", state: "sent", attachment: { name: "creative-lab-materials.pdf", type: "PDF checklist", size: "184 KB" } }
+        ]
+      },
+      {
+        id: "demo-thread-morgan-schedule",
+        slug: "morgan-schedule",
+        recipientType: "family",
+        participantIds: ["demo-family-morgan", "demo-director-maya-chen"],
+        participantLabel: "Morgan Family",
+        contextId: "demo-context-northfield-studio",
+        relatedStudentId: "demo-student-eli-morgan",
+        relatedCourseId: "demo-course-creative-app-lab",
+        subject: "Thursday class time confirmed",
+        summary: "Rachel confirmed Eli’s Thursday schedule.",
+        priority: "normal",
+        readState: "read",
+        replyNeeded: false,
+        state: "sent",
+        updatedAt: "Aug 29 · 6:10 PM",
+        messages: [
+          { id: "demo-thread-morgan-schedule-1", senderId: "demo-director-maya-chen", senderLabel: "Maya Chen", timestamp: "Aug 29 · 5:55 PM", body: "Creative App Lab remains scheduled for Thursday from 4:00–5:30 PM in Studio 2.", state: "sent" },
+          { id: "demo-thread-morgan-schedule-2", senderId: "demo-guardian-rachel-morgan", senderLabel: "Rachel Morgan", timestamp: "Aug 29 · 6:10 PM", body: "Thank you. Eli will be there.", state: "sent" }
+        ]
+      },
+      {
+        id: "demo-thread-harbor-jordan",
+        slug: "harbor-jordan",
+        recipientType: "coach",
+        participantIds: ["demo-coach-jordan-ellis", "demo-director-maya-chen"],
+        participantLabel: "Jordan Ellis",
+        contextId: "demo-context-harbor-academy",
+        relatedStudentId: "demo-student-noah-bennett",
+        relatedCourseId: "demo-course-creative-app-lab",
+        subject: "Harbor showcase room check",
+        summary: "Confirm the Harbor room setup before the showcase session.",
+        priority: "normal",
+        readState: "unread",
+        replyNeeded: true,
+        state: "ready_to_send",
+        updatedAt: "Today · 8:35 AM",
+        messages: [
+          { id: "demo-thread-harbor-jordan-1", senderId: "demo-coach-jordan-ellis", senderLabel: "Jordan Ellis", timestamp: "Today · 8:35 AM", body: "Is the Harbor Media Room available thirty minutes before the showcase for setup?", state: "sent" }
+        ]
+      }
+    ],
+    announcements: [
+      { id: "demo-announcement-weekend", slug: "weekend-schedule", contextId: "demo-context-northfield-studio", title: "Weekend schedule reminder", body: "Saturday sessions begin at 10:00 AM. Please arrive ten minutes early for room check-in.", audience: "All Families", audienceType: "all_families", createdAt: "Aug 31, 2026", state: "published", visibleAt: "Published Aug 31 · 8:00 AM" },
+      { id: "demo-announcement-staff-meeting", slug: "staff-meeting", contextId: "demo-context-northfield-studio", title: "Coach planning huddle", body: "Coaches meet in Studio 2 at 3:15 PM Thursday to review next week’s materials.", audience: "All Coaches", audienceType: "all_coaches", createdAt: "Sep 1, 2026", state: "scheduled", visibleAt: "Scheduled for Sep 3 · 9:00 AM" },
+      { id: "demo-announcement-showcase", slug: "creative-showcase", contextId: "demo-context-northfield-studio", title: "Creative App Lab showcase", body: "Families in Creative App Lab are invited to the September showcase.", audience: "Creative App Lab group", audienceType: "course_group", relatedCourseId: "demo-course-creative-app-lab", createdAt: "Sep 2, 2026", state: "draft", visibleAt: "Draft" },
+      { id: "demo-announcement-harbor", slug: "harbor-showcase", contextId: "demo-context-harbor-academy", title: "Harbor showcase setup", body: "Harbor Coaches should arrive thirty minutes early for room setup.", audience: "All Coaches", audienceType: "all_coaches", createdAt: "Sep 2, 2026", state: "published", visibleAt: "Published Sep 2 · 8:00 AM" }
+    ],
+    audiencesByContext: {
+      "demo-context-northfield-studio": [
+        { id: "coach:priya", type: "coach", label: "Coach · Priya Nair", personId: "demo-coach-priya-nair" },
+        { id: "coach:jordan", type: "coach", label: "Coach · Jordan Ellis", personId: "demo-coach-jordan-ellis" },
+        { id: "family:reyes", type: "family", label: "Family · Reyes Family", familyId: "demo-family-reyes" },
+        { id: "family:morgan", type: "family", label: "Family · Morgan Family", familyId: "demo-family-morgan" },
+        { id: "family:park", type: "family", label: "Family · Park Family", familyId: "demo-family-park" },
+        { id: "family:thompson", type: "family", label: "Family · Thompson Family", billingAccountId: "demo-billing-thompson" },
+        { id: "group:all-coaches", type: "all_coaches", label: "All Coaches · Northfield Studio" },
+        { id: "group:all-families", type: "all_families", label: "All Families · Northfield Studio" },
+        { id: "course:creative-app-lab", type: "course_group", label: "Course group · Creative App Lab", courseId: "demo-course-creative-app-lab" },
+        { id: "course:robotics-studio", type: "course_group", label: "Course group · Robotics Studio", courseId: "demo-course-robotics-studio" },
+        { id: "course:digital-storytelling-lab", type: "course_group", label: "Course group · Digital Storytelling Lab", courseId: "demo-course-digital-storytelling-lab" }
+      ],
+      "demo-context-harbor-academy": [
+        { id: "coach:jordan", type: "coach", label: "Coach · Jordan Ellis", personId: "demo-coach-jordan-ellis" },
+        { id: "group:all-coaches", type: "all_coaches", label: "All Coaches · Harbor Academy Program" },
+        { id: "course:creative-app-lab", type: "course_group", label: "Course group · Creative App Lab", courseId: "demo-course-creative-app-lab" }
+      ]
     }
-  ],
+  },
   financials: {
     accounts: [
       {
