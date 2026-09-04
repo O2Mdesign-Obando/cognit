@@ -1,5 +1,4 @@
 const COMMUNICATION_STATE_KEY = "cognit:center-demo-state:v2";
-const COMMUNICATION_SCROLL_KEY = "cognit:center-communication-scroll:v1";
 
 const readCenterState = () => {
   try { return JSON.parse(localStorage.getItem(COMMUNICATION_STATE_KEY) || "{}"); }
@@ -32,37 +31,6 @@ document.querySelectorAll("[data-communication-root]").forEach((root) => {
   const context = root.dataset.context;
   const base = root.dataset.base;
 
-  const pendingScroll = (() => {
-    try { return JSON.parse(sessionStorage.getItem(COMMUNICATION_SCROLL_KEY) || "null"); }
-    catch { return null; }
-  })();
-  if (pendingScroll?.path === `${window.location.pathname}${window.location.search}` && Date.now() - pendingScroll.savedAt < 10000) {
-    sessionStorage.removeItem(COMMUNICATION_SCROLL_KEY);
-    window.requestAnimationFrame(() => {
-      window.scrollTo({ left: pendingScroll.x, top: pendingScroll.y, behavior: "auto" });
-      const conversationList = root.querySelector(".conversation-list");
-      if (conversationList) conversationList.scrollTop = pendingScroll.listY;
-      if (pendingScroll.keyboard) root.querySelector('[data-thread-card][aria-current="page"]')?.focus({ preventScroll: true });
-    });
-  } else if (pendingScroll) {
-    sessionStorage.removeItem(COMMUNICATION_SCROLL_KEY);
-  }
-  root.querySelectorAll("[data-thread-card]").forEach((card) => card.addEventListener("click", (event) => {
-    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || card.target === "_blank") return;
-    const destination = new URL(card.href);
-    if (destination.origin !== window.location.origin) return;
-    try {
-      sessionStorage.setItem(COMMUNICATION_SCROLL_KEY, JSON.stringify({
-        path: `${destination.pathname}${destination.search}`,
-        x: window.scrollX,
-        y: window.scrollY,
-        listY: root.querySelector(".conversation-list")?.scrollTop || 0,
-        savedAt: Date.now(),
-        keyboard: event.detail === 0
-      }));
-    } catch { /* Selection still works when session storage is unavailable. */ }
-  }));
-
   const updateAttachment = (select, preview, remove) => {
     if (!select || !preview) return;
     const render = () => {
@@ -75,10 +43,11 @@ document.querySelectorAll("[data-communication-root]").forEach((root) => {
     render();
   };
 
-  const localReplies = root.querySelector("[data-local-replies]");
-  const activeThread = root.querySelector("[data-thread]");
-  if (activeThread) {
+  const initializeActiveThread = () => {
+    const activeThread = root.querySelector("[data-thread]");
+    if (!activeThread) return;
     const threadId = activeThread.dataset.thread;
+    const localReplies = activeThread.querySelector("[data-local-replies]");
     const renderReplies = () => {
       if (!localReplies) return;
       localReplies.replaceChildren();
@@ -121,10 +90,10 @@ document.querySelectorAll("[data-communication-root]").forEach((root) => {
       if (threadState) threadState.textContent = "Sent";
     }
 
-    const replyForm = root.querySelector("[data-reply-form]");
+    const replyForm = activeThread.querySelector("[data-reply-form]");
     if (replyForm) {
       const attachmentSelect = replyForm.elements.namedItem("attachment");
-      updateAttachment(attachmentSelect, root.querySelector("[data-reply-attachment]"), root.querySelector("[data-remove-reply-attachment]"));
+      updateAttachment(attachmentSelect, activeThread.querySelector("[data-reply-attachment]"), activeThread.querySelector("[data-remove-reply-attachment]"));
       replyForm.querySelector("[data-save-reply-draft]")?.addEventListener("click", () => {
         communications.drafts[threadId] = { body: replyForm.elements.namedItem("message").value, attachment: attachmentRecord(attachmentSelect.value), savedAt: "Today · 10:42 AM" };
         persistCommunication(state, communications);
@@ -156,7 +125,65 @@ document.querySelectorAll("[data-communication-root]").forEach((root) => {
         localReplies?.lastElementChild?.scrollIntoView({ block: "nearest" });
       });
     }
-  }
+  };
+  initializeActiveThread();
+
+  const desktopSplitPane = window.matchMedia("(min-width: 681px)");
+  const communicationPath = `${base}/communication`;
+  let selectionRequest;
+
+  const matchingCard = (destination) => [...root.querySelectorAll("[data-thread-card]")].find((card) => {
+    const cardUrl = new URL(card.href);
+    return cardUrl.pathname === destination.pathname && cardUrl.search === destination.search;
+  });
+
+  const selectConversation = async (destination, card, historyMode = "push") => {
+    const previousCard = root.querySelector('[data-thread-card][aria-current="page"]');
+    if (card === previousCard && historyMode === "push") return;
+    root.querySelectorAll("[data-thread-card]").forEach((candidate) => {
+      if (candidate === card) candidate.setAttribute("aria-current", "page");
+      else candidate.removeAttribute("aria-current");
+    });
+
+    selectionRequest?.abort();
+    selectionRequest = new AbortController();
+    try {
+      const response = await fetch(destination, { signal: selectionRequest.signal, headers: { "X-Cognit-Pane-Request": "conversation" } });
+      if (!response.ok) throw new Error(`Conversation request failed with ${response.status}`);
+      const page = new DOMParser().parseFromString(await response.text(), "text/html");
+      const nextPanel = page.querySelector("[data-communication-root] [data-thread]");
+      if (!nextPanel) throw new Error("Conversation panel was not found");
+      root.querySelector("[data-thread]")?.replaceWith(document.importNode(nextPanel, true));
+      initializeActiveThread();
+      if (historyMode === "push") history.pushState({ cognitCommunicationThread: true }, "", destination);
+      const status = root.querySelector("[data-thread-selection-status]");
+      const heading = root.querySelector("[data-thread] h2")?.textContent?.trim();
+      const participant = root.querySelector("[data-thread] header p")?.textContent?.trim();
+      if (status) status.textContent = `Opened ${heading} conversation${participant ? ` with ${participant}` : ""}.`;
+    } catch (error) {
+      if (error.name === "AbortError") return;
+      root.querySelectorAll("[data-thread-card]").forEach((candidate) => {
+        if (candidate === previousCard) candidate.setAttribute("aria-current", "page");
+        else candidate.removeAttribute("aria-current");
+      });
+      window.location.assign(destination.href);
+    }
+  };
+
+  root.querySelectorAll("[data-thread-card]").forEach((card) => card.addEventListener("click", (event) => {
+    if (!desktopSplitPane.matches || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || card.target === "_blank") return;
+    const destination = new URL(card.href);
+    if (destination.origin !== window.location.origin) return;
+    event.preventDefault();
+    selectConversation(destination, card);
+  }));
+
+  window.addEventListener("popstate", () => {
+    if (!desktopSplitPane.matches || !window.location.pathname.startsWith(communicationPath)) return;
+    const destination = new URL(window.location.href);
+    const card = matchingCard(destination) || (destination.pathname === communicationPath ? root.querySelector("[data-thread-card]") : null);
+    if (card) selectConversation(new URL(card.href), card, "none");
+  });
 
   const applyMessageFilter = () => {
     const query = (root.querySelector("[data-message-search]")?.value || "").trim().toLowerCase();

@@ -68,6 +68,7 @@ const statusLabel = (value) => value === "ready_to_send" ? "Ready to send" : val
         </form>
       </article>
     </div>
+    <p class="visually-hidden" role="status" aria-live="polite" data-thread-selection-status></p>
   </>}
 
   {!isCompose && !isAnnouncements && (!selectedThread || threads.length === 0) && <section class="communication-empty"><h2>Conversation unavailable in this context</h2><p>No participant, Student, Course, or message detail is disclosed outside its Center context.</p><a href={href()}>Return to Messages</a></section>}
