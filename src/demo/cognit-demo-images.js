@@ -23,7 +23,7 @@ export const COGNIT_DEMO_IMAGES = Object.freeze({
     robotics: { src: asset("learning-robotics.webp"), width: 1200, height: 800, alt: "Student working with coding and robotics projects" }
   }),
   evidence: Object.freeze({
-    prototypePhoto: { src: "/assets/placeholders/placeholder-student-male-scene.avif", width: 1024, height: 1024, alt: "Representative placeholder for a learner testing a prototype" }
+    prototypePhoto: { src: "/assets/placeholders/placeholder-student-male-scene.avif", width: 1024, height: 1024, alt: "Learner testing a prototype" }
   })
 });
 

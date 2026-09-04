@@ -4,9 +4,9 @@ const isDemo = variant === "demo-shell" || variant === "demo-arrival-shell";
 const perspectives = ["center", "coach", "student", "family", "hq"];
 const names = { center: "Center", coach: "Coach", student: "Student", family: "Family", hq: "HQ" };
 const profile = {
-  center: ["Marcus R.", "Center demo"],
-  coach: ["Jordan Ellis", "Coach demo"],
-  student: ["Eli Morgan", "Student demo"],
+  center: ["Marcus R.", "Center"],
+  coach: ["Jordan Ellis", "Coach"],
+  student: ["Eli Morgan", "Student"],
   family: ["Rachel Morgan", "Morgan Family"],
   hq: ["Avery Chen", "Network operations"]
 };
@@ -16,15 +16,14 @@ const currentProfile = profile[demoPerspective];
 <header class:list={["site-header", isDemo && "demo-global-header"]}>
   <a class="brand" href={isDemo ? "/learninghub/demo" : "/"}>
     <img src="/assets/brand/cognit-logo-horizontal.jpg" alt="Cognit" />
-    <span><strong>{isDemo ? "Learning Hub Demo" : "Learning Hub"}</strong></span>
+    <span><strong>Learning Hub</strong></span>
   </a>
-  {isDemo && <nav class="perspectives" aria-label="Switch demo perspective">
-    <span>Demo perspective</span>
+  {isDemo && <nav class="perspectives" aria-label="Switch perspective">
     {perspectives.map((item) => <a href={`/learninghub/demo/${item}`} aria-current={demoPerspective === item ? "page" : undefined}>{names[item]}</a>)}
   </nav>}
   {isDemo && currentProfile && <details class="profile-menu">
     <summary><span class="avatar" aria-hidden="true">{currentProfile[0].slice(0, 1)}</span><span><b>{currentProfile[0]}</b><small>{currentProfile[1]}</small></span></summary>
-    <nav aria-label={`${names[demoPerspective]} demo profile menu`}>
+    <nav aria-label={`${names[demoPerspective]} profile menu`}>
       <a href={`/learninghub/demo/${demoPerspective}`}>Overview</a>
       {demoPerspective !== "student" && <a href={`/learninghub/demo/${demoPerspective}/support`}>Support</a>}
     </nav>

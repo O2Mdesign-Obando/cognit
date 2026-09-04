@@ -17,14 +17,13 @@ const sections = {
     ["today", "Today", "/learninghub/demo/coach/today"],
     ["class", "Class", "/learninghub/demo/coach/class"],
     ["learning-plan", "Learning Plan", "/learninghub/demo/coach/learning-plan"],
-    ["progress", "Progress", "/learninghub/demo/coach/progress"],
-    ["observations", "Observations", "/learninghub/demo/coach/observations"],
-    ["reporting", "Reporting", "/learninghub/demo/coach/reporting"]
+    ["learners", "Learners", "/learninghub/demo/coach/learners/eli"],
+    ["correspondence", "Correspondence", "/learninghub/demo/coach/correspondence"],
+    ["support", "Support", "/learninghub/demo/coach/support"]
   ],
   student: [
     ["today", "Today", "/learninghub/demo/student"],
     ["my-work", "My Work", "/learninghub/demo/student/my-work"],
-    ["progress", "Progress", "/learninghub/demo/student/progress"],
     ["courses", "Courses", "/learninghub/demo/student/courses"],
     ["journey", "Learning Journey", "/learninghub/demo/student/journey"]
   ],
@@ -42,7 +41,7 @@ const sections = {
 ---
 
 <div class="loop-navigation">
-  <nav class="loop-sections" aria-label={`${role} demo sections`}>
+  <nav class="loop-sections" aria-label={`${role} sections`}>
     {sections[role].map(([id, label, href]) => (
       <a href={role === "center" ? centerContextSectionHref(context, id) : href} aria-current={active === id ? "page" : undefined}>{label}</a>
     ))}

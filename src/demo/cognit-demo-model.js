@@ -120,6 +120,9 @@ function studentModel() {
     next: primary.next,
     progression: primary.progression,
     artifact: primary.evidence,
+    observation: primary.observation,
+    familyUpdate: primary.familyUpdate,
+    publishedStory: primary.publishedStory,
     continuityExample: { student: student("demo-student-lena-grant"), courses: lenaCourses }
   };
 }
@@ -136,6 +139,13 @@ function familyModel() {
     student: student(primary.studentId),
     course: course(primary.courseId),
     attendance: primary.attendance,
+    challenge: primary.challenge,
+    completed: primary.completed,
+    next: primary.next,
+    progression: primary.progression,
+    observation: primary.observation,
+    evidence: primary.evidence,
+    report: primary.report,
     update: primary.familyUpdate,
     publishedStory: primary.publishedStory,
     action: "No action needed",

@@ -46,7 +46,7 @@ const selected = perspectives[selectedKey];
 const model = selectedKey === "hq" ? null : getCognitDemoPerspectiveModel(selectedKey);
 ---
 
-<BaseLayout title={`${selected.label} Demo · Cognit Learning Hub`} shellVariant="demo-shell" footerVariant="compact" demoPerspective={selectedKey}>
+<BaseLayout title={`${selected.label} · Cognit Learning Hub`} shellVariant="demo-shell" footerVariant="compact" demoPerspective={selectedKey}>
   <main class="demo-page">
     <Container>
       {selectedKey !== "student" && selectedKey !== "family" && selectedKey !== "hq" && selectedKey !== "center" && <DemoLoopNav role={selectedKey} active="today" />}
@@ -59,7 +59,7 @@ const model = selectedKey === "hq" ? null : getCognitDemoPerspectiveModel(select
 
       {selectedKey === "student" ? <CognitStudentJourneyView view="today" /> : selectedKey === "family" ? <CognitFamilyJourneyView view="overview" /> : selectedKey === "hq" ? <CognitHqView view="home" /> : selectedKey === "center" ? <CognitCenterView view="overview" /> : <CognitDemoPerspective model={model} />}
 
-      <a class="back-link" href="/learninghub/demo">← All demo perspectives</a>
+      <a class="back-link" href="/learninghub/demo">← All perspectives</a>
     </Container>
   </main>
 

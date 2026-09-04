@@ -12,7 +12,8 @@ const centerView = role === "center" ? parseCenterDemoView(view) : null;
 const [roleSection, roleItem = ""] = view.split("/");
 const section = centerView?.section ?? roleSection;
 const item = centerView?.item ?? roleItem;
-const active = section;
+const studentMyWorkSections = new Set(["my-work", "artifact", "progress"]);
+const active = role === "student" && studentMyWorkSections.has(section) ? "my-work" : section;
 const contextKey = centerView?.context || "northfield";
 const studentSlug = (studentId) => studentId.replace("demo-student-", "").split("-")[0];
 const findStudent = (slug) => data.people.students.find((person) => studentSlug(person.id) === slug);
@@ -42,7 +43,7 @@ const meta = {
     attendance: ["Attendance", item === "sofia" ? "Sofia Reyes · attendance and makeup" : item === "eli" ? "Eli Morgan · attendance" : `${selectedContext?.name} attendance`, "Attendance and makeup information scoped to the selected operating context."],
     reports: ["Reports", item === "sofia" ? "Sofia Reyes · review exception" : item === "eli" ? "Eli Morgan · processed report" : `${selectedContext?.name} reports`, "Learning reports scoped to the selected operating context."],
     messages: ["Messages", `${selectedContext?.name} operational conversations`, "Message threads scoped to the selected operating context."],
-    settings: ["Settings", `${selectedContext?.name} context`, "Context metadata and shared demo policy for this learning operation."]
+    settings: ["Settings", `${selectedContext?.name} context`, "Context metadata and shared policy for this learning operation."]
   },
   coach: {
     class: ["Class", "Creative App Lab learners", "Open a learner to see the current learning context."],
@@ -63,7 +64,7 @@ const meta = {
   family: {
     journey: ["Learning Journey", item === "eli" ? "A working first flow, improved through testing" : "Published learning updates", "The Family-facing story translated from the same learning event."],
     attendance: ["Attendance", item === "sofia" ? "Sofia Reyes · makeup available" : item === "eli" ? "Eli Morgan · present" : "Attendance and makeup", "Clear current status and any Family action."],
-    messages: ["Messages", "Family communication", "A bounded synthetic exchange about Sofia’s makeup option."],
+    messages: ["Messages", "Family communication", "A private exchange about Sofia’s makeup option."],
     account: ["Account", "Learning visibility preferences", "Safe Family-level settings without fabricated personal contact information."]
   }
 }[role][section];
@@ -76,6 +77,13 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
 ---
 
 <DemoLoopNav role={role} active={active} context={contextKey} />
+{role === "student" && studentMyWorkSections.has(section) && (
+  <nav class="student-work-nav" aria-label="My Work sections">
+    <a href="/learninghub/demo/student/my-work" aria-current={section === "my-work" ? "page" : undefined}>Overview</a>
+    <a href="/learninghub/demo/student/artifact" aria-current={section === "artifact" ? "page" : undefined}>Latest work</a>
+    <a href="/learninghub/demo/student/progress" aria-current={section === "progress" ? "page" : undefined}>Progress</a>
+  </nav>
+)}
 
 <header class="deep-heading">
   <a href={`/learninghub/demo/${role}`}>{role[0].toUpperCase() + role.slice(1)} overview</a>
@@ -95,7 +103,7 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
         const course = findCourse(session.courseId); const coach = findCoach(session.coachId);
         return <article class="record-row"><div><span>{session.label}</span><h2>{course.name}</h2><p>{findContext(session.contextId).name}</p></div><div><strong>{coach.name}</strong><span>{session.studentIds.length} learners</span></div><span class={`state ${session.status}`}>{session.status.replaceAll("_", " ")}</span>{session.id === "demo-session-creative-today" ? <a href="/learninghub/demo/center/schedule/creative">Inspect session →</a> : <span>Scheduled context</span>}</article>;
       })}
-    </section> : <section class="empty-state" aria-labelledby="empty-schedule"><span>Scoped schedule</span><h2 id="empty-schedule">No sessions in {selectedContext.name}</h2><p>This context has no scheduled sessions in the current demo window.</p></section>
+    </section> : <section class="empty-state" aria-labelledby="empty-schedule"><span>Scoped schedule</span><h2 id="empty-schedule">No sessions in {selectedContext.name}</h2><p>This context has no scheduled sessions in the current view.</p></section>
   )}
 
   {role === "center" && section === "schedule" && item === "creative" && (
@@ -119,7 +127,7 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   )}
 
   {role === "center" && section === "attendance" && !item && (
-    selectedContextAttendance.length ? <section class="record-list">{selectedContextAttendance.map((record) => <article class="record-row"><div><span>{findCourse(record.courseId).name}</span><h2>{findStudent(studentSlug(record.studentId)).name}</h2></div><span class={`state ${record.status}`}>{record.status}</span>{record.studentId === "demo-student-sofia-reyes" ? <a href="/learninghub/demo/center/attendance/sofia">Inspect makeup →</a> : <a href="/learninghub/demo/center/attendance/eli">Inspect attendance →</a>}</article>)}</section> : <section class="empty-state" aria-labelledby="empty-attendance"><span>Scoped attendance</span><h2 id="empty-attendance">No attendance records in {selectedContext.name}</h2><p>Attendance has not been recorded for this context in the demo window.</p></section>
+    selectedContextAttendance.length ? <section class="record-list">{selectedContextAttendance.map((record) => <article class="record-row"><div><span>{findCourse(record.courseId).name}</span><h2>{findStudent(studentSlug(record.studentId)).name}</h2></div><span class={`state ${record.status}`}>{record.status}</span>{record.studentId === "demo-student-sofia-reyes" ? <a href="/learninghub/demo/center/attendance/sofia">Inspect makeup →</a> : <a href="/learninghub/demo/center/attendance/eli">Inspect attendance →</a>}</article>)}</section> : <section class="empty-state" aria-labelledby="empty-attendance"><span>Scoped attendance</span><h2 id="empty-attendance">No attendance records in {selectedContext.name}</h2><p>Attendance has not been recorded for this context in the view.</p></section>
   )}
 
   {role === "center" && section === "attendance" && item && (
@@ -130,7 +138,7 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
     selectedContextEvents.length ? <section class="record-list" aria-label={`${selectedContext.name} reports`}>{selectedContextEvents.map((event) => {
       const isSofia = event.id === "demo-event-sofia-sensor-test";
       return <a class="record-row" href={`/learninghub/demo/center/reports/${isSofia ? "sofia" : "eli"}`}><div><span>{isSofia ? "Needs clarification" : "No review required"}</span><h2>{findStudent(studentSlug(event.studentId)).name} · {findCourse(event.courseId).name}</h2><p>{isSofia ? event.report.reason : "Learning update processed without Center intervention."}</p></div><b>{isSofia ? "Open review →" : "Open report →"}</b></a>;
-    })}</section> : <section class="empty-state" aria-labelledby="empty-reports"><span>Scoped reports</span><h2 id="empty-reports">No reports in {selectedContext.name}</h2><p>No learning reports are associated with this operating context in the demo window.</p></section>
+    })}</section> : <section class="empty-state" aria-labelledby="empty-reports"><span>Scoped reports</span><h2 id="empty-reports">No reports in {selectedContext.name}</h2><p>No learning reports are associated with this operating context in the view.</p></section>
   )}
 
   {role === "center" && section === "reports" && item && (
@@ -138,11 +146,11 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   )}
 
   {role === "center" && section === "messages" && (
-    selectedContextMessages.length ? <section class="detail-stack" aria-label={`${selectedContext.name} messages`}>{selectedContextMessages.map((message) => <details class="message-thread"><summary><span>{message.status.replaceAll("_", " ")}</span><strong>{message.subject}</strong><small>{message.preview}</small></summary><p>{message.response || "Priya still needs to attach the referenced evidence artifact."}</p></details>)}</section> : <section class="empty-state" aria-labelledby="empty-messages"><span>Scoped messages</span><h2 id="empty-messages">No messages in {selectedContext.name}</h2><p>No operational message threads are associated with this context in the demo window.</p></section>
+    selectedContextMessages.length ? <section class="detail-stack" aria-label={`${selectedContext.name} messages`}>{selectedContextMessages.map((message) => <details class="message-thread"><summary><span>{message.status.replaceAll("_", " ")}</span><strong>{message.subject}</strong><small>{message.preview}</small></summary><p>{message.response || "Priya still needs to attach the referenced evidence artifact."}</p></details>)}</section> : <section class="empty-state" aria-labelledby="empty-messages"><span>Scoped messages</span><h2 id="empty-messages">No messages in {selectedContext.name}</h2><p>No operational message threads are associated with this context in the view.</p></section>
   )}
 
   {role === "center" && section === "settings" && (
-    <section class="detail-card"><h2>{selectedContext.name}</h2><p>{selectedContext.purpose}</p><dl><div><dt>Operating context</dt><dd>{selectedContext.name}</dd></div><div><dt>Learning period language</dt><dd>{data.settings.learningPeriodLabel}</dd></div><div><dt>Report handling</dt><dd>{data.settings.reviewMode}</dd></div><div><dt>Family visibility</dt><dd>{data.settings.familyPublishing}</dd></div></dl><p class="quiet-note">These shared demo policies are shown in the selected operating context; no context-specific settings have been fabricated.</p></section>
+    <section class="detail-card"><h2>{selectedContext.name}</h2><p>{selectedContext.purpose}</p><dl><div><dt>Operating context</dt><dd>{selectedContext.name}</dd></div><div><dt>Learning period language</dt><dd>{data.settings.learningPeriodLabel}</dd></div><div><dt>Report handling</dt><dd>{data.settings.reviewMode}</dd></div><div><dt>Family visibility</dt><dd>{data.settings.familyPublishing}</dd></div></dl><p class="quiet-note">These shared policies apply to the selected operating context.</p></section>
   )}
 
   {role === "center" && section === "overview" && centerView?.explicitContext && (
@@ -174,7 +182,7 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   )}
 
   {role === "coach" && section === "evidence" && (
-    <section class="detail-stack"><article class="detail-card evidence-context"><span class="eyebrow">Connected evidence</span><h2>{eliEvent.evidence.label}</h2><dl><div><dt>Learner</dt><dd>Eli Morgan</dd></div><div><dt>Course</dt><dd>Creative App Lab</dd></div><div><dt>Learning focus</dt><dd>{eliEvent.challenge}</dd></div><div><dt>Status</dt><dd>Connected to learning record</dd></div></dl></article><div class="evidence-gallery" aria-label="Representative Habit Tracker evidence media"><figure><div class="artifact-visual" role="img" aria-label="Representative placeholder screenshot of the Habit Tracker Today screen"><span>Habit</span><b>Today</b><i>✓</i></div><figcaption><strong>Prototype screen</strong><span>Screenshot placeholder</span></figcaption></figure><figure><DemoImage image={COGNIT_DEMO_IMAGES.evidence.prototypePhoto} size="evidence-photo" /><figcaption><strong>Prototype testing</strong><span>Photo placeholder</span></figcaption></figure><figure><div class="evidence-video" role="img" aria-label="Representative placeholder thumbnail for a short prototype test video"><span aria-hidden="true">▶</span><strong>Interaction test</strong></div><figcaption><strong>Interaction test</strong><span>Video thumbnail placeholder</span></figcaption></figure></div></section>
+    <section class="detail-stack"><article class="detail-card evidence-context"><span class="eyebrow">Connected evidence</span><h2>{eliEvent.evidence.label}</h2><dl><div><dt>Learner</dt><dd>Eli Morgan</dd></div><div><dt>Course</dt><dd>Creative App Lab</dd></div><div><dt>Learning focus</dt><dd>{eliEvent.challenge}</dd></div><div><dt>Status</dt><dd>Connected to learning record</dd></div></dl></article><div class="evidence-gallery" aria-label="Habit Tracker evidence media"><figure><div class="artifact-visual" role="img" aria-label="Screenshot of the Habit Tracker Today screen"><span>Habit</span><b>Today</b><i>✓</i></div><figcaption><strong>Prototype screen</strong><span>Screenshot</span></figcaption></figure><figure><DemoImage image={COGNIT_DEMO_IMAGES.evidence.prototypePhoto} size="evidence-photo" /><figcaption><strong>Prototype testing</strong><span>Photo</span></figcaption></figure><figure><div class="evidence-video" role="img" aria-label="Thumbnail for a short prototype test video"><span aria-hidden="true">▶</span><strong>Interaction test</strong></div><figcaption><strong>Interaction test</strong><span>Video</span></figcaption></figure></div></section>
   )}
 
   {role === "coach" && section === "reporting" && (
@@ -194,7 +202,7 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   )}
 
   {role === "student" && section === "courses" && !item && (
-    <section class="card-grid two"><article class="detail-card"><span class="eyebrow">Active course</span><h2>Creative App Lab</h2><p>{findCourse("demo-course-creative-app-lab").focus}</p><small>Coach: Jordan Ellis</small></article><a class="entity-card" href="/learninghub/demo/student/courses/lena"><DemoImage image={getDemoStudentImage("demo-student-lena-grant")} size="avatar-md" /><span>Multi-course example</span><h2>View Lena Grant</h2><p>See two course paths under one learner identity.</p><b>View Lena →</b></a></section>
+    <section class="card-grid two"><article class="detail-card"><span class="eyebrow">Active course</span><h2>Creative App Lab</h2><p>{findCourse("demo-course-creative-app-lab").focus}</p><small>Coach: Jordan Ellis</small></article><a class="entity-card" href="/learninghub/demo/student/courses/lena"><DemoImage image={getDemoStudentImage("demo-student-lena-grant")} size="avatar-md" /><span>Course continuity</span><h2>View Lena Grant</h2><p>See two course paths under one learner identity.</p><b>View Lena →</b></a></section>
   )}
 
   {role === "student" && section === "courses" && item === "lena" && (
@@ -226,11 +234,11 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   )}
 
   {role === "family" && section === "messages" && (
-    <section class="detail-stack"><details class="message-thread" open><summary><span>Answered</span><strong>Robotics Studio makeup</strong><small>Will Sofia’s missed session create a makeup option?</small></summary><p>Yes. One makeup option is available for Sofia.</p></details><p class="quiet-note">This focused thread demonstrates communication continuity without creating a full inbox.</p></section>
+    <section class="detail-stack"><details class="message-thread" open><summary><span>Answered</span><strong>Robotics Studio makeup</strong><small>Will Sofia’s missed session create a makeup option?</small></summary><p>Yes. One makeup option is available for Sofia.</p></details><p class="quiet-note">This thread keeps the Family conversation connected to the learning record.</p></section>
   )}
 
   {role === "family" && section === "account" && (
-    <section class="detail-card"><h2>Family learning preferences</h2><dl><div><dt>Linked learner</dt><dd>Eli Morgan</dd></div><div><dt>Learning visibility</dt><dd>Published learning updates</dd></div><div><dt>Attendance visibility</dt><dd>Current status and makeup options</dd></div><div><dt>Communication</dt><dd>Learning Hub messages</dd></div></dl><p class="quiet-note">Personal contact information is intentionally omitted from this synthetic demo.</p></section>
+    <section class="detail-card"><h2>Family learning preferences</h2><dl><div><dt>Linked learner</dt><dd>Eli Morgan</dd></div><div><dt>Learning visibility</dt><dd>Published learning updates</dd></div><div><dt>Attendance visibility</dt><dd>Current status and makeup options</dd></div><div><dt>Communication</dt><dd>Learning Hub messages</dd></div></dl><p class="quiet-note">Personal contact information is available only to authorized roles.</p></section>
   )}
 </div>
 
@@ -246,6 +254,9 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   .deep-heading h1 { margin: 6px 0 10px; color: var(--color-ink); font-size: clamp(2.5rem, 5vw, 4.2rem); }
   .deep-heading p { max-width: 65ch; margin: 0; font-size: 1.04rem; }
   .deep-content, .detail-stack { display: grid; gap: 18px; }.deep-content [hidden]{display:none!important}.publication-sync{display:grid;gap:4px;padding:15px 18px;border:1px solid var(--color-border);border-left:5px solid var(--cognit-brand-accent);border-radius:12px;background:#fff7e8}.publication-sync--published{border-left-color:var(--cognit-brand-progress);background:#eaf8f5}.publication-sync span{color:var(--color-muted)}
+  .student-work-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: -8px 0 28px; padding: 8px; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; box-shadow: var(--shadow-soft); }
+  .student-work-nav a { padding: 10px 15px; border-radius: 9px; color: var(--color-ink); font-weight: 850; text-decoration: none; }
+  .student-work-nav a[aria-current="page"] { background: var(--color-ink); color: #fff; }
   .profile-heading, .compact-identity { display: flex; align-items: center; gap: 18px; }
   .profile-heading > div, .compact-identity > div { min-width: 0; }
   .profile-heading .eyebrow, .compact-identity .eyebrow { margin-top: 0; }
@@ -336,6 +347,9 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   .story-detail blockquote { margin: 24px 0; padding: 18px 22px; border-left: 4px solid var(--cognit-brand-progress); background: #fff; color: var(--color-ink); }
   .story-detail aside { margin-top: 26px; padding: 18px; border-radius: 10px; background: #fff; }
   .story-detail aside p { margin: 5px 0 0; }
+  .family-story-detail .compact-identity { align-items: flex-start; }
+  .family-story-detail .compact-identity > div { flex: 1 1 28rem; min-width: 0; }
+  .family-story-detail h2 { max-width: 16ch; overflow-wrap: normal; word-break: normal; hyphens: none; font-size: clamp(2.4rem, 6vw, 4.8rem); line-height: .98; }
   .lead-fact { color: var(--color-ink); font-size: 1.15rem; }
   .quiet-note { color: var(--color-muted); font-size: .9rem; }
   @media (max-width: 760px) {
@@ -344,5 +358,8 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
     .detail-card dl, .fact-grid, .sequence { grid-template-columns: 1fr; }
     .accessible-progress > div:first-child, .progress-record > div, .course-progress-heading { align-items: flex-start; flex-direction: column; }
     .profile-heading { align-items: flex-start; }
+    .family-story-detail .compact-identity { flex-direction: column; }
+    .family-story-detail .compact-identity > div { flex-basis: auto; width: 100%; }
+    .family-story-detail h2 { max-width: 12ch; font-size: clamp(2.2rem, 12vw, 3.6rem); }
   }
 </style>

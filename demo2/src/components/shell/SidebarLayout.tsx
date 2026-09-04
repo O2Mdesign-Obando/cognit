@@ -82,35 +82,37 @@ export function SidebarLayout() {
     <div className="flex min-h-full">
       <div className="hidden lg:block">{sidebar}</div>
 
-      {/* mobile */}
-      <div className="flex w-full flex-1 flex-col lg:hidden">
-        <header className="flex h-14 items-center justify-between border-b border-cool-300/60 bg-white px-4">
+      <div className="flex w-full flex-1 flex-col">
+        {/* mobile */}
+        <header className="flex h-14 items-center justify-between border-b border-cool-300/60 bg-white px-4 lg:hidden">
           <div className="flex items-center gap-2">
             <LogoIcon className="h-7 w-7" />
             <span className="text-[15px] font-semibold text-navy">Cognit HQ</span>
           </div>
-          <button onClick={() => setOpen(true)} className="rounded-lg p-2 hover:bg-cool-100">
+          <button
+            onClick={() => setOpen(true)}
+            aria-label="Open navigation"
+            aria-expanded={open}
+            aria-controls="demo2-hq-navigation"
+            className="rounded-lg p-2 hover:bg-cool-100"
+          >
             <Menu size={20} />
           </button>
         </header>
         {open && (
-          <div className="fixed inset-0 z-50 flex">
+          <div id="demo2-hq-navigation" className="fixed inset-0 z-50 flex">
             <div className="h-full">{sidebar}</div>
-            <button className="flex-1 bg-deepnavy/40" onClick={() => setOpen(false)}>
+            <button aria-label="Close navigation" className="flex-1 bg-deepnavy/40" onClick={() => setOpen(false)}>
               <X className="m-4 text-white" />
             </button>
           </div>
         )}
-        <main className="flex-1 px-5 py-8">
-          <Outlet />
+        <main className="flex-1 px-5 py-8 lg:px-10 lg:py-10">
+          <div className="mx-auto lg:max-w-[1080px]">
+            <Outlet />
+          </div>
         </main>
       </div>
-
-      <main className="hidden flex-1 px-10 py-10 lg:block">
-        <div className="mx-auto max-w-[1080px]">
-          <Outlet />
-        </div>
-      </main>
     </div>
   );
 }

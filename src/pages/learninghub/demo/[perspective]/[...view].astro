@@ -13,28 +13,31 @@ export function getStaticPaths() {
   const contextSectionRoutes = CENTER_CONTEXT_KEYS.flatMap((context) => CENTER_SECTION_KEYS.map((section) => section === "overview" ? `context/${context}` : `context/${context}/${section}`));
   const contextChildRoutes = CENTER_CONTEXT_KEYS.flatMap((context) => [
     "classes/creative", "classes/creative/attendance", "classes/robotics",
-    "communication/coach", "communication/family", "communication/compose",
-    "coaches/jordan", "coaches/priya", "schedule/creative",
-    "scheduling/daily", "scheduling/weekly", "scheduling/monthly", "scheduling/season", "scheduling/cancel", "scheduling/cancel/confirmed",
+    "communication/coach", "communication/family", "communication/compose", "communication/announcements", "communication/announcements/new",
+    "communication/thread/priya-evidence", "communication/thread/reyes-makeup", "communication/thread/jordan-materials", "communication/thread/morgan-schedule", "communication/thread/harbor-jordan",
+    "coaches/jordan", "coaches/priya", "coaches/avery", "schedule/creative",
+    "scheduling/daily", "scheduling/weekly", "scheduling/monthly", "scheduling/season", "scheduling/new", "scheduling/cancel", "scheduling/cancel/confirmed",
+    "scheduling/session/creative-today", "scheduling/session/robotics-today", "scheduling/session/storytelling-today", "scheduling/session/robotics-extension-draft", "scheduling/session/robotics-recurring-tuesday", "scheduling/session/harbor-creative", "scheduling/session/harbor-showcase", "scheduling/staffing/storytelling-today",
     "students/eli", "students/sofia", "students/noah", "students/mina", "students/lena", "students/ava",
     "students/morgan", "students/reyes", "students/bennett", "students/park", "students/grant", "students/thompson",
-    "families/morgan", "families/reyes", "families/park", "attendance/eli", "attendance/sofia",
+    "families/morgan", "families/reyes", "families/park", "attendance/eli", "attendance/sofia", "attendance/absence/mina-storytelling", "attendance/makeup", "attendance/makeup/mina-storytelling", "attendance/makeup/eli-creative-weather", "attendance/makeup/lena-creative-weather", "attendance/makeup/sofia-robotics", "attendance/makeup/sofia-robotics-redeemed", "attendance/makeup/sofia-robotics-expired", "attendance/override/ava-storytelling", "attendance/cancellation/creative-weather",
     "courses/creative-app-lab", "courses/robotics-studio", "courses/digital-storytelling-lab",
-    "reports/eli", "reports/sofia", "reports/builder", "whats-new/archive",
-    "configuration/modules", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/ready"
+    "billing/dashboard", "billing/account/morgan", "billing/account/morgan/method", "billing/account/reyes", "billing/account/reyes/method", "billing/account/park", "billing/account/park/method", "billing/account/grant", "billing/account/grant/method", "billing/account/thompson", "billing/account/thompson/method",
+    "reports/attention", "reports/ready", "reports/all", "reports/published", "reports/eli", "reports/sofia", "reports/builder", "whats-new/archive",
+    "configuration/modules", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/processing", "migration/ready"
   ].map((child) => `context/${context}/${child}`));
   const routes = {
     center: [
-      "classes", "classes/creative", "classes/creative/attendance", "classes/robotics", "communication", "communication/coach", "communication/family", "communication/compose",
-      "coaches", "coaches/jordan", "coaches/priya", "schedule", "schedule/creative", "scheduling", "scheduling/daily", "scheduling/weekly", "scheduling/monthly", "scheduling/season", "scheduling/cancel", "scheduling/cancel/confirmed",
+      "classes", "classes/creative", "classes/creative/attendance", "classes/robotics", "communication", "communication/coach", "communication/family", "communication/compose", "communication/announcements", "communication/announcements/new", "communication/thread/priya-evidence", "communication/thread/reyes-makeup", "communication/thread/jordan-materials", "communication/thread/morgan-schedule", "communication/thread/harbor-jordan",
+      "coaches", "coaches/jordan", "coaches/priya", "coaches/avery", "schedule", "schedule/creative", "scheduling", "scheduling/daily", "scheduling/weekly", "scheduling/monthly", "scheduling/season", "scheduling/new", "scheduling/cancel", "scheduling/cancel/confirmed", "scheduling/session/creative-today", "scheduling/session/robotics-today", "scheduling/session/storytelling-today", "scheduling/session/robotics-extension-draft", "scheduling/session/robotics-recurring-tuesday", "scheduling/session/harbor-creative", "scheduling/session/harbor-showcase", "scheduling/staffing/storytelling-today",
       "students", "students/eli", "students/sofia", "students/noah", "students/mina", "students/lena", "students/ava",
       "students/morgan", "students/reyes", "students/bennett", "students/park", "students/grant", "students/thompson",
-      "families", "families/morgan", "families/reyes", "families/park", "attendance", "attendance/eli", "attendance/sofia",
-      "courses", "courses/creative-app-lab", "courses/robotics-studio", "courses/digital-storytelling-lab", "billing",
-      "reports", "reports/eli", "reports/sofia", "reports/builder", "messages", "settings", "configuration", "configuration/modules", "module-control", "support",
-      "whats-new", "whats-new/archive", "migration", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/ready", ...contextSectionRoutes, ...contextChildRoutes
+      "families", "families/morgan", "families/reyes", "families/park", "attendance", "attendance/eli", "attendance/sofia", "attendance/absence/mina-storytelling", "attendance/makeup", "attendance/makeup/mina-storytelling", "attendance/makeup/eli-creative-weather", "attendance/makeup/lena-creative-weather", "attendance/makeup/sofia-robotics", "attendance/makeup/sofia-robotics-redeemed", "attendance/makeup/sofia-robotics-expired", "attendance/override/ava-storytelling", "attendance/cancellation/creative-weather",
+      "courses", "courses/creative-app-lab", "courses/robotics-studio", "courses/digital-storytelling-lab", "billing", "billing/dashboard", "billing/account/morgan", "billing/account/morgan/method", "billing/account/reyes", "billing/account/reyes/method", "billing/account/park", "billing/account/park/method", "billing/account/grant", "billing/account/grant/method", "billing/account/thompson", "billing/account/thompson/method",
+      "reports", "reports/attention", "reports/ready", "reports/all", "reports/published", "reports/eli", "reports/sofia", "reports/builder", "messages", "settings", "configuration", "configuration/modules", "module-control", "support",
+      "whats-new", "whats-new/archive", "migration", "migration/source", "migration/select", "migration/map", "migration/preview", "migration/processing", "migration/ready", ...contextSectionRoutes, ...contextChildRoutes
     ],
-    coach: ["today", "readiness", "live", "capture", "after-class", "end-of-day", "releases", "support", "profile", "class", "learners/eli", "learners/noah", "learners/lena", "learning-plan", "progress", "progress/lena", "observations", "evidence/eli", "reporting"],
+    coach: ["today", "readiness", "live", "capture", "after-class", "end-of-day", "releases", "support", "profile", "class", "learners/eli", "learners/eli/progress", "learners/eli/evidence", "learners/eli/observations", "learners/noah", "learners/lena", "learning-plan", "progress", "progress/eli", "progress/lena", "observations", "observations/eli", "evidence/eli", "reporting", "correspondence"],
     student: ["lesson", "active", "reflection", "complete", "my-work", "artifact", "progress", "courses", "courses/lena", "journey", "journey/eli"],
     family: ["journey", "journey/eli", "attendance", "attendance/eli", "attendance/sofia", "messages", "absence", "absence-confirmed", "makeup", "courses", "billing", "account", "support"],
     hq: ["network", "centers", "curriculum", "insights", "performance", "governance", "support", "deployment", "modules", "allocation"]
@@ -44,20 +47,20 @@ export function getStaticPaths() {
 
 const { perspective, view } = Astro.props;
 const roleLabel = perspective[0].toUpperCase() + perspective.slice(1);
-const coachJourneyViews = new Set(["today", "readiness", "live", "capture", "after-class", "end-of-day", "releases", "support", "profile"]);
+const coachJourneyViews = new Set(["today", "readiness", "live", "capture", "after-class", "end-of-day", "releases", "support", "profile", "learners/eli", "learners/eli/progress", "learners/eli/evidence", "learners/eli/observations", "progress/eli", "observations/eli", "evidence/eli", "correspondence"]);
 const isCoachJourney = perspective === "coach" && coachJourneyViews.has(view);
-const studentJourneyViews = new Set(["lesson", "active", "reflection", "complete"]);
+const studentJourneyViews = new Set(["lesson", "active", "reflection", "complete", "journey/eli"]);
 const isStudentJourney = perspective === "student" && studentJourneyViews.has(view);
 const isFamilyJourney = perspective === "family";
 const isHqJourney = perspective === "hq";
 const isCenterJourney = perspective === "center";
 ---
 
-<BaseLayout title={`${roleLabel} Demo · Cognit Learning Hub`} shellVariant="demo-shell" footerVariant="compact" demoPerspective={perspective}>
+<BaseLayout title={`${roleLabel} · Cognit Learning Hub`} shellVariant="demo-shell" footerVariant="compact" demoPerspective={perspective}>
   <main class="deep-demo-page">
     <Container>
       {isCoachJourney ? <CognitCoachJourneyView view={view} /> : isStudentJourney ? <CognitStudentJourneyView view={view} /> : isFamilyJourney ? <CognitFamilyJourneyView view={view} /> : isHqJourney ? <CognitHqView view={view} /> : isCenterJourney ? <CognitCenterView view={view} /> : <CognitDemoDeepView role={perspective} view={view} />}
-      <a class="all-perspectives" href="/learninghub/demo">← All demo perspectives</a>
+      <a class="all-perspectives" href="/learninghub/demo">← All perspectives</a>
     </Container>
   </main>
   <style>

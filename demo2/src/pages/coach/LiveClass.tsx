@@ -38,6 +38,7 @@ export default function LiveClass() {
       </div>
 
       <main className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-12 px-6 py-14 lg:grid-cols-2">
+        <h1 className="sr-only">Python Prodigy class in progress</h1>
         {/* Timer */}
         <div className="flex flex-col items-center">
           <div className="relative h-[300px] w-[300px]">

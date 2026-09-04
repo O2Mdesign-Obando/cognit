@@ -71,6 +71,7 @@ export default function Landing() {
 
       {/* Cards */}
       <main className="mx-auto w-full max-w-[1180px] flex-1 px-6 py-14 sm:px-10">
+        <h1 className="sr-only">Cognit Learning Hub Demo</h1>
         <div className="grid gap-7 md:grid-cols-2">
           {LOOPS.map((l, i) => (
             <button

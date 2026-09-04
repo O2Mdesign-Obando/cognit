@@ -27,6 +27,7 @@ export default function PostClassReview() {
       </div>
 
       <main className="mx-auto w-full max-w-3xl px-6 py-8">
+        <h1 className="sr-only">Post-class observation review</h1>
         {/* Session summary */}
         <Card className="flex flex-wrap items-center justify-between gap-4 px-6 py-5">
           <div>
