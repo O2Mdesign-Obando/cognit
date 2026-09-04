@@ -14,7 +14,7 @@ const totalCoaches = d.centers.reduce((n, c) => n + c.coaches, 0);
 const attentionCenters = d.centers.filter((c) => c.readiness.toLowerCase().includes("attention") || c.readiness.toLowerCase().includes("decision"));
 const titleMap = {
   home: ["Network stewardship", "What needs attention across the network?"],
-  network: ["Network overview", "A bounded view of network health"],
+  network: ["Network overview", "Understand network health"],
   centers: ["Center management", "Manage lifecycle and readiness"],
   curriculum: ["Curriculum management", "Distribute templates without taking over local delivery"],
   insights: ["Operational insights", "What is happening across the network?"],
@@ -33,14 +33,14 @@ const [eyebrow, heading] = titleMap[view] || titleMap.home;
     <div><strong>Cognit HQ</strong><span>Network operations</span></div>
     <details class="hq-profile"><summary aria-label="HQ profile menu"><span class="avatar">AC</span><span>{d.meta.steward}<small>{d.meta.role}</small></span></summary><nav><a href="/learninghub/demo/hq/support">Support</a><a href="/learninghub/demo/hq/governance">Settings</a><button type="button" data-hq-logout>Log out</button></nav></details>
   </div>
-  <nav class="hq-nav" aria-label="HQ demo sections">
+  <nav class="hq-nav" aria-label="HQ sections">
     {nav.map(([id, label, href]) => <a href={href} aria-current={view === id ? "page" : undefined}>{label}</a>)}
     <a href="/learninghub/demo/hq/modules" aria-current={view === "modules" || view === "allocation" ? "page" : undefined}>Module governance</a>
   </nav>
 
   <header class="hq-hero">
     <p class="eyebrow">{eyebrow}</p><h1>{heading}</h1>
-    <p>{view === "home" ? "Review by exception, then leave healthy operations quiet." : "Illustrative Cognit demo data only—no live tenant, learner, Family, or Coach records are queried."}</p>
+    <p>{view === "home" ? "Review by exception, then leave healthy operations quiet." : "Review network-level patterns while keeping Center, learner, Family, and Coach responsibilities distinct."}</p>
   </header>
 
   {view === "home" && <>
@@ -52,7 +52,7 @@ const [eyebrow, heading] = titleMap[view] || titleMap.home;
     <section class="metric-grid five" aria-label="Network metrics">
       <article><span>Active Centers</span><strong>{activeCenters.length}</strong></article><article><span>Active learners</span><strong>{totalLearners}</strong></article><article><span>Active Coaches</span><strong>{totalCoaches}</strong></article><article><span>Programs running</span><strong>11</strong></article><article><span>Needs attention</span><strong>{attentionCenters.length}</strong></article>
     </section>
-    <div class="split-grid"><section class="panel"><h2>Platform health</h2><div class="health-state"><strong>System operational</strong><span>Last updated: 12 minutes ago</span></div><p>Presentation data only; not production telemetry.</p></section><section class="panel"><h2>Recent network activity</h2><ul class="activity"><li>Riverton adopted Creative App Foundations 2.4</li><li>Oak Harbor completed its internal standards review</li><li>Cedar Grove advanced to Coach training</li><li>Bluewater entered a lifecycle decision state</li></ul></section></div>
+    <div class="split-grid"><section class="panel"><h2>Platform health</h2><div class="health-state"><strong>System operational</strong><span>Last updated: 12 minutes ago</span></div></section><section class="panel"><h2>Recent network activity</h2><ul class="activity"><li>Riverton adopted Creative App Foundations 2.4</li><li>Oak Harbor completed its internal standards review</li><li>Cedar Grove advanced to Coach training</li><li>Bluewater entered a lifecycle decision state</li></ul></section></div>
   </>}
 
   {view === "centers" && <>
@@ -81,7 +81,7 @@ const [eyebrow, heading] = titleMap[view] || titleMap.home;
 
   {view === "governance" && <>
     <div class="split-grid wide-left"><section class="panel"><h2>Internal network standards</h2>{d.policies.map((p) => <div class="list-row"><div><strong>{p.name}</strong><small>{p.version}</small></div><span>{p.status}</span></div>)}</section><section class="panel"><h2>Program configuration</h2><div class="list-row"><span>Coach-to-learner planning ratio</span><strong>1:8</strong></div><div class="list-row"><span>Observation planning target</span><strong>2/month</strong></div><div class="list-row"><span>Family story cadence</span><strong>Monthly</strong></div><div class="list-row"><span>Journey review cycle</span><strong>Quarterly</strong></div></section></div>
-    <div class="split-grid"><section class="panel"><h2>Center standards review</h2>{d.centers.slice(0,5).map((c,i) => <div class="list-row"><span>{c.name}</span><strong>{96-i*3}% · Internal status</strong></div>)}</section><section class="panel"><h2>Audit history</h2><ul class="activity"><li>Data handling standard marked active</li><li>Center readiness reviewed</li><li>Module configuration initialized</li></ul><p class="muted">These entries illustrate the audit structure; they are not signed production audit records.</p></section></div>
+    <div class="split-grid"><section class="panel"><h2>Center standards review</h2>{d.centers.slice(0,5).map((c,i) => <div class="list-row"><span>{c.name}</span><strong>{96-i*3}% · Internal status</strong></div>)}</section><section class="panel"><h2>Audit history</h2><ul class="activity"><li>Data handling standard marked active</li><li>Center readiness reviewed</li><li>Module configuration initialized</li></ul></section></div>
   </>}
 
   {view === "support" && <>
@@ -106,7 +106,7 @@ const [eyebrow, heading] = titleMap[view] || titleMap.home;
           return <label class={centerDisabled ? "is-locked" : ""}><input type="radio" name={`${view}-${m.id}`} value={state} checked={selected} disabled={centerDisabled} /><span>{state[0].toUpperCase()+state.slice(1)}</span></label>;
         })}
       </div></fieldset>)}
-      <div class="module-actions"><p data-module-status role="status" aria-live="polite">No unsaved demo changes.</p><button type="button" class="secondary" data-module-reset>Reset</button><button type="reset" class="secondary" data-module-discard>Discard changes</button><button type="submit">Save configuration</button></div>
+      <div class="module-actions"><p data-module-status role="status" aria-live="polite">No unsaved changes.</p><button type="button" class="secondary" data-module-reset>Restore defaults</button><button type="reset" class="secondary" data-module-discard>Discard changes</button><button type="submit">Save configuration</button></div>
     </form>
     <section class="demo-audit" aria-label="Configuration audit"><h2>Configuration history</h2><ul data-module-audit><li>Module envelope initialized.</li></ul></section>
   </section>}

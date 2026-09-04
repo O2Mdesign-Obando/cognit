@@ -16,13 +16,13 @@ if (root) {
 
   const centerFeedback = root.querySelector("[data-hq-center-feedback]");
   root.querySelector("[data-hq-add-center]")?.addEventListener("click", () => {
-    centerFeedback.textContent = "Center onboarding preview opened; no Center was created.";
+    centerFeedback.textContent = "Center onboarding opened.";
   });
 
   const caseFeedback = root.querySelector("[data-hq-case-feedback]");
   root.querySelectorAll("[data-take-case]").forEach((button) => {
     button.addEventListener("click", () => {
-      caseFeedback.textContent = `${button.dataset.takeCase} assigned in this browser-only demo state.`;
+      caseFeedback.textContent = `${button.dataset.takeCase} assigned.`;
       button.textContent = "Case selected";
       button.disabled = true;
     });
@@ -47,22 +47,22 @@ if (root) {
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       localStorage.setItem(storageKey, JSON.stringify(readForm()));
-      statusLine.textContent = "Demo configuration saved locally in this browser.";
+      statusLine.textContent = "Configuration saved.";
       const item = document.createElement("li");
-      item.textContent = "Demo configuration change recorded locally.";
+      item.textContent = "Configuration change recorded.";
       audit.prepend(item);
     });
     workspace.querySelector("[data-module-discard]")?.addEventListener("click", (event) => {
       event.preventDefault();
       form.reset();
       applyState(JSON.parse(localStorage.getItem(storageKey) || "null") || defaults);
-      statusLine.textContent = "Unsaved demo changes discarded.";
+      statusLine.textContent = "Unsaved changes discarded.";
     });
     workspace.querySelector("[data-module-reset]")?.addEventListener("click", () => {
       localStorage.removeItem(storageKey);
       form.reset();
       applyState(defaults);
-      statusLine.textContent = "Configuration restored to its presentation baseline.";
+      statusLine.textContent = "Configuration restored to its default settings.";
     });
   }
 }

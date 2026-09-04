@@ -11,7 +11,7 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
       displayName: "Northfield Studio",
       type: "learning_center",
       status: "active",
-      operationalEmail: "hello@northfield.demo",
+      operationalEmail: "hello@northfield.example",
       operationalPhone: "(555) 014-2000",
       address: "125 Learning Way, Princeton, NJ 08540",
       primaryContact: "Maya Chen",
@@ -25,7 +25,7 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
       displayName: "Harbor Academy Program",
       type: "school_program",
       status: "active",
-      operationalEmail: "program@harbor.demo",
+      operationalEmail: "program@harbor.example",
       operationalPhone: "(555) 014-2400",
       address: "40 Harbor Avenue, Princeton, NJ 08540",
       primaryContact: "Maya Chen",
@@ -54,7 +54,7 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         focus: "Creative technology and app development",
         role: "Lead Coach",
         status: "active",
-        workEmail: "jordan.ellis@northfield.demo",
+        workEmail: "jordan.ellis@northfield.example",
         workPhone: "(555) 014-2011",
         availability: "Monday–Thursday · 2:30–7:30 PM",
         expertise: ["App design", "Creative coding", "Interaction design"],
@@ -68,7 +68,7 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         focus: "Robotics and physical computing",
         role: "Coach",
         status: "active",
-        workEmail: "priya.nair@northfield.demo",
+        workEmail: "priya.nair@northfield.example",
         workPhone: "(555) 014-2024",
         availability: "Tuesday–Friday · 4:00–8:00 PM",
         expertise: ["Robotics", "Physical computing", "Sensor systems"],
@@ -82,7 +82,7 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         focus: "Digital storytelling and creative media",
         role: "Coach",
         status: "on_leave",
-        workEmail: "avery.cole@northfield.demo",
+        workEmail: "avery.cole@northfield.example",
         workPhone: "(555) 014-2038",
         availability: "On leave through September 8",
         expertise: ["Digital storytelling", "Creative media", "Narrative design"],
@@ -104,9 +104,9 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         id: "demo-family-morgan",
         name: "Morgan Family",
         guardian: { id: "demo-guardian-rachel-morgan", name: "Rachel Morgan" },
-        primaryContact: { name: "Rachel Morgan", relationship: "Parent", email: "rachel.morgan@family.demo", phone: "(555) 013-1101" },
-        secondaryContact: { name: "Sam Morgan", relationship: "Parent", email: "sam.morgan@family.demo", phone: "(555) 013-1102" },
-        preferredEmail: "rachel.morgan@family.demo",
+        primaryContact: { name: "Rachel Morgan", relationship: "Parent", email: "rachel.morgan@family.example", phone: "(555) 013-1101" },
+        secondaryContact: { name: "Sam Morgan", relationship: "Parent", email: "sam.morgan@family.example", phone: "(555) 013-1102" },
+        preferredEmail: "rachel.morgan@family.example",
         preferredPhone: "(555) 013-1101",
         communicationPreference: "Email first · text for same-day changes",
         billingResponsibleContact: "Rachel Morgan",
@@ -117,9 +117,9 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         id: "demo-family-reyes",
         name: "Reyes Family",
         guardian: { id: "demo-guardian-daniel-reyes", name: "Daniel Reyes" },
-        primaryContact: { name: "Daniel Reyes", relationship: "Parent", email: "daniel.reyes@family.demo", phone: "(555) 013-1201" },
+        primaryContact: { name: "Daniel Reyes", relationship: "Parent", email: "daniel.reyes@family.example", phone: "(555) 013-1201" },
         secondaryContact: null,
-        preferredEmail: "daniel.reyes@family.demo",
+        preferredEmail: "daniel.reyes@family.example",
         preferredPhone: "(555) 013-1201",
         communicationPreference: "Email",
         billingResponsibleContact: "Daniel Reyes",
@@ -130,9 +130,9 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         id: "demo-family-park",
         name: "Park Family",
         guardian: { id: "demo-guardian-jin-park", name: "Jin Park" },
-        primaryContact: { name: "Jin Park", relationship: "Parent", email: "jin.park@family.demo", phone: "(555) 013-1301" },
-        secondaryContact: { name: "Alex Park", relationship: "Authorized adult", email: "alex.park@family.demo", phone: "(555) 013-1302" },
-        preferredEmail: "jin.park@family.demo",
+        primaryContact: { name: "Jin Park", relationship: "Parent", email: "jin.park@family.example", phone: "(555) 013-1301" },
+        secondaryContact: { name: "Alex Park", relationship: "Authorized adult", email: "alex.park@family.example", phone: "(555) 013-1302" },
+        preferredEmail: "jin.park@family.example",
         preferredPhone: "(555) 013-1301",
         communicationPreference: "Phone for schedule changes · email otherwise",
         billingResponsibleContact: "Jin Park",
@@ -161,7 +161,7 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
       modules: [
         { id: "creative-foundations", sequence: 1, title: "Frame the problem", state: "completed", delivery: "Week 1–2", summary: "Choose a useful habit, map the primary user journey, and define the smallest meaningful prototype.", activities: ["Interview a peer about one recurring habit", "Sketch the primary screen flow"], objectives: ["Translate a learner-selected need into a clear app purpose", "Sequence a usable first interaction"], outcomes: ["A tested problem statement", "A screen-flow map ready to build"], resources: [{ label: "Problem-framing prompts", type: "Facilitation guide" }, { label: "Screen-flow template", type: "Planning canvas" }] },
         { id: "creative-prototype", sequence: 2, title: "Prototype the core flow", state: "current", delivery: "Week 3–5 · current", summary: "Build the primary interaction, test it with a classmate, and revise one confusing step using observed feedback.", activities: ["Build navigation and reusable interface elements", "Run a peer interaction test", "Record one evidence-backed revision"], objectives: ["Create a functional multi-screen interaction", "Use testing evidence to prioritize an improvement"], outcomes: ["A working core flow", "A documented interaction revision"], resources: [{ label: "Interaction test protocol", type: "Coach guide" }, { label: "Prototype review checklist", type: "Learner checklist" }] },
-        { id: "creative-share", sequence: 3, title: "Refine and share", state: "upcoming", delivery: "Week 6–8", summary: "Strengthen feedback, accessibility, and explanation before sharing the finished prototype.", activities: ["Add clear system feedback", "Prepare a short design walkthrough"], objectives: ["Refine the experience using evidence", "Explain key design decisions"], outcomes: ["A shareable prototype", "A concise design reflection"], resources: [{ label: "Demo preparation guide", type: "Learner guide" }] }
+        { id: "creative-share", sequence: 3, title: "Refine and share", state: "upcoming", delivery: "Week 6–8", summary: "Strengthen feedback, accessibility, and explanation before sharing the finished prototype.", activities: ["Add clear system feedback", "Prepare a short design walkthrough"], objectives: ["Refine the experience using evidence", "Explain key design decisions"], outcomes: ["A shareable prototype", "A concise design reflection"], resources: [{ label: "Showcase preparation guide", type: "Learner guide" }] }
       ]
     },
     {
@@ -601,7 +601,7 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
     accounts: [
       {
         id: "demo-billing-morgan",
-        accountId: "DEMO-BILL-MORGAN",
+        accountId: "BILL-MORGAN",
         slug: "morgan",
         contextId: "demo-context-northfield-studio",
         studentId: "demo-student-eli-morgan",
@@ -619,13 +619,13 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         lastPayment: "Aug 15, 2026",
         nextPayment: "Sep 15, 2026",
         payments: [
-          { id: "demo-receipt-morgan-aug", date: "Aug 15, 2026", description: "Creative App Lab tuition", amount: 180, status: "paid", method: "Visa ending 4242", reference: "DEMO-MOR-0826" },
-          { id: "demo-receipt-morgan-jul", date: "Jul 15, 2026", description: "Creative App Lab tuition", amount: 180, status: "paid", method: "Visa ending 4242", reference: "DEMO-MOR-0726" }
+          { id: "demo-receipt-morgan-aug", date: "Aug 15, 2026", description: "Creative App Lab tuition", amount: 180, status: "paid", method: "Visa ending 4242", reference: "MOR-0826" },
+          { id: "demo-receipt-morgan-jul", date: "Jul 15, 2026", description: "Creative App Lab tuition", amount: 180, status: "paid", method: "Visa ending 4242", reference: "MOR-0726" }
         ]
       },
       {
         id: "demo-billing-reyes",
-        accountId: "DEMO-BILL-REYES",
+        accountId: "BILL-REYES",
         slug: "reyes",
         contextId: "demo-context-northfield-studio",
         studentId: "demo-student-sofia-reyes",
@@ -643,13 +643,13 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         lastPayment: "Jul 15, 2026",
         nextPayment: "Due now",
         payments: [
-          { id: "demo-attempt-reyes-aug", date: "Aug 15, 2026", description: "Robotics Studio tuition", amount: 190, status: "failed", method: "Visa ending 8901", reference: "DEMO-REY-FAIL-0826" },
-          { id: "demo-receipt-reyes-jul", date: "Jul 15, 2026", description: "Robotics Studio tuition", amount: 190, status: "paid", method: "Visa ending 8901", reference: "DEMO-REY-0726" }
+          { id: "demo-attempt-reyes-aug", date: "Aug 15, 2026", description: "Robotics Studio tuition", amount: 190, status: "failed", method: "Visa ending 8901", reference: "REY-FAIL-0826" },
+          { id: "demo-receipt-reyes-jul", date: "Jul 15, 2026", description: "Robotics Studio tuition", amount: 190, status: "paid", method: "Visa ending 8901", reference: "REY-0726" }
         ]
       },
       {
         id: "demo-billing-park",
-        accountId: "DEMO-BILL-PARK",
+        accountId: "BILL-PARK",
         slug: "park",
         contextId: "demo-context-northfield-studio",
         studentId: "demo-student-mina-park",
@@ -666,11 +666,11 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         paymentMethod: { brand: "Visa", last4: "1020", expiration: "07/26", status: "expired", cardholder: "Jin Park", zip: "08544" },
         lastPayment: "Jul 5, 2026",
         nextPayment: "Due now",
-        payments: [{ id: "demo-attempt-park-aug", date: "Aug 5, 2026", description: "Digital Storytelling Lab tuition", amount: 175, status: "failed", method: "Visa ending 1020", reference: "DEMO-PAR-EXP-0826" }]
+        payments: [{ id: "demo-attempt-park-aug", date: "Aug 5, 2026", description: "Digital Storytelling Lab tuition", amount: 175, status: "failed", method: "Visa ending 1020", reference: "PAR-EXP-0826" }]
       },
       {
         id: "demo-billing-grant",
-        accountId: "DEMO-BILL-GRANT",
+        accountId: "BILL-GRANT",
         slug: "grant",
         contextId: "demo-context-northfield-studio",
         studentId: "demo-student-lena-grant",
@@ -687,11 +687,11 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         paymentMethod: { brand: "Mastercard", last4: "6732", expiration: "04/29", status: "active", cardholder: "Taylor Grant", zip: "08540" },
         lastPayment: "Aug 15, 2026",
         nextPayment: "Sep 15, 2026",
-        payments: [{ id: "demo-receipt-grant-aug", date: "Aug 15, 2026", description: "Creative App Lab tuition", amount: 180, status: "paid", method: "Mastercard ending 6732", reference: "DEMO-GRA-0826" }]
+        payments: [{ id: "demo-receipt-grant-aug", date: "Aug 15, 2026", description: "Creative App Lab tuition", amount: 180, status: "paid", method: "Mastercard ending 6732", reference: "GRA-0826" }]
       },
       {
         id: "demo-billing-thompson",
-        accountId: "DEMO-BILL-THOMPSON",
+        accountId: "BILL-THOMPSON",
         slug: "thompson",
         contextId: "demo-context-northfield-studio",
         studentId: "demo-student-ava-thompson",
@@ -730,8 +730,8 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
         ],
         upcomingBills: [
           { name: "Building lease", vendor: "Acme Properties", due: "Sep 5", amount: 4500, action: "Review bill" },
-          { name: "Insurance premium", vendor: "Hartford Demo Co.", due: "Sep 20", amount: 1850, action: "View detail" },
-          { name: "Learning supplies", vendor: "Sample School Supply", due: "Sep 30", amount: 1240, action: "Mark planned" }
+          { name: "Insurance premium", vendor: "Hartford Coverage Co.", due: "Sep 20", amount: 1850, action: "View detail" },
+          { name: "Learning supplies", vendor: "School Supply Co.", due: "Sep 30", amount: 1240, action: "Mark planned" }
         ],
         recentTransactions: [
           { name: "Tuition payments", date: "Sep 1", amount: 550, category: "Tuition" },
@@ -759,15 +759,15 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
       { id: "report-review", name: "Report Review", detail: "Center review and publication", allocation: "available", enabled: true, owner: "Center" },
       { id: "family-reporting", name: "Family Reporting", detail: "Published Family learning updates", allocation: "available", enabled: true, owner: "Center" },
       { id: "communication", name: "Communication", detail: "Center messages and announcements", allocation: "available", enabled: true, owner: "Center" },
-      { id: "financials", name: "Financials", detail: "Illustrative tuition and planning views", allocation: "available", enabled: true, owner: "Center" },
+      { id: "financials", name: "Financials", detail: "Tuition accounts and financial planning", allocation: "available", enabled: true, owner: "Center" },
       { id: "migration", name: "Migration", detail: "Data transition tooling", allocation: "unavailable", enabled: false, owner: "HQ" }
     ],
     systemStatuses: [
       { name: "Authentication", status: "Platform managed", owner: "Cognit", detail: "Identity and sign-in settings are not configurable by the Center." },
       { name: "Curriculum library", status: "Managed by HQ", owner: "HQ", detail: "Canonical templates and required modules remain governed by HQ." },
-      { name: "Email delivery", status: "Not connected", owner: "Cognit", detail: "Illustrative messages only; no external delivery occurs in this presentation." },
-      { name: "Payment collection", status: "Not connected", owner: "Cognit", detail: "Illustrative billing only; no processor or real payment method is connected." },
-      { name: "Accounting", status: "Available", owner: "Cognit", detail: "No accounting system is connected in this presentation." }
+      { name: "Email delivery", status: "Not connected", owner: "Cognit", detail: "Email delivery is not connected." },
+      { name: "Payment collection", status: "Not connected", owner: "Cognit", detail: "Payment collection is not connected." },
+      { name: "Accounting", status: "Not connected", owner: "Cognit", detail: "No accounting connection is configured." }
     ]
   }
 });

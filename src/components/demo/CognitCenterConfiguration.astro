@@ -88,7 +88,7 @@ const ownership = (owner) => owner === "Center" ? "Center setting" : owner === "
         </form>
         <article class="locked-setting"><span class="ownership-tag hq">Managed by HQ</span><h3>Qualifying absence categories</h3><p>Illness, appointment, and Center cancellation.</p><strong>Visible for reference · locked at Center</strong></article>
         <article class="locked-setting"><span class="ownership-tag hq">Managed by HQ</span><h3>Attendance confirmation</h3><p>A Coach or Center operator confirms attendance; inactivity alone never confirms absence.</p><strong>Network standard · locked at Center</strong></article>
-      </div> : <p class="context-empty">No local Make-Up Token policy is allocated to this context. Northfield policy details remain protected.</p>}
+      </div> : <p class="context-empty">No Make-Up Token policy is available for this operating context.</p>}
       <a class="inline-link" href={attendanceHref}>Review Attendance &amp; Make-Ups →</a>
     </section>
 
@@ -99,7 +99,7 @@ const ownership = (owner) => owner === "Center" ? "Center setting" : owner === "
 
     <section class="configuration-section" id="system-status">
       <div class="configuration-section-heading"><div><p class="eyebrow">Read-only connection view</p><h2>Integrations &amp; System Status</h2></div><span class="ownership-tag platform">Managed outside Center</span></div>
-      <p class="section-copy">Illustrative status only—no external system is connected in this presentation.</p>
+      <p class="section-copy">Review the availability and ownership of services used by this Center.</p>
       <div class="system-status-list">{d.settings.systemStatuses.map((entry) => <article><div><h3>{entry.name}</h3><p>{entry.detail}</p></div><span class="status-chip neutral">{entry.status}</span><small>{ownership(entry.owner)}</small></article>)}</div>
     </section>
   </> : <>
@@ -113,7 +113,6 @@ const ownership = (owner) => owner === "Center" ? "Center setting" : owner === "
     </form>
   </>}
 
-  <aside class="configuration-boundary"><strong>Presentation-only configuration</strong><span>Changes are stored only in this browser. No Production settings, identity systems, security controls, infrastructure, or external integrations are changed.</span></aside>
 </section>
 
 <style>

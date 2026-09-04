@@ -56,11 +56,11 @@ const isHqJourney = perspective === "hq";
 const isCenterJourney = perspective === "center";
 ---
 
-<BaseLayout title={`${roleLabel} Demo · Cognit Learning Hub`} shellVariant="demo-shell" footerVariant="compact" demoPerspective={perspective}>
+<BaseLayout title={`${roleLabel} · Cognit Learning Hub`} shellVariant="demo-shell" footerVariant="compact" demoPerspective={perspective}>
   <main class="deep-demo-page">
     <Container>
       {isCoachJourney ? <CognitCoachJourneyView view={view} /> : isStudentJourney ? <CognitStudentJourneyView view={view} /> : isFamilyJourney ? <CognitFamilyJourneyView view={view} /> : isHqJourney ? <CognitHqView view={view} /> : isCenterJourney ? <CognitCenterView view={view} /> : <CognitDemoDeepView role={perspective} view={view} />}
-      <a class="all-perspectives" href="/learninghub/demo">← All demo perspectives</a>
+      <a class="all-perspectives" href="/learninghub/demo">← All perspectives</a>
     </Container>
   </main>
   <style>

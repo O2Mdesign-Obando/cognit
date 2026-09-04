@@ -19,13 +19,13 @@ export const COGNIT_HQ_DEMO = Object.freeze({
     { type: "Support", title: "One Center-impacting issue is escalated", detail: "A roster sync issue needs a network operations owner.", href: "/learninghub/demo/hq/support" },
     { type: "Onboarding", title: "Cedar Grove onboarding needs a Coach assignment", detail: "Training can continue after the local staffing checkpoint.", href: "/learninghub/demo/hq/centers" },
     { type: "Reporting", title: "Monthly network summary is ready", detail: "Aggregate trends are available for review.", href: "/learninghub/demo/hq/performance" },
-    { type: "Credentials", title: "Three Coach credentials approach review", detail: "Internal demo reminders only; no certification claim is made.", href: "/learninghub/demo/hq/governance" }
+    { type: "Credentials", title: "Three Coach credentials approach review", detail: "Three credential records are ready for governance review.", href: "/learninghub/demo/hq/governance" }
   ],
   curriculum: [
     { name: "Creative App Foundations", category: "Digital making", status: "Published", version: "2.4", adoption: "5 of 6 Centers" },
-    { name: "Robotics Systems", category: "Engineering", status: "Published", version: "Demo 1.8", adoption: "4 of 6 Centers" },
-    { name: "Digital Storytelling", category: "Creative computing", status: "Draft", version: "Demo 1.2", adoption: "0 of 6 Centers" },
-    { name: "AI Foundations", category: "AI literacy", status: "Published", version: "Demo 1.0", adoption: "3 of 6 Centers" }
+    { name: "Robotics Systems", category: "Engineering", status: "Published", version: "1.8", adoption: "4 of 6 Centers" },
+    { name: "Digital Storytelling", category: "Creative computing", status: "Draft", version: "1.2", adoption: "0 of 6 Centers" },
+    { name: "AI Foundations", category: "AI literacy", status: "Published", version: "1.0", adoption: "3 of 6 Centers" }
   ],
   journeyTemplates: [
     { name: "Creative Computing Journey", duration: "8 weeks", status: "Published", centers: 5 },
@@ -33,15 +33,15 @@ export const COGNIT_HQ_DEMO = Object.freeze({
     { name: "Advanced Problem Solving", duration: "10 weeks", status: "Draft", centers: 0 }
   ],
   policies: [
-    { name: "Data handling standard", version: "Demo 3.2", status: "Active" },
+    { name: "Data handling standard", version: "3.2", status: "Active" },
     { name: "Student safety guideline", version: "2.1", status: "Active" },
-    { name: "Coach conduct standard", version: "Demo 1.4", status: "Active" },
-    { name: "Center operations standard", version: "Demo 4.0", status: "Under review" }
+    { name: "Coach conduct standard", version: "1.4", status: "Active" },
+    { name: "Center operations standard", version: "4.0", status: "Under review" }
   ],
   support: [
-    { id: "HQ-DEMO-0842", center: "Riverton Learning Studio", summary: "Roster sync unavailable for one teaching block", priority: "High", status: "Escalated", owner: "Avery Chen", age: "4 hours" },
-    { id: "HQ-DEMO-0839", center: "Sunfield Learning Works", summary: "Journey preview returns an incomplete image", priority: "Medium", status: "In progress", owner: "Platform support", age: "1 day" },
-    { id: "HQ-DEMO-0835", center: "Oak Harbor Lab", summary: "Local schedule configuration question", priority: "Low", status: "Awaiting Center", owner: "Network operations", age: "2 days" }
+    { id: "HQ-0842", center: "Riverton Learning Studio", summary: "Roster sync unavailable for one teaching block", priority: "High", status: "Escalated", owner: "Avery Chen", age: "4 hours" },
+    { id: "HQ-0839", center: "Sunfield Learning Works", summary: "Journey image is incomplete", priority: "Medium", status: "In progress", owner: "Platform support", age: "1 day" },
+    { id: "HQ-0835", center: "Oak Harbor Lab", summary: "Schedule configuration question", priority: "Low", status: "Awaiting Center", owner: "Network operations", age: "2 days" }
   ],
   releases: [
     { name: "Family journey refinements", version: "2.5", stage: "In development", target: "September planning window" },

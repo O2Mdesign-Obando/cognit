@@ -41,7 +41,7 @@ const sections = {
 ---
 
 <div class="loop-navigation">
-  <nav class="loop-sections" aria-label={`${role} demo sections`}>
+  <nav class="loop-sections" aria-label={`${role} sections`}>
     {sections[role].map(([id, label, href]) => (
       <a href={role === "center" ? centerContextSectionHref(context, id) : href} aria-current={active === id ? "page" : undefined}>{label}</a>
     ))}

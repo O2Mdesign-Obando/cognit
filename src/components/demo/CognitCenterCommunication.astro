@@ -30,8 +30,6 @@ const statusLabel = (value) => value === "ready_to_send" ? "Ready to send" : val
     <a href={href("announcements")} aria-current={isAnnouncements ? "page" : undefined}>Announcements <span>{announcements.length}</span></a>
   </nav>
 
-  <aside class="communication-boundary"><strong>Presentation only — messages are not actually delivered.</strong><span>Sending and publishing update only this presentation state.</span></aside>
-
   {!isCompose && !isAnnouncements && threads.length > 0 && selectedThread && <>
     <section class="communication-filters" aria-label="Filter messages">
       <label>Search conversations<input type="search" placeholder="Person, subject, Student, or Course" data-message-search /></label>
@@ -63,7 +61,7 @@ const statusLabel = (value) => value === "ready_to_send" ? "Ready to send" : val
         </div>
         <form class="reply-composer" data-reply-form data-thread-id={selectedThread.id} data-participant={selectedThread.participantLabel}>
           <label>Reply<textarea name="message" rows="4" required placeholder={`Reply to ${selectedThread.participantLabel}`}></textarea></label>
-          <label>Sample attachment<select name="attachment"><option value="">No attachment</option><option value="progress-summary.pdf|PDF progress summary|236 KB">progress-summary.pdf</option><option value="class-material-checklist.pdf|PDF checklist|184 KB">class-material-checklist.pdf</option><option value="session-reference.png|Image reference|420 KB">session-reference.png</option></select></label>
+          <label>Attachment<select name="attachment"><option value="">No attachment</option><option value="progress-summary.pdf|PDF progress summary|236 KB">progress-summary.pdf</option><option value="class-material-checklist.pdf|PDF checklist|184 KB">class-material-checklist.pdf</option><option value="session-reference.png|Image reference|420 KB">session-reference.png</option></select></label>
           <div class="selected-attachment" data-reply-attachment hidden><span></span><button type="button" data-remove-reply-attachment>Remove</button></div>
           <div class="communication-actions"><button class="secondary" type="button" data-save-reply-draft>Save draft</button><button type="submit">Send reply</button></div>
           <p role="status" aria-live="polite" data-reply-status></p>
@@ -85,12 +83,12 @@ const statusLabel = (value) => value === "ready_to_send" ? "Ready to send" : val
       </div>
       <label>Subject<input name="subject" required /></label>
       <label>Message<textarea name="message" rows="8" required></textarea></label>
-      <label>Sample attachment<select name="attachment"><option value="">No attachment</option><option value="progress-summary.pdf|PDF progress summary|236 KB">progress-summary.pdf · PDF progress summary</option><option value="class-material-checklist.pdf|PDF checklist|184 KB">class-material-checklist.pdf · PDF checklist</option><option value="session-reference.png|Image reference|420 KB">session-reference.png · Image reference</option></select></label>
+      <label>Attachment<select name="attachment"><option value="">No attachment</option><option value="progress-summary.pdf|PDF progress summary|236 KB">progress-summary.pdf · PDF progress summary</option><option value="class-material-checklist.pdf|PDF checklist|184 KB">class-material-checklist.pdf · PDF checklist</option><option value="session-reference.png|Image reference|420 KB">session-reference.png · Image reference</option></select></label>
       <div class="selected-attachment" data-compose-attachment hidden><span></span><button type="button" data-remove-compose-attachment>Remove</button></div>
       <div class="communication-actions"><button class="secondary" type="button" data-save-message-draft>Save draft</button><button type="submit">Send</button></div>
       <p role="status" aria-live="polite" data-compose-status></p>
     </form>
-    <section class="sent-confirmation" data-sent-confirmation tabindex="-1" hidden><span aria-hidden="true">✓</span><h2>Sent</h2><p>The conversation is updated in this presentation. Nothing was delivered outside Cognit.</p><dl><div><dt>Recipient</dt><dd data-sent-recipient></dd></div><div><dt>Subject</dt><dd data-sent-subject></dd></div><div><dt>State</dt><dd>Sent</dd></div></dl><a class="communication-primary" href={href()}>Open Messages</a></section>
+    <section class="sent-confirmation" data-sent-confirmation tabindex="-1" hidden><span aria-hidden="true">✓</span><h2>Sent</h2><p>The conversation has been updated.</p><dl><div><dt>Recipient</dt><dd data-sent-recipient></dd></div><div><dt>Subject</dt><dd data-sent-subject></dd></div><div><dt>State</dt><dd>Sent</dd></div></dl><a class="communication-primary" href={href()}>Open Messages</a></section>
   </>}
 
   {isAnnouncements && !isNewAnnouncement && <section class="announcement-list" data-announcement-list>

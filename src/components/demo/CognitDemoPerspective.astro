@@ -96,7 +96,7 @@ const titleCase = (value) => String(value || "").replaceAll("_", " ").replace(/^
 
       <div class="two-column student-supporting">
         <a class="panel artifact-card actionable-card" href="/learninghub/demo/student/artifact"><span class="section-kicker">Your latest work</span><h3>{model.artifact.label}</h3><p>Your Coach connected this project artifact to today’s learning.</p><span class="card-action">Open project artifact →</span></a>
-        <a class="panel actionable-card" href="/learninghub/demo/student/courses/lena"><span class="section-kicker">Continuity example</span><h3>{model.continuityExample.student.name}</h3><p>{model.continuityExample.courses.map((item) => item.name).join(" and ")} remain separate learning paths under one learner profile.</p><span class="card-action">View multi-course example →</span></a>
+        <a class="panel actionable-card" href="/learninghub/demo/student/courses/lena"><span class="section-kicker">Course continuity</span><h3>{model.continuityExample.student.name}</h3><p>{model.continuityExample.courses.map((item) => item.name).join(" and ")} remain separate learning paths under one learner profile.</p><span class="card-action">View course paths →</span></a>
       </div>
     </div>
   )}

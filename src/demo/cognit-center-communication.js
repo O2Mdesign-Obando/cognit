@@ -152,7 +152,7 @@ document.querySelectorAll("[data-communication-root]").forEach((root) => {
         const threadState = root.querySelector("[data-thread-state]");
         if (threadState) threadState.textContent = "Sent";
         replyForm.reset();
-        replyForm.querySelector("[data-reply-status]").textContent = "Sent. The thread is updated in this presentation.";
+        replyForm.querySelector("[data-reply-status]").textContent = "Sent. The thread is updated.";
         localReplies?.lastElementChild?.scrollIntoView({ block: "nearest" });
       });
     }
@@ -298,7 +298,7 @@ document.querySelectorAll("[data-communication-root]").forEach((root) => {
       const values = Object.fromEntries(new FormData(announcementForm));
       communications.announcements.unshift({ id: `local-announcement-${Date.now()}`, context, title: values.title, body: values.body, audienceId: values.audience, audienceLabel: announcementForm.elements.namedItem("audience").selectedOptions[0].textContent, state: announcementState, scheduledAt: values.scheduledAt || null, createdAt: "Sep 2, 2026" });
       persistCommunication(state, communications);
-      announcementForm.querySelector("[data-announcement-status]").textContent = announcementState === "draft" ? "Draft saved." : announcementState === "scheduled" ? "Scheduled. The announcement is visible in Announcements." : "Published in this presentation.";
+      announcementForm.querySelector("[data-announcement-status]").textContent = announcementState === "draft" ? "Draft saved." : announcementState === "scheduled" ? "Scheduled. The announcement is visible in Announcements." : "Published.";
     };
     root.querySelector("[data-save-announcement-draft]")?.addEventListener("click", () => saveAnnouncement("draft"));
     announcementForm.addEventListener("submit", (event) => { event.preventDefault(); saveAnnouncement(announcementForm.elements.namedItem("timing").value); });

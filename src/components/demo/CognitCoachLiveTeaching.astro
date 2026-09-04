@@ -85,27 +85,27 @@ const lena = model.roster.find((learner) => learner.id === "demo-student-lena-gr
         </div>
         <p class="bounded-note" data-evidence-note>This evidence belongs to Eli’s current Creative App Lab learning focus.</p>
         <div class="action-row">
-          <button class="secondary-action" type="button" data-attach-evidence>Attach existing demo evidence</button>
+          <button class="secondary-action" type="button" data-attach-evidence>Attach existing evidence</button>
           <button class="text-button" type="button" data-inspect-evidence disabled>Inspect evidence</button>
         </div>
         <div class="artifact-inspection" data-artifact-inspection hidden>
           <h4 data-inspection-title>{model.primary.evidence.label}</h4>
-          <div class="evidence-gallery" aria-label="Representative evidence media">
+          <div class="evidence-gallery" aria-label="Evidence media">
             <figure>
-              <div class="evidence-screen" role="img" aria-label="Representative placeholder screenshot of the Habit Tracker Today screen"><span>Habit</span><strong>Today</strong><i>✓</i></div>
-              <figcaption><strong>Prototype screen</strong><span>Screenshot placeholder</span></figcaption>
+              <div class="evidence-screen" role="img" aria-label="Screenshot of the Habit Tracker Today screen"><span>Habit</span><strong>Today</strong><i>✓</i></div>
+              <figcaption><strong>Prototype screen</strong><span>Screenshot</span></figcaption>
             </figure>
             <figure>
               <DemoImage image={COGNIT_DEMO_IMAGES.evidence.prototypePhoto} size="evidence-photo" />
-              <figcaption><strong>Prototype testing</strong><span>Photo placeholder</span></figcaption>
+              <figcaption><strong>Prototype testing</strong><span>Photo</span></figcaption>
             </figure>
             <figure>
-              <div class="evidence-video" role="img" aria-label="Representative placeholder thumbnail for a short prototype test video"><span aria-hidden="true">▶</span><strong>Interaction test</strong></div>
-              <figcaption><strong>Interaction test</strong><span>Video thumbnail placeholder</span></figcaption>
+              <div class="evidence-video" role="img" aria-label="Thumbnail for a short prototype test video"><span aria-hidden="true">▶</span><strong>Interaction test</strong></div>
+              <figcaption><strong>Interaction test</strong><span>Video</span></figcaption>
             </figure>
           </div>
           <dl>
-            <div><dt>Evidence type</dt><dd>Screenshot, photo, and video placeholders</dd></div>
+            <div><dt>Evidence type</dt><dd>Screenshot, photo, and video</dd></div>
             <div><dt>Learner</dt><dd data-inspection-learner>Eli Morgan</dd></div>
             <div><dt>Course</dt><dd>Creative App Lab</dd></div>
             <div><dt>Learning focus</dt><dd>{model.session.learningFocus}</dd></div>
@@ -247,7 +247,7 @@ const lena = model.roster.find((learner) => learner.id === "demo-student-lena-gr
       }
 
       const hasArtifact = Boolean(learner.artifact);
-      setText("[data-artifact-title]", hasArtifact ? learner.artifact.label : "No demo evidence available");
+      setText("[data-artifact-title]", hasArtifact ? learner.artifact.label : "No evidence available");
       setText("[data-evidence-state]", learner.evidenceAttached ? "Attached" : "Not attached");
       setText("[data-evidence-note]", hasArtifact
         ? `This evidence belongs to ${learner.name}’s current Creative App Lab learning focus.`
@@ -257,7 +257,7 @@ const lena = model.roster.find((learner) => learner.id === "demo-student-lena-gr
       const attachButton = find("[data-attach-evidence]");
       if (attachButton instanceof HTMLButtonElement) {
         attachButton.disabled = !hasArtifact || learner.evidenceAttached || learner.submitted;
-        attachButton.textContent = learner.evidenceAttached ? "Evidence attached" : hasArtifact ? "Attach existing demo evidence" : "No demo evidence available";
+        attachButton.textContent = learner.evidenceAttached ? "Evidence attached" : hasArtifact ? "Attach existing evidence" : "No evidence available";
       }
       const inspectButton = find("[data-inspect-evidence]");
       if (inspectButton instanceof HTMLButtonElement) inspectButton.disabled = !learner.evidenceAttached;
