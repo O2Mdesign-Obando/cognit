@@ -55,11 +55,11 @@ const meta = {
     reporting: ["Reporting", "Learning update states", "See why one update flows normally and one returns for clarification."]
   },
   student: {
-    "my-work": ["My Work", "Habit Tracker prototype", "Current work, completed steps, and the next improvement."],
-    artifact: ["Project artifact", "Habit Tracker — interaction flow prototype", "The work connected to today’s learning focus."],
-    progress: ["Progress", "Creative App Lab progression", "Completed, current, and next—expressed in learning language."],
-    courses: ["Courses", item === "lena" ? "Lena Grant · two active courses" : "My active course", "One learner identity can participate in separate course paths."],
-    journey: ["Learning Journey", item === "eli" ? "A working first flow, improved through testing" : "Published learning stories", "A learner-readable account of what changed and what comes next."]
+    "my-work": ["My Work", "Habit Tracker prototype", "See what you’ve finished, what you’re working on, and what comes next."],
+    artifact: ["Latest work", "Habit Tracker — interaction flow prototype", "The project you worked on today."],
+    progress: ["Progress", "Creative App Lab progress", "See what you’ve completed, what you’re doing now, and what comes next."],
+    courses: ["Courses", item === "lena" ? "Lena Grant · two active courses" : "My active course", item === "lena" ? "One student can participate in separate courses." : "Keep learning in Creative App Lab or explore Lena’s separate course paths."],
+    journey: ["Learning Journey", item === "eli" ? "A working first flow, improved through testing" : "Published learning stories", "An easy way to see what changed and what comes next."]
   },
   family: {
     journey: ["Learning Journey", item === "eli" ? "A working first flow, improved through testing" : "Published learning updates", "The Family-facing story translated from the same learning event."],
@@ -93,10 +93,6 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
 </header>
 
 <div class="deep-content" data-demo-view={`${role}/${view}`}>
-  {role === "student" && <>
-    <aside class="publication-sync publication-sync--held" data-center-publication-held><strong>Same-event update held at Center review</strong><span>Current work and course progress remain available while the new story awaits release.</span></aside>
-    <aside class="publication-sync publication-sync--published" data-center-published-event hidden><strong>Same-event update published</strong><span>The Center-reviewed story now appears consistently in Student and Family views.</span></aside>
-  </>}
   {role === "center" && section === "schedule" && !item && (
     selectedContextSessions.length ? <section class="record-list" aria-label={`${selectedContext.name} sessions`}>
       {selectedContextSessions.map((session) => {
@@ -190,7 +186,7 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   )}
 
   {role === "student" && section === "my-work" && (
-    <section class="detail-stack"><figure class="narrative-figure"><DemoImage image={COGNIT_DEMO_IMAGES.narrative.robotics} size="narrative-card" loading="eager" /><figcaption>Coding and robotics learning context</figcaption></figure><article class="detail-card"><span class="eyebrow">Current project</span><h2>{eliEvent.evidence.label}</h2><p>{eliEvent.challenge}</p><div class="sequence"><div><b>Done</b><span>{eliEvent.completed}</span></div><div><b>Now</b><span>{eliEvent.challenge}</span></div><div><b>Next</b><span>{eliEvent.next}</span></div></div></article><a class="primary-link" href="/learninghub/demo/student/artifact">Open project artifact →</a></section>
+    <section class="student-project-overview"><figure class="narrative-figure"><DemoImage image={COGNIT_DEMO_IMAGES.narrative.robotics} size="narrative-card" loading="eager" /></figure><article class="detail-card"><span class="eyebrow">Current project</span><h2>{eliEvent.evidence.label}</h2><p>{eliEvent.challenge}</p><div class="sequence" aria-label="Project progress"><div class="complete"><span class="progress-marker" aria-hidden="true">✓</span><div><b>Done</b><span>{eliEvent.completed}</span></div></div><div class="current"><span class="progress-marker" aria-hidden="true">○</span><div><b>Now</b><span>{eliEvent.challenge}</span></div></div><div><span class="progress-marker" aria-hidden="true">–</span><div><b>Next</b><span>{eliEvent.next}</span></div></div></div><a class="primary-link" href="/learninghub/demo/student/artifact">Open my project →</a></article></section>
   )}
 
   {role === "student" && section === "artifact" && (
@@ -198,11 +194,11 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   )}
 
   {role === "student" && section === "progress" && (
-    <section class="detail-card"><span class="eyebrow">Creative App Lab</span><h2>Completed, current, next</h2><div class="sequence"><div><b>Completed</b><span>{eliEvent.completed}</span></div><div><b>Current</b><span>{eliEvent.challenge}</span></div><div><b>Next</b><span>{eliEvent.next}</span></div></div><div class="accessible-progress"><div><strong>{eliEvent.progression.label}</strong><span>Your next step is ready.</span></div><div role="progressbar" aria-valuemin="0" aria-valuemax={eliEvent.progression.total} aria-valuenow={eliEvent.progression.completed} aria-label={eliEvent.progression.label}><span style="width:66.67%"></span></div></div></section>
+    <section class="detail-card"><span class="eyebrow">Creative App Lab</span><h2>Completed, current, next</h2><div class="sequence" aria-label="Course progress"><div class="complete"><span class="progress-marker" aria-hidden="true">✓</span><div><b>Completed</b><span>{eliEvent.completed}</span></div></div><div class="current"><span class="progress-marker" aria-hidden="true">○</span><div><b>Current</b><span>{eliEvent.challenge}</span></div></div><div><span class="progress-marker" aria-hidden="true">–</span><div><b>Next</b><span>{eliEvent.next}</span></div></div></div><div class="accessible-progress"><div><strong>{eliEvent.progression.label}</strong><span>Your next step is ready.</span></div><div role="progressbar" aria-valuemin="0" aria-valuemax={eliEvent.progression.total} aria-valuenow={eliEvent.progression.completed} aria-label={eliEvent.progression.label}><span style="width:66.67%"></span></div></div></section>
   )}
 
   {role === "student" && section === "courses" && !item && (
-    <section class="card-grid two"><article class="detail-card"><span class="eyebrow">Active course</span><h2>Creative App Lab</h2><p>{findCourse("demo-course-creative-app-lab").focus}</p><small>Coach: Jordan Ellis</small></article><a class="entity-card" href="/learninghub/demo/student/courses/lena"><DemoImage image={getDemoStudentImage("demo-student-lena-grant")} size="avatar-md" /><span>Course continuity</span><h2>View Lena Grant</h2><p>See two course paths under one learner identity.</p><b>View Lena →</b></a></section>
+    <section class="card-grid two"><article class="detail-card active-course-card"><div class="compact-identity"><DemoImage image={getDemoStudentImage("demo-student-eli-morgan")} size="avatar-md" loading="eager" /><div><span class="eyebrow">Active course</span><h2>Creative App Lab</h2></div></div><p>{findCourse("demo-course-creative-app-lab").focus}</p><p class="course-coach"><span>Coach</span><strong>Jordan Ellis</strong></p><a class="primary-link" href="/learninghub/demo/student/my-work">Continue course →</a></article><a class="entity-card" href="/learninghub/demo/student/courses/lena"><DemoImage image={getDemoStudentImage("demo-student-lena-grant")} size="avatar-md" /><span>Course continuity</span><h2>View Lena Grant</h2><p>See two course paths for one student.</p><b>View Lena →</b></a></section>
   )}
 
   {role === "student" && section === "courses" && item === "lena" && (
@@ -242,26 +238,22 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   )}
 </div>
 
-<script>
-  import { applyCenterPublicationState } from "../../demo/cognit-publication-sync.js";
-  document.querySelectorAll('[data-demo-view^="student/"]').forEach((root) => applyCenterPublicationState(root));
-</script>
-
 <style>
   .deep-heading { max-width: 820px; margin-bottom: 30px; }
   .deep-heading > a { color: var(--color-muted); font-size: .82rem; font-weight: 850; text-decoration: underline; text-underline-offset: 3px; }
   .deep-heading > span, .eyebrow, .entity-card > span, .record-row > div > span, .fact-grid span { display: block; margin-top: 16px; color: var(--color-muted); font-size: .72rem; font-weight: 950; letter-spacing: .04em; text-transform: uppercase; }
   .deep-heading h1 { margin: 6px 0 10px; color: var(--color-ink); font-size: clamp(2.5rem, 5vw, 4.2rem); }
   .deep-heading p { max-width: 65ch; margin: 0; font-size: 1.04rem; }
-  .deep-content, .detail-stack { display: grid; gap: 18px; }.deep-content [hidden]{display:none!important}.publication-sync{display:grid;gap:4px;padding:15px 18px;border:1px solid var(--color-border);border-left:5px solid var(--cognit-brand-accent);border-radius:12px;background:#fff7e8}.publication-sync--published{border-left-color:var(--cognit-brand-progress);background:#eaf8f5}.publication-sync span{color:var(--color-muted)}
+  .deep-content, .detail-stack { display: grid; gap: 18px; }.deep-content [hidden]{display:none!important}
   .student-work-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: -8px 0 28px; padding: 8px; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; box-shadow: var(--shadow-soft); }
   .student-work-nav a { padding: 10px 15px; border-radius: 9px; color: var(--color-ink); font-weight: 850; text-decoration: none; }
   .student-work-nav a[aria-current="page"] { background: var(--color-ink); color: #fff; }
   .profile-heading, .compact-identity { display: flex; align-items: center; gap: 18px; }
   .profile-heading > div, .compact-identity > div { min-width: 0; }
   .profile-heading .eyebrow, .compact-identity .eyebrow { margin-top: 0; }
-  .narrative-figure { justify-self: center; width: 100%; max-width: 900px; margin: 0; padding: 10px; border: 1px solid var(--color-border); border-radius: 16px; background: #fff; box-shadow: var(--shadow-soft); }
-  .narrative-figure figcaption { padding: 9px 5px 2px; color: var(--color-muted); font-size: .78rem; font-weight: 800; }
+  .student-project-overview { display: grid; grid-template-columns: minmax(210px, .52fr) minmax(0, 1.48fr); align-items: stretch; gap: 18px; }
+  .narrative-figure { width: 100%; min-width: 0; margin: 0; padding: 10px; border: 1px solid var(--color-border); border-radius: 16px; background: #fff; box-shadow: var(--shadow-soft); }
+  .student-project-overview .narrative-figure :global(img) { width: 100%; height: 100%; object-fit: cover; }
   .card-grid { display: grid; gap: 16px; }
   .card-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .card-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -288,6 +280,10 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   .state { width: fit-content; padding: 5px 9px; border-radius: 999px; background: var(--color-sky); color: var(--color-ink); font-size: .72rem; font-weight: 950; text-transform: capitalize; }
   .state.in_progress, .state.present { background: var(--color-mint); color: #08746f; }
   .detail-card > p, .story-detail > p { max-width: 72ch; line-height: 1.7; }
+  .active-course-card { display: flex; flex-direction: column; align-items: flex-start; }
+  .active-course-card .primary-link { margin-top: auto; }
+  .course-coach { display: inline-flex; align-items: center; gap: 8px; width: fit-content; margin: 8px 0 22px; padding: 7px 11px; border-radius: 999px; background: var(--color-blue-soft); color: var(--color-ink); }
+  .course-coach span { color: var(--color-muted); font-size: .72rem; font-weight: 950; letter-spacing: .04em; text-transform: uppercase; }
   .detail-card dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 24px 0 0; }
   .detail-card dl > div { padding: 15px; border-radius: 10px; background: var(--cognit-surface-secondary); }
   dt { color: var(--color-muted); font-size: .72rem; font-weight: 950; text-transform: uppercase; }
@@ -319,8 +315,12 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   .message-thread summary small { color: var(--color-muted); }
   .message-thread > p { margin: 0; padding: 18px 22px; border-top: 1px solid var(--color-border); background: var(--color-blue-soft); }
   .sequence { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
-  .sequence > div { display: grid; gap: 8px; padding: 18px; border-radius: 10px; background: var(--cognit-surface-secondary); }
+  .sequence > div { display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: start; align-items: start; gap: 12px; min-height: 100%; padding: 18px; border-radius: 10px; background: var(--cognit-surface-secondary); }
+  .sequence > div > div { display: grid; align-content: start; gap: 8px; }
   .sequence b { color: var(--color-ink); }
+  .progress-marker { display: grid; width: 28px; height: 28px; place-items: center; border: 2px solid #9eb2c1; border-radius: 50%; color: var(--color-muted); font-weight: 950; line-height: 1; }
+  .sequence .complete .progress-marker { border-color: var(--cognit-brand-progress); background: var(--cognit-brand-progress); color: #fff; }
+  .sequence .current .progress-marker { border-color: var(--cognit-brand-accent); color: #965600; }
   .positive-card { border-top: 5px solid var(--cognit-brand-progress); }
   .attention-card { border-top: 5px solid var(--cognit-brand-accent); }
   .artifact-detail { display: grid; grid-template-columns: minmax(220px, .7fr) minmax(0, 1.3fr); align-items: center; gap: 30px; }
@@ -353,7 +353,8 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   .lead-fact { color: var(--color-ink); font-size: 1.15rem; }
   .quiet-note { color: var(--color-muted); font-size: .9rem; }
   @media (max-width: 760px) {
-    .card-grid.two, .card-grid.three, .artifact-detail, .evidence-gallery { grid-template-columns: 1fr; }
+    .card-grid.two, .card-grid.three, .student-project-overview, .artifact-detail, .evidence-gallery { grid-template-columns: 1fr; }
+    .student-project-overview .narrative-figure { max-height: 280px; }
     .record-row { grid-template-columns: 1fr; gap: 10px; }
     .detail-card dl, .fact-grid, .sequence { grid-template-columns: 1fr; }
     .accessible-progress > div:first-child, .progress-record > div, .course-progress-heading { align-items: flex-start; flex-direction: column; }

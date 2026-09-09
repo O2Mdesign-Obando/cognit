@@ -11,6 +11,14 @@ const isLesson = view === "lesson";
 const isJourneyDetail = view === "journey/eli";
 const isWorkspace = ["active", "reflection", "complete"].includes(view);
 const initialPhase = view === "reflection" ? "reflection" : view === "complete" ? "complete" : "active";
+const formatSessionTime = (value) => {
+  const [hour, minute] = value.split(":").map(Number);
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const displayHour = hour % 12 || 12;
+  return `${displayHour}:${String(minute).padStart(2, "0")} ${suffix}`;
+};
+const upcomingDay = model.session.recurrence.split(" and ").at(-1);
+const upcomingTime = `${formatSessionTime(model.session.startTime)}–${formatSessionTime(model.session.endTime)}`;
 const resources = [
   { id: "walkthrough", kind: "Walkthrough", title: "Interaction-flow walkthrough", detail: "A short, silent walkthrough." },
   { id: "reference", kind: "Reference", title: "Interaction-flow pattern", detail: "A reference for moving between Habit Tracker screens." },
@@ -20,10 +28,6 @@ const resources = [
 
 <div class="student-journey" data-student-journey data-initial-phase={initialPhase}>
   {!isWorkspace && <DemoLoopNav role="student" active="today" />}
-  {!isWorkspace && <>
-    <aside class="publication-sync publication-sync--held" data-center-publication-held><strong>Same-event update held at Center review</strong><span>Your current work remains visible; the new published story is not released yet.</span></aside>
-    <aside class="publication-sync publication-sync--published" data-center-published-event hidden><strong>Same-event update published</strong><span>Your newest Center-reviewed learning story is now available across Student and Family views.</span></aside>
-  </>}
 
   {isHome && (
     <div class="student-home" data-student-home>
@@ -34,7 +38,7 @@ const resources = [
 
       <section class="learning-hero" aria-labelledby="today-work-title">
         <div class="learning-copy">
-          <span class="course-pill">{model.course.name} · {model.session.label}</span>
+          <span class="course-pill">{model.course.name} · Today at {formatSessionTime(model.session.startTime)}</span>
           <h2 id="today-work-title">Build and improve your Habit Tracker flow.</h2>
           <p>{model.session.learningFocus}</p>
           <div class="coach-line"><span>Coach</span><strong>{model.coach.name}</strong></div>
@@ -52,6 +56,11 @@ const resources = [
         </ol>
       </section>
 
+      <section class="upcoming-session" aria-labelledby="upcoming-session-title">
+        <div><span class="eyebrow">Upcoming session</span><h2 id="upcoming-session-title">{model.course.name}</h2><p>Habit Tracker · {model.session.room}</p></div>
+        <p class="upcoming-session-time"><span>{upcomingDay}</span><strong>{upcomingTime}</strong></p>
+      </section>
+
       <div class="home-grid">
         <section class="panel" aria-labelledby="courses-title"><h2 id="courses-title">Your courses</h2><article><span class="state-word">Active</span><div><strong>Creative App Lab</strong><small>Habit Tracker · current learning focus</small></div><a href="/learninghub/demo/student/courses">View courses →</a></article><article><span class="state-word upcoming">Continuity</span><div><strong>Lena’s course paths</strong><small>Separate course paths remain separate.</small></div><a href="/learninghub/demo/student/courses/lena">Explore courses →</a></article></section>
         <section class="panel" aria-labelledby="coach-note-title"><h2 id="coach-note-title">A note from Jordan</h2><blockquote>“Keep the core flow simple, test it with someone else, and notice where they hesitate.”</blockquote><p class="boundary-note">Guidance from Jordan for this activity.</p></section>
@@ -66,37 +75,35 @@ const resources = [
       <section class="lesson-card" aria-labelledby="lesson-title">
         <span class="eyebrow">Lesson context</span><h1 id="lesson-title">Prototype and improve the interaction flow.</h1>
         <p class="objective"><strong>Objective:</strong> Build the core Habit Tracker flow, then test one interaction and revise a confusing step.</p>
-        <div class="context-grid"><article><span>Previous session</span><strong>{model.completed}</strong></article><article><span>Expected learning</span><strong>Explain one design choice and improve it after testing.</strong></article><article><span>Learning environment</span><strong>Your existing app-building workspace</strong></article></div>
-        <div class="resource-grid" aria-label="Today’s resources">{resources.map((resource) => <button type="button" data-open-resource={resource.id}><span>{resource.kind}</span><strong>{resource.title}</strong><small>Open preview →</small></button>)}</div>
+        <div class="context-grid"><article><span>Previous session</span><strong>{model.completed}</strong></article><article><span>What you’ll learn</span><strong>Explain one design choice and improve it after testing.</strong></article><article><span>Where you’ll work</span><strong>Your app-building workspace</strong></article></div>
+        <div class="resource-grid" aria-label="Today’s resources">{resources.map((resource) => <button type="button" data-open-resource={resource.id}><span>{resource.kind}</span><strong>{resource.title}</strong><small>Open resource →</small></button>)}</div>
         <a class="primary-button centered" href="/learninghub/demo/student/active">Open the learning workspace →</a>
-        <p class="quiet-copy">The Learning Hub stays available for guidance; it does not replace the app-building environment.</p>
+        <p class="quiet-copy">Keep this page open for guidance while you work.</p>
       </section>
     </div>
   )}
 
   {isJourneyDetail && <>
     <section class="journey-held panel" data-center-publication-held aria-labelledby="student-held-story-title">
-      <span class="eyebrow">Current work · publication held</span>
+      <span class="eyebrow">Your current work</span>
       <h1 id="student-held-story-title">Your Creative App Lab story is still being reviewed.</h1>
-      <p>Your learning remains connected while the newest story waits for the Center’s publication decision.</p>
+      <p>You can keep working while your newest learning story is reviewed.</p>
       <ol class="journey-spine">
-        <li><span>Completed</span><strong>{model.completed}</strong></li>
-        <li><span>Current learning focus</span><strong>{model.challenge}</strong></li>
-        <li><span>What comes next</span><strong>{model.next}</strong></li>
+        <li class="complete"><span class="journey-marker" aria-hidden="true">✓</span><div><span>Completed</span><strong>{model.completed}</strong></div></li>
+        <li class="current"><span class="journey-marker" aria-hidden="true">○</span><div><span>Current</span><strong>{model.challenge}</strong></div></li>
+        <li><span class="journey-marker" aria-hidden="true">–</span><div><span>Next</span><strong>{model.next}</strong></div></li>
       </ol>
-      <p class="boundary-note">Coach observation and connected evidence are not exposed here before publication.</p>
     </section>
     <article class="published-journey" data-center-published-event hidden aria-labelledby="student-published-story-title">
       <header><span class="eyebrow">Published Learning Journey · {model.course.name}</span><h1 id="student-published-story-title">{model.publishedStory}</h1><p>{model.familyUpdate}</p></header>
       <section class="panel" aria-labelledby="student-story-spine-title"><h2 id="student-story-spine-title">How this learning moved</h2><ol class="journey-spine"><li><span>Completed</span><strong>{model.completed}</strong></li><li><span>Learning focus</span><strong>{model.challenge}</strong></li><li><span>Coach observation</span><strong>{model.observation}</strong></li><li><span>What comes next</span><strong>{model.next}</strong></li></ol></section>
-      <section class="panel evidence-summary" aria-labelledby="student-evidence-title"><div class="artifact-preview" aria-hidden="true"><b>Habit</b><strong>Today</strong><span>✓</span></div><div><span class="eyebrow">Connected evidence</span><h2 id="student-evidence-title">{model.artifact.label}</h2><p>{model.artifact.type.replace("_", " ")} · {model.artifact.status}</p></div></section>
-      <p class="boundary-note">Private or unfinished Student reflection remains outside this published story.</p>
+      <section class="panel evidence-summary" aria-labelledby="student-evidence-title"><div class="artifact-preview" aria-hidden="true"><b>Habit</b><strong>Today</strong><span>✓</span></div><div><span class="eyebrow">Your project</span><h2 id="student-evidence-title">{model.artifact.label}</h2><p>The project connected to this learning story.</p></div></section>
     </article>
   </>}
 
   {isWorkspace && (
-    <div class="student-workspace-shell" data-workspace-shell>
-      <header class="active-session-header"><div><span>Active lesson</span><strong>Creative App Lab · Habit Tracker</strong></div><div><span data-session-phase>{initialPhase === "reflection" ? "Wrapping up" : initialPhase === "complete" ? "Lesson complete" : "Learning in progress"}</span><strong data-student-timer aria-label="Elapsed lesson time">00:00</strong></div></header>
+    <div class:list={["student-workspace-shell", initialPhase !== "complete" && "has-session-header"]} data-workspace-shell>
+      {initialPhase !== "complete" && <header class="active-session-header" data-active-session-header><div><span>Active lesson</span><strong>Creative App Lab · Habit Tracker</strong></div><div><span data-session-phase>{initialPhase === "reflection" ? "Wrapping up" : "Learning in progress"}</span><strong data-student-timer aria-label="Elapsed lesson time">00:00</strong></div></header>}
 
       <section class:list={["active-workspace", initialPhase !== "active" && "is-hidden"]} data-phase-panel="active" aria-labelledby="workspace-title">
         <div class="workspace-main">
@@ -110,7 +117,7 @@ const resources = [
           <p class="help-state" data-help-state hidden><strong>Help requested in this lesson.</strong> Jordan can review the request with the lesson context.</p>
         </div>
         <aside class="workspace-side">
-          <section class="scratchpad"><span class="eyebrow">Your scratchpad</span><label for="student-scratchpad">Quick notes for yourself</label><textarea id="student-scratchpad" data-scratchpad rows="7" placeholder="Add a reminder, idea, or question…"></textarea><small>Only you can see these notes. They are not a Coach observation or Family update.</small></section>
+          <section class="scratchpad"><span class="eyebrow">Your scratchpad</span><label for="student-scratchpad">Quick notes for yourself</label><textarea id="student-scratchpad" data-scratchpad rows="7" placeholder="Add a reminder, idea, or question…"></textarea><small>Only you can see these notes.</small></section>
           <section class="resource-panel"><h2>Helpful resources</h2>{resources.map((resource) => <button type="button" data-open-resource={resource.id}><span>{resource.kind}</span><strong>{resource.title}</strong></button>)}</section>
         </aside>
       </section>
@@ -120,15 +127,15 @@ const resources = [
         <fieldset><legend>Energy or mood</legend><div class="choice-grid" data-choice-group="mood"><button type="button" data-choice="Great">Great</button><button type="button" data-choice="Okay">Okay</button><button type="button" data-choice="Struggled">Struggled</button></div></fieldset>
         <fieldset><legend>What happened?</legend><div class="choice-grid" data-choice-group="outcome"><button type="button" data-choice="I finished the step">I finished the step</button><button type="button" data-choice="I got stuck">I got stuck</button><button type="button" data-choice="I need more time">I need more time</button></div></fieldset>
         <label for="student-reflection">Anything else you want to remember? <span>(optional)</span></label><textarea id="student-reflection" data-reflection-text rows="5" placeholder="Write a short reflection…"></textarea>
-        <p class="boundary-note">This reflection is private unless the Student chooses to share it.</p>
+        <p class="boundary-note">Your reflection stays private unless you choose to share it.</p>
         <div class="reflection-actions"><button class="text-button" type="button" data-skip-reflection>Skip reflection</button><button class="primary-button" type="button" data-submit-reflection>Save reflection and finish</button></div>
       </section>
 
       <section class:list={["complete-panel", initialPhase !== "complete" && "is-hidden"]} data-phase-panel="complete" aria-labelledby="complete-title">
         <DemoImage image={getDemoStudentImage(model.person.id)} size="avatar-md" loading="eager" /><div class="completion-mark" aria-hidden="true">✓</div><span class="eyebrow">Lesson complete</span><h1 id="complete-title" tabindex="-1">Today’s learning step is complete.</h1><p>Creative App Lab · Habit Tracker interaction flow</p>
         <dl><div><dt>Duration</dt><dd data-complete-duration>00:00</dd></div><div><dt>Status</dt><dd>Lesson step completed</dd></div><div data-mood-summary hidden><dt>Your mood</dt><dd data-complete-mood></dd></div><div data-outcome-summary hidden><dt>What happened</dt><dd data-complete-outcome></dd></div><div data-reflection-summary hidden><dt>Your reflection</dt><dd data-complete-reflection></dd></div></dl>
-        <aside><span>What comes next</span><strong>{model.next}</strong><small>No Learning Journey entry was published by this interaction.</small></aside>
-        <a class="primary-button" href="/learninghub/demo/student">Back to Student Today</a>
+        <aside><span>What comes next</span><strong>{model.next}</strong></aside>
+        <a class="primary-button" href="/learninghub/demo/student">Back to my homepage</a>
       </section>
     </div>
   )}
@@ -136,8 +143,8 @@ const resources = [
   {resources.map((resource) => (
     <dialog class="resource-dialog" data-resource-dialog={resource.id} aria-labelledby={`resource-${resource.id}-title`}>
       <form method="dialog"><button class="dialog-close" value="close" aria-label={`Close ${resource.title}`}>×</button></form>
-      <span class="eyebrow">{resource.kind} preview</span><h2 id={`resource-${resource.id}-title`}>{resource.title}</h2><p>{resource.detail}</p>
-      {resource.id === "walkthrough" && <div class="video-shell" role="img" aria-label="Silent walkthrough preview"><span aria-hidden="true">▶</span><strong>Walkthrough preview</strong><small>Silent walkthrough</small></div>}
+      <span class="eyebrow">{resource.kind}</span><h2 id={`resource-${resource.id}-title`}>{resource.title}</h2><p>{resource.detail}</p>
+      {resource.id === "walkthrough" && <div class="video-shell" role="img" aria-label="Interaction-flow walkthrough"><span aria-hidden="true">▶</span><strong>Walkthrough</strong></div>}
       {resource.id === "reference" && <pre aria-label="Interaction-flow reference"><code>{`screen = "Today"\nif action == "add_habit":\n    screen = "New habit"\n\n# Test whether the next screen is clear.`}</code></pre>}
       {resource.id === "checklist" && <ul class="guide-list"><li>Can someone identify the next action?</li><li>Does the screen explain what changed?</li><li>Which step caused hesitation?</li></ul>}
       <form method="dialog"><button class="primary-button" value="close">Return to lesson</button></form>
@@ -158,10 +165,12 @@ const resources = [
     const finish = root.querySelector("[data-finish-lesson]");
     const panels = [...root.querySelectorAll("[data-phase-panel]")];
     const phaseLabel = root.querySelector("[data-session-phase]");
+    const sessionHeader = root.querySelector("[data-active-session-header]");
 
     function showPhase(phase) {
       state.phase = phase;
       panels.forEach((panel) => panel.classList.toggle("is-hidden", panel.getAttribute("data-phase-panel") !== phase));
+      if (sessionHeader instanceof HTMLElement) sessionHeader.hidden = phase === "complete";
       if (phaseLabel) phaseLabel.textContent = phase === "active" ? "Learning in progress" : phase === "reflection" ? "Wrapping up" : "Lesson complete";
       const route = phase === "active" ? "/learninghub/demo/student/active" : `/learninghub/demo/student/${phase}`;
       if (window.location.pathname !== route) history.pushState({}, "", route);
@@ -219,7 +228,7 @@ const resources = [
 </script>
 
 <style>
-  .student-journey { color: var(--color-ink); }.student-journey [hidden]{display:none!important}.publication-sync{display:grid;gap:4px;margin:18px 0 28px;padding:15px 18px;border:1px solid var(--color-border);border-left:5px solid var(--cognit-brand-accent);border-radius:12px;background:#fff7e8}.publication-sync--published{border-left-color:var(--cognit-brand-progress);background:#eaf8f5}.publication-sync span{color:var(--color-muted)}
+  .student-journey { color: var(--color-ink); }.student-journey [hidden]{display:none!important}
   .student-journey h1, .student-journey h2, .student-journey p { margin-top: 0; }
   .student-journey h1 { max-width: 15ch; margin-bottom: 12px; font-size: clamp(2.5rem, 6vw, 5rem); line-height: .98; }
   .student-journey h2 { font-size: clamp(1.35rem, 3vw, 2rem); }
@@ -237,19 +246,20 @@ const resources = [
   .primary-button { border: 0; background: var(--color-ink); color: #fff; }.learning-copy .primary-button { background: var(--cognit-brand-accent); color: var(--color-ink); }
   .primary-button:disabled { cursor: not-allowed; background: #a8b9c6; }.secondary-button { border: 2px solid var(--color-ink); background: #fff; color: var(--color-ink); }.text-button { border: 0; background: transparent; color: var(--color-ink); text-decoration: underline; }
   .continuity { padding: 38px 0 28px; }.continuity ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0; list-style: none; }.continuity li { display: grid; gap: 7px; padding: 18px; border: 1px solid var(--color-border); border-radius: 12px; background: #fff; }.continuity li::before { content: "Upcoming"; color: var(--color-muted); font-size: .72rem; font-weight: 900; }.continuity li.complete::before { content: "Complete ✓"; color: #08746f; }.continuity li.current { border: 2px solid var(--cognit-brand-accent); }.continuity li.current::before { content: "Current step"; color: #965600; }.continuity li span { color: var(--color-muted); font-size: .72rem; font-weight: 900; text-transform: uppercase; }
+  .upcoming-session { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 28px; padding: 20px 24px; border: 1px solid var(--color-border); border-radius: 14px; background: #fff; box-shadow: var(--shadow-soft); }.upcoming-session .eyebrow { display: block; margin-bottom: 7px; }.upcoming-session h2, .upcoming-session p { margin-bottom: 0; }.upcoming-session > div > p { color: var(--color-muted); }.upcoming-session-time { display: grid; flex: 0 0 auto; gap: 3px; text-align: right; }.upcoming-session-time span { color: var(--color-muted); font-size: .78rem; font-weight: 850; }.upcoming-session-time strong { color: var(--color-ink); }
   .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }.panel, .lesson-card, .scratchpad, .resource-panel, .reflection-panel, .complete-panel { padding: clamp(24px, 4vw, 40px); border: 1px solid var(--color-border); border-radius: 16px; background: #fff; box-shadow: var(--shadow-soft); }.panel article { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 16px 0; border-top: 1px solid var(--color-border); }.panel article div { display: grid; gap: 4px; }.panel small, .boundary-note, .quiet-copy { color: var(--color-muted); }.panel a { font-weight: 900; text-decoration: underline; }.state-word { color: #08746f; font-size: .7rem; font-weight: 950; text-transform: uppercase; }.state-word.upcoming { color: #7c5a1b; }.panel blockquote { margin: 20px 0; font-size: 1.05rem; line-height: 1.7; }
   .active-strip, .active-session-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; padding: 14px clamp(18px, 4vw, 34px); border-bottom: 2px solid var(--cognit-brand-accent); background: linear-gradient(90deg, #0f4267, #18717b); color: #fff; }.active-strip span, .active-session-header span { color: #d5edf2; font-size: .75rem; font-weight: 900; text-transform: uppercase; }.quiet-link { display: inline-flex; margin-bottom: 18px; font-weight: 900; text-decoration: underline; }
   .lesson-card h1 { max-width: 20ch; }.objective { font-size: 1.1rem; }.context-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 28px 0; }.context-grid article { display: grid; gap: 8px; padding: 18px; border-radius: 10px; background: var(--cognit-surface-secondary); }.context-grid span, .resource-grid span, .resource-panel span { color: var(--color-muted); font-size: .7rem; font-weight: 900; text-transform: uppercase; }.resource-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 28px 0; }.resource-grid button, .resource-panel button { display: grid; gap: 6px; padding: 18px; border: 1px solid var(--color-border); border-radius: 10px; background: #fff; color: var(--color-ink); text-align: left; }.resource-grid button:hover, .resource-panel button:hover { border-color: var(--color-blue); }.resource-grid small { color: var(--color-muted); }.centered { display: flex; width: fit-content; margin: 28px auto 10px; }.quiet-copy { text-align: center; }
-  .student-workspace-shell { min-width: 0; }
-  .active-session-header { position: sticky; top: 90px; z-index: 4; width: 100%; box-sizing: border-box; }.active-session-header > div { display: grid; gap: 4px; }.active-session-header > div:last-child { text-align: right; }
+  .student-workspace-shell { min-width: 0; }.student-workspace-shell.has-session-header { margin-top: calc(-1 * clamp(28px, 5vw, 58px)); }
+  .active-session-header { position: sticky; top: 0; z-index: 4; width: 100%; box-sizing: border-box; }.active-session-header > div { display: grid; gap: 4px; }.active-session-header > div:last-child { text-align: right; }
   .active-workspace { display: grid; grid-template-columns: 1.55fr .75fr; gap: 20px; }.workspace-main { padding: clamp(22px, 4vw, 38px); border: 1px solid var(--color-border); border-radius: 16px; background: #fff; box-shadow: var(--shadow-soft); }.workspace-heading { display: flex; align-items: start; justify-content: space-between; gap: 18px; }.workspace-heading h1 { max-width: 18ch; font-size: clamp(2rem, 4vw, 3.4rem); }.progress-badge { flex: 0 0 auto; padding: 7px 10px; border-radius: 999px; background: var(--color-mint); color: #08746f; font-size: .75rem; font-weight: 950; }.step-list { display: grid; gap: 12px; padding: 24px 0; list-style: none; }.step-list li { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 18px; border: 1px solid var(--color-border); border-radius: 12px; }.step-list li > span { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #dfe8ee; font-weight: 950; }.step-list li div { display: grid; gap: 5px; }.step-list small { color: var(--color-muted); }.step-list li.complete { background: #f4fbf9; }.step-list li.complete > span { background: var(--color-mint); color: #08746f; }.step-list li.current { border: 2px solid var(--cognit-brand-accent); }.step-list li.current > span { background: var(--color-ink); color: #fff; }.step-list button { min-height: 40px; padding: 8px 12px; border: 1px solid var(--color-ink); border-radius: 8px; background: #fff; color: var(--color-ink); font-weight: 900; }.workspace-actions, .reflection-actions { display: flex; justify-content: space-between; gap: 12px; }.help-state { margin: 18px 0 0; padding: 14px; border-radius: 10px; background: #fff4dc; }.workspace-side { display: grid; align-content: start; gap: 18px; }.scratchpad label { display: block; margin: 10px 0 8px; font-weight: 900; }.scratchpad textarea, .reflection-panel textarea { width: 100%; padding: 14px; border: 1px solid var(--color-border); border-radius: 10px; resize: vertical; }.scratchpad small { display: block; margin-top: 10px; color: var(--color-muted); line-height: 1.5; }.resource-panel { display: grid; gap: 10px; }.resource-panel h2 { margin-bottom: 4px; }.resource-panel button { padding: 14px; }
   .reflection-panel, .complete-panel { max-width: 800px; margin: 34px auto; }.reflection-panel h1, .complete-panel h1 { max-width: 16ch; }.reflection-panel fieldset { margin: 26px 0; padding: 0; border: 0; }.reflection-panel legend, .reflection-panel > label { display: block; margin-bottom: 10px; font-weight: 900; }.reflection-panel label span { color: var(--color-muted); font-weight: 700; }.choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }.choice-grid button { min-height: 54px; border: 1px solid var(--color-border); border-radius: 10px; background: #fff; color: var(--color-ink); font-weight: 900; }.choice-grid button[aria-pressed="true"] { border: 2px solid var(--cognit-brand-accent); background: #fff7e8; }.boundary-note { margin: 16px 0; font-size: .84rem; line-height: 1.55; }
   .complete-panel { display: grid; justify-items: center; text-align: center; }.completion-mark { display: grid; place-items: center; width: 68px; height: 68px; margin: 16px 0; border-radius: 50%; background: var(--cognit-brand-progress); color: #fff; font-size: 2rem; font-weight: 950; }.complete-panel dl { width: 100%; margin: 26px 0; }.complete-panel dl div { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0; border-top: 1px solid var(--color-border); text-align: left; }.complete-panel dt { color: var(--color-muted); font-weight: 900; }.complete-panel dd { margin: 0; font-weight: 900; text-align: right; }.complete-panel aside { display: grid; gap: 8px; width: 100%; margin-bottom: 26px; padding: 18px; border-radius: 10px; background: var(--cognit-surface-secondary); }.complete-panel aside span { color: var(--color-muted); font-size: .72rem; font-weight: 900; text-transform: uppercase; }.complete-panel aside small { color: var(--color-muted); }
   .resource-dialog { width: min(760px, calc(100vw - 32px)); padding: clamp(24px, 4vw, 38px); border: 0; border-radius: 18px; box-shadow: 0 24px 80px rgba(10,49,77,.28); color: var(--color-ink); }.resource-dialog::backdrop { background: rgba(11,48,74,.5); }.resource-dialog h2 { margin: 8px 42px 10px 0; }.dialog-close { position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border: 1px solid var(--color-border); border-radius: 50%; background: #fff; color: var(--color-ink); font-size: 1.4rem; }.video-shell { display: grid; place-items: center; gap: 10px; min-height: 300px; margin: 24px 0; border-radius: 12px; background: #0d3857; color: #fff; }.video-shell > span { display: grid; place-items: center; width: 62px; height: 62px; border: 2px solid #fff; border-radius: 50%; font-size: 1.5rem; }.video-shell small { color: #c8dfed; }.resource-dialog pre { overflow: auto; margin: 24px 0; padding: 22px; border-radius: 12px; background: #0d3857; color: #c7fff1; line-height: 1.7; }.guide-list { display: grid; gap: 12px; margin: 24px 0; padding-left: 24px; }.is-hidden { display: none !important; }
-  @media (max-width: 820px) { .learning-hero, .active-workspace, .home-grid { grid-template-columns: 1fr; }.learning-hero figure { min-height: 240px; }.context-grid, .resource-grid { grid-template-columns: 1fr; }.active-session-header { top: 72px; }.workspace-heading { display: grid; }.progress-badge { width: fit-content; }.workspace-side { grid-row: 1; }.continuity ol { grid-template-columns: 1fr; } }
-  @media (max-width: 560px) { .student-journey h1 { font-size: 2.55rem; }.home-heading { align-items: flex-start; }.home-heading :global(img) { width: 72px; height: 72px; }.learning-copy { padding: 26px 20px; }.learning-hero figure { min-height: 190px; }.panel article { grid-template-columns: 1fr; }.active-session-header { top: 64px; align-items: start; }.active-session-header > div:last-child { text-align: left; }.step-list li { grid-template-columns: auto 1fr; }.step-list li button { grid-column: 1 / -1; }.workspace-actions, .reflection-actions { flex-direction: column-reverse; }.workspace-actions > *, .reflection-actions > * { width: 100%; }.choice-grid { grid-template-columns: 1fr; }.complete-panel dl div { display: grid; }.complete-panel dd { text-align: left; }.resource-dialog { max-height: calc(100vh - 24px); overflow: auto; }.video-shell { min-height: 210px; } }
+  @media (max-width: 820px) { .learning-hero, .active-workspace, .home-grid { grid-template-columns: 1fr; }.learning-hero figure { min-height: 240px; }.context-grid, .resource-grid { grid-template-columns: 1fr; }.workspace-heading { display: grid; }.progress-badge { width: fit-content; }.workspace-side { grid-row: 1; }.continuity ol { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .student-journey h1 { font-size: 2.55rem; }.home-heading { align-items: flex-start; }.home-heading :global(img) { width: 72px; height: 72px; }.learning-copy { padding: 26px 20px; }.learning-hero figure { min-height: 190px; }.upcoming-session { align-items: flex-start; flex-direction: column; gap: 14px; }.upcoming-session-time { text-align: left; }.panel article { grid-template-columns: 1fr; }.active-session-header { align-items: start; }.active-session-header > div:last-child { text-align: left; }.step-list li { grid-template-columns: auto 1fr; }.step-list li button { grid-column: 1 / -1; }.workspace-actions, .reflection-actions { flex-direction: column-reverse; }.workspace-actions > *, .reflection-actions > * { width: 100%; }.choice-grid { grid-template-columns: 1fr; }.complete-panel dl div { display: grid; }.complete-panel dd { text-align: left; }.resource-dialog { max-height: calc(100vh - 24px); overflow: auto; }.video-shell { min-height: 210px; } }
 </style>
 
 <style>
-  .published-journey{display:grid;gap:22px}.published-journey>header{padding:clamp(22px,5vw,48px);border-radius:20px;background:linear-gradient(135deg,#0f4267,#267d87);color:#fff}.published-journey>header .eyebrow,.published-journey>header p{color:#d8edf1}.journey-held{border-top:5px solid var(--cognit-brand-accent)}.journey-spine{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0 0;padding:0;list-style:none}.journey-spine li{display:grid;gap:6px;padding:16px;border:1px solid var(--color-border);border-radius:12px;background:#f7fafb}.journey-spine li span{color:var(--color-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}.evidence-summary{display:grid;grid-template-columns:180px 1fr;align-items:center;gap:22px}.artifact-preview{display:grid;place-content:center;min-height:150px;border-radius:14px;background:linear-gradient(135deg,#eef8fb,#e8f7f3);text-align:center}.artifact-preview strong{font-size:2rem}.artifact-preview span{display:grid;place-items:center;width:38px;height:38px;margin:10px auto 0;border-radius:50%;background:#20aaa5;color:#fff}@media(max-width:620px){.journey-spine,.evidence-summary{grid-template-columns:1fr}}
+  .published-journey{display:grid;gap:22px}.published-journey>header{padding:clamp(22px,5vw,48px);border-radius:20px;background:linear-gradient(135deg,#0f4267,#267d87);color:#fff}.published-journey>header .eyebrow,.published-journey>header p{color:#d8edf1}.journey-held{border-top:5px solid var(--cognit-brand-accent)}.journey-spine{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0 0;padding:0;list-style:none}.journey-held .journey-spine{grid-template-columns:repeat(3,minmax(0,1fr))}.journey-spine li{display:grid;grid-template-columns:auto minmax(0,1fr);align-content:start;align-items:start;gap:12px;padding:16px;border:1px solid var(--color-border);border-radius:12px;background:#f7fafb}.journey-spine li>div{display:grid;align-content:start;gap:6px}.journey-spine li span:not(.journey-marker){color:var(--color-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}.journey-marker{display:grid;width:28px;height:28px;place-items:center;border:2px solid #9eb2c1;border-radius:50%;color:var(--color-muted);font-weight:950;line-height:1}.journey-spine .complete .journey-marker{border-color:var(--cognit-brand-progress);background:var(--cognit-brand-progress);color:#fff}.journey-spine .current .journey-marker{border-color:var(--cognit-brand-accent);color:#965600}.evidence-summary{display:grid;grid-template-columns:180px 1fr;align-items:center;gap:22px}.artifact-preview{display:grid;place-content:center;min-height:150px;border-radius:14px;background:linear-gradient(135deg,#eef8fb,#e8f7f3);text-align:center}.artifact-preview strong{font-size:2rem}.artifact-preview span{display:grid;place-items:center;width:38px;height:38px;margin:10px auto 0;border-radius:50%;background:#20aaa5;color:#fff}@media(max-width:620px){.journey-spine,.journey-held .journey-spine,.evidence-summary{grid-template-columns:1fr}}
 </style>
