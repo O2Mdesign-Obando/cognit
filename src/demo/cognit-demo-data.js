@@ -1,5 +1,11 @@
 // Fictional, local-only Cognit demonstration data.
 // This module is never an operational seed, tenant loader, or authentication source.
+const COGNIT_DEMO_SCENARIO = Object.freeze({
+  operatingDate: "2026-08-31",
+  displayDate: "August 31, 2026",
+  displayLabel: "Demo scenario date: August 31, 2026"
+});
+
 export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
   id: "demo-org-northfield-learning-collective",
   name: "Northfield Learning Collective",
@@ -355,8 +361,9 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
       studentIds: ["demo-student-noah-bennett"]
     }
   ],
+  scenario: COGNIT_DEMO_SCENARIO,
   scheduling: {
-    operatingDate: "2026-08-31",
+    operatingDate: COGNIT_DEMO_SCENARIO.operatingDate,
     season: { id: "fall-2026", label: "Fall 2026", startDate: "2026-08-24", endDate: "2026-10-17" },
     roomsByContext: {
       "demo-context-northfield-studio": [
@@ -440,7 +447,10 @@ export const SYNTHETIC_COGNIT_DEMO = Object.freeze({
   attendancePolicy: {
     id: "demo-policy-northfield-makeup-fall-2026",
     contextId: "demo-context-northfield-studio",
-    label: "Northfield recognized-absence policy",
+    label: "Northfield Studio Demo policy",
+    displayCopy: "Northfield Studio Demo policy: Make-Up Tokens expire 45 days after issuance. This fictional policy applies to this Demo center.",
+    fictionalDisclosure: "This fictional policy applies to this Demo center.",
+    expirationBasis: "issuance",
     rule: "A reported illness or appointment before class, or a Center cancellation, automatically adds one Make-Up Token when the Student was enrolled for the class.",
     expiryDays: 45,
     automaticReasons: ["illness", "appointment", "center_cancellation"],
