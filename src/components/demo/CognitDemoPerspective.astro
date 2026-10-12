@@ -121,9 +121,9 @@ const titleCase = (value) => String(value || "").replaceAll("_", " ").replace(/^
         <span class="card-action">Open learning story →</span>
       </a>
 
-      <a class="panel family-secondary actionable-card" href="/learninghub/demo/family/attendance/sofia" aria-labelledby="family-makeup-title">
-        <div><span class="section-kicker">Another Family example</span><h3 id="family-makeup-title">{model.secondary.family.name}</h3><p>{model.secondary.student.name} has one makeup option following a prior Robotics Studio absence.</p></div>
-        <span class="status-chip neutral">{model.secondary.makeup.label}</span>
+      <a class="panel family-secondary actionable-card" href="/learninghub/demo/family/makeup" aria-labelledby="family-makeup-title">
+        <div><span class="section-kicker">Morgan Family · Attendance &amp; Make-Ups</span><h3 id="family-makeup-title">{model.student.name}</h3><p>One Make-Up Token is available from the Creative App Lab weather cancellation.</p></div>
+        <span class="status-chip neutral">{model.makeup.label}</span>
       </a>
     </div>
   )}

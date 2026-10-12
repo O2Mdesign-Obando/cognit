@@ -130,7 +130,7 @@ function studentModel() {
 function familyModel() {
   const primary = eliEvent();
   const family = byId(data.people.families, "demo-family-morgan");
-  const makeup = data.makeupEntitlements[0];
+  const makeup = byId(data.makeupEntitlements, "demo-makeup-eli-creative-weather");
   return {
     ...sharedModel(),
     role: "family",
@@ -149,10 +149,10 @@ function familyModel() {
     update: primary.familyUpdate,
     publishedStory: primary.publishedStory,
     action: "No action needed",
-    secondary: {
-      family: byId(data.people.families, "demo-family-reyes"),
-      student: student(makeup.studentId),
-      makeup
+    makeup: {
+      ...makeup,
+      course: course(makeup.courseId),
+      origin: byId(data.cancellationConsequences, makeup.originId)
     }
   };
 }
