@@ -79,10 +79,10 @@ Smallest access correction: authorize the existing Vercel connection for team `t
 After targeted re-review and separate authorization, the exact proposed remote action is:
 
 ```sh
-git push -u origin feat/demo-structured-curriculum-multilingual-01
+git push origin 3f99f86967123ed89e59a17e3f615656f9c33d9b:refs/heads/feat/demo-structured-curriculum-multilingual-01
 ```
 
-Expected direct Git effect: create/update only that remote feature branch and set its upstream; it does not merge either branch or create a PR. If and only if the currently unconfirmed Vercel Git integration is active and this branch is not the configured Production branch, Vercel should automatically create a Preview deployment for the pushed commit. No `vercel --prod`, promotion, Production alias assignment, or merge is part of the action.
+Expected direct Git effect: create/update only that remote feature branch at the exact correction checkpoint; it does not push the later local-only readiness documentation commit, set an upstream, merge either branch, or create a PR. If and only if the currently unconfirmed Vercel Git integration is active and this branch is not the configured Production branch, Vercel should automatically create a Preview deployment for the pushed commit. No `vercel --prod`, promotion, Production alias assignment, or merge is part of the action.
 
 After the push, inspect the resulting deployment and require its source commit to equal the exact reviewed correction checkpoint before sharing its URL. If a PR is later authorized before PR #2 merges, base it on `feat/demo-scenario-context-coherence-01` so the proposed diff contains only this feature and does not duplicate the scenario-coherence changes. If PR #2 merges first, rebase/reconcile separately and obtain review for the resulting commit; do not silently transfer acceptance.
 
