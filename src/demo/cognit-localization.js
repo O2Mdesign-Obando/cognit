@@ -1,5 +1,6 @@
 import { enUS } from "./locales/en-US.js";
 import { esUS } from "./locales/es-US.js";
+import { esUSLiterals } from "./locales/es-US-literals.js";
 
 export const COGNIT_LOCALES = Object.freeze(["en-US", "es-US"]);
 export const COGNIT_LANGUAGE_ENTITLEMENT = Object.freeze({
@@ -18,6 +19,8 @@ export const CENTER_LANGUAGE_STORAGE_KEY = "cognit:demo-language-enablement:v1";
 export const PERSON_LANGUAGE_STORAGE_PREFIX = "cognit:demo-language-preference:v1:";
 const dictionaries = { "en-US": enUS, "es-US": esUS };
 const memoryStorage = new Map();
+const originalText = new WeakMap();
+const originalAttributes = new WeakMap();
 
 function storageRead(storage, key) {
   try { return storage?.getItem(key) ?? memoryStorage.get(key) ?? null; }
@@ -90,6 +93,42 @@ function translateElement(element, locale) {
   return result.fallback;
 }
 
+function translateLiteralText(root, locale) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      return node.parentElement?.closest("script, style, [data-i18n], [data-i18n-preserve]") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach((node) => {
+    if (!originalText.has(node)) originalText.set(node, node.nodeValue);
+    let source = originalText.get(node);
+    const currentTranslation = esUSLiterals[source.trim()];
+    const expected = currentTranslation === undefined ? source : source.replace(source.trim(), currentTranslation);
+    if (locale === "es-US" && node.nodeValue !== source && node.nodeValue !== expected) {
+      originalText.set(node, node.nodeValue);
+      source = node.nodeValue;
+    }
+    const trimmed = source.trim();
+    const translated = locale === "es-US" ? esUSLiterals[trimmed] : undefined;
+    const nextValue = translated === undefined ? source : source.replace(trimmed, translated);
+    if (node.nodeValue !== nextValue) node.nodeValue = nextValue;
+  });
+  ["aria-label", "placeholder", "title", "data-center-local-action"].forEach((attribute) => {
+    root.querySelectorAll(`[${attribute}]`).forEach((element) => {
+      if (element.hasAttribute(`data-i18n-${attribute}`)) return;
+      if (!originalAttributes.has(element)) originalAttributes.set(element, {});
+      const values = originalAttributes.get(element);
+      if (!(attribute in values)) values[attribute] = element.getAttribute(attribute);
+      const source = values[attribute];
+      const translated = locale === "es-US" ? esUSLiterals[source] : undefined;
+      const nextValue = translated ?? source;
+      if (element.getAttribute(attribute) !== nextValue) element.setAttribute(attribute, nextValue);
+    });
+  });
+}
+
 export function applyCognitLocale(locale, root = document) {
   let fallbackCount = 0;
   root.querySelectorAll("[data-i18n]").forEach((element) => { if (translateElement(element, locale)) fallbackCount += 1; });
@@ -104,6 +143,7 @@ export function applyCognitLocale(locale, root = document) {
   document.documentElement.lang = locale;
   document.documentElement.dataset.contentLocale = locale;
   root.querySelectorAll("[data-language-fallback-notice]").forEach((element) => { element.hidden = fallbackCount === 0; });
+  translateLiteralText(root, locale);
   return fallbackCount;
 }
 
@@ -130,5 +170,7 @@ export function initializeCognitLocalization(control) {
   select?.addEventListener("change", () => { if (select instanceof HTMLSelectElement) writeSavedLocale(personId, select.value); render(); select.focus(); });
   toggle?.addEventListener("change", () => { if (toggle instanceof HTMLInputElement) writeCenterLanguageSetting(toggle.checked); render(); toggle.focus(); });
   addEventListener("storage", render);
+  const observer = new MutationObserver(() => queueMicrotask(() => translateLiteralText(document, control.dataset.effectiveLocale || "en-US")));
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
   render();
 }
