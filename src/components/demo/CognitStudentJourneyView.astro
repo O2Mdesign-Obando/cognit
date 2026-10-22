@@ -1,6 +1,8 @@
 ---
 import DemoImage from "./DemoImage.astro";
 import DemoLoopNav from "./DemoLoopNav.astro";
+import CognitCurriculumWorkspace from "./CognitCurriculumWorkspace.astro";
+import CognitCurriculumProjection from "./CognitCurriculumProjection.astro";
 import { COGNIT_DEMO_IMAGES, getDemoStudentImage } from "../../demo/cognit-demo-images.js";
 import { getCognitDemoPerspectiveModel } from "../../demo/cognit-demo-model.js";
 
@@ -70,16 +72,18 @@ const resources = [
 
   {isLesson && (
     <div class="lesson-context" data-lesson-context>
-      <div class="active-strip"><span>Today’s work</span><strong>Creative App Lab · Habit Tracker</strong></div>
-      <a class="quiet-link" href="/learninghub/demo/student">← Back to Today</a>
+      <div class="active-strip"><span data-i18n="legacy.student.todayWork">Today’s work</span><strong>Creative App Lab · Habit Tracker</strong></div>
+      <a class="quiet-link" href="/learninghub/demo/student" data-i18n="legacy.student.backToday">← Back to Today</a>
       <section class="lesson-card" aria-labelledby="lesson-title">
-        <span class="eyebrow">Lesson context</span><h1 id="lesson-title">Prototype and improve the interaction flow.</h1>
-        <p class="objective"><strong>Objective:</strong> Build the core Habit Tracker flow, then test one interaction and revise a confusing step.</p>
-        <div class="context-grid"><article><span>Previous session</span><strong>{model.completed}</strong></article><article><span>What you’ll learn</span><strong>Explain one design choice and improve it after testing.</strong></article><article><span>Where you’ll work</span><strong>Your app-building workspace</strong></article></div>
+        <span class="eyebrow" data-i18n="legacy.student.lessonContext">Lesson context</span><h1 id="lesson-title" data-i18n="legacy.student.lessonHeading">Prototype and improve the interaction flow.</h1>
+        <p class="objective" data-i18n="legacy.student.objective">Objective: Build the core Habit Tracker flow, then test one interaction and revise a confusing step.</p>
+        <div class="context-grid"><article><span data-i18n="legacy.student.previous">Previous session</span><strong>{model.completed}</strong></article><article><span data-i18n="legacy.student.learn">What you’ll learn</span><strong>Explain one design choice and improve it after testing.</strong></article><article><span data-i18n="legacy.student.work">Where you’ll work</span><strong>Your app-building workspace</strong></article></div>
         <div class="resource-grid" aria-label="Today’s resources">{resources.map((resource) => <button type="button" data-open-resource={resource.id}><span>{resource.kind}</span><strong>{resource.title}</strong><small>Open resource →</small></button>)}</div>
-        <a class="primary-button centered" href="/learninghub/demo/student/active">Open the learning workspace →</a>
-        <p class="quiet-copy">Keep this page open for guidance while you work.</p>
+        <a class="primary-button centered" href="/learninghub/demo/student/active" data-i18n="legacy.student.open">Open the learning workspace →</a>
+        <p class="quiet-copy" data-i18n="legacy.student.keepOpen">Keep this page open for guidance while you work.</p>
       </section>
+      <CognitCurriculumProjection role="student" personId="demo-student-eli-morgan" />
+      <CognitCurriculumWorkspace audience="student" personId="demo-student-eli-morgan" />
     </div>
   )}
 

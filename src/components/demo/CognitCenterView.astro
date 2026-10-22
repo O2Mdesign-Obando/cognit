@@ -5,12 +5,14 @@ import { getDemoStudentImage, getDemoCoachImage } from "../../demo/cognit-demo-i
 import CognitCenterCommunication from "./CognitCenterCommunication.astro";
 import CognitCenterConfiguration from "./CognitCenterConfiguration.astro";
 import CognitCenterCloseout from "./CognitCenterCloseout.astro";
+import CognitCurriculumProjection from "./CognitCurriculumProjection.astro";
 
 const { view = "overview" } = Astro.props;
 const parsed = parseCenterDemoView(view);
 const aliases = { schedule: "scheduling", messages: "communication", settings: "configuration" };
 const section = parsed.section === "configuration" && parsed.item === "modules" ? "module-control" : (aliases[parsed.section] || parsed.section);
 const item = parsed.item;
+const isAuthorizedCurriculumRoute = view === "courses/creative-app-lab";
 const contextKey = parsed.context;
 const context = contextKey === "harbor" ? d.contexts[1] : d.contexts[0];
 const contextId = context.id;
@@ -60,7 +62,11 @@ const progressFor = (id) => d.courseProgress.filter((p) => p.studentId === id);
 const selectedStudent = d.people.students.find((s) => s.id.endsWith(`-${item}`)) || d.people.students.find((s) => s.id.includes(item)) || d.people.students[0];
 const selectedCoach = d.people.coaches.find((c) => c.id.endsWith(`-${item}`)) || d.people.coaches.find((c) => c.id.includes(item)) || d.people.coaches[0];
 const selectedFamily = d.people.families.find((family) => family.id.endsWith(`-${item}`)) || d.people.families.find((family) => family.id.includes(item));
-const selectedCourse = item ? contextCourses.find((course) => course.id.endsWith(item)) : undefined;
+const selectedCourseRecord = item ? contextCourses.find((course) => course.id.endsWith(item)) : undefined;
+// The exact authorized Center route receives summary-only progression. Instructional arrays stay out of its rendered payload.
+const selectedCourse = isAuthorizedCurriculumRoute && selectedCourseRecord
+  ? { ...selectedCourseRecord, modules: [] }
+  : selectedCourseRecord;
 const studentImage = (id) => getDemoStudentImage(id) || { src: "/assets/cognit-demo/student-generic.webp", alt: "", width: 640, height: 640 };
 const coachImage = (id) => getDemoCoachImage(id) || { src: "/assets/cognit-demo/coach-placeholder.webp", alt: "", width: 640, height: 640 };
 const title = contextKey === "harbor" ? "Harbor Academy Program" : "Northfield Studio";
@@ -308,6 +314,7 @@ const billingCounts = {
     <a class="back-inline" href={href("courses")}>← Course portfolio</a>
     <header class="course-heading"><div><p class="eyebrow">{selectedCourse.code} · Course operations</p><h1>{selectedCourse.name}</h1><p>{selectedCourse.description}</p><div class="course-heading-status"><span class={`status-chip ${(selectedCourseDelivery?.status || selectedCourse.status) === "active" ? "ready" : "neutral"}`} data-course-detail-status>{selectedCourseDelivery?.status || selectedCourse.status}</span><span>{selectedCourse.curriculum.source === "hq" ? `HQ curriculum · v${selectedCourse.curriculum.version}` : `Center-created curriculum · v${selectedCourse.curriculum.version}`}</span></div></div></header>
     <section class="course-operating-summary" aria-label="Course operating summary"><article><span>Coach</span><strong data-course-detail-coach>{coachById(selectedCourseSessions[0]?.coachId || selectedCourse.coachId)?.name || "Unassigned"}</strong></article><article><span>Enrollment</span><strong><span data-course-detail-enrollment>{selectedCourseEnrollments.length}</span> / <span data-course-detail-capacity>{selectedCourse.capacity}</span></strong><small><span data-course-detail-seats>{Math.max(0,selectedCourse.capacity-selectedCourseEnrollments.length)}</span> seats available</small></article><article><span>Schedule</span><strong class="operating-lines" data-course-detail-pattern>{(selectedCourseDelivery?.pattern || "Not scheduled").replace(" · ", "\n")}</strong><small data-course-detail-room>{selectedCourseDelivery?.room || "Room unassigned"}</small></article><article><span>Duration</span><strong class="operating-lines">{selectedCourse.duration.replace(" · ", "\n")}</strong></article></section>
+    {isAuthorizedCurriculumRoute && <CognitCurriculumProjection role="center" personId="demo-center-director-maya-chen" centerAdmin={true} />}
     <div class="course-detail-grid">
       <section class="panel course-provenance"><p class="eyebrow">Curriculum provenance</p><h2>{selectedCourse.curriculum.source === "hq" ? "Canonical HQ curriculum" : "Northfield-authored curriculum"}</h2><dl class="profile-facts"><div><dt>Owner</dt><dd>{selectedCourse.curriculum.owner}</dd></div><div><dt>Version</dt><dd>{selectedCourse.curriculum.version}</dd></div><div><dt>Center authority</dt><dd>{selectedCourse.curriculum.editableAtCenter ? "Curriculum and local delivery editable" : "Local delivery editable · curriculum locked"}</dd></div></dl>{selectedCourse.curriculum.editableAtCenter ? <p class="record-boundary">This Course is scoped to {title}.</p> : <><p class="record-boundary">Modules, activities, objectives, outcomes, resources, and canonical sequence are read-only here. Clone before customizing curriculum.</p><button class="action action-secondary" type="button" data-center-local-action="A Center-owned copy can be prepared; customization begins from that copy.">Prepare a Center-owned copy</button></>}</section>
       <section class="panel"><p class="eyebrow">Delivery progression</p><h2>{selectedCourseCurrentModule ? `Module ${selectedCourseCurrentModule.sequence} of ${selectedCourse.modules.length}` : `${selectedCourse.modules.length} modules planned`}</h2><div class="course-progress-track" aria-label={`${selectedCourse.modules.filter((module)=>module.state==="completed").length} completed, one current, ${selectedCourse.modules.filter((module)=>module.state==="upcoming").length} upcoming`}>{selectedCourse.modules.map((module)=><span class={module.state}><b>{module.sequence}</b><small>{module.state}</small></span>)}</div><p>{selectedCourse.focus}</p></section>

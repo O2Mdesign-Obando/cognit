@@ -1,0 +1,23 @@
+---
+import CognitLanguageControls from "./CognitLanguageControls.astro";
+import { getCreativeAppLabProgressionProjection } from "../../demo/cognit-curriculum-progression.js";
+const { role, personId, centerAdmin = false } = Astro.props;
+const projection = getCreativeAppLabProgressionProjection(role);
+if (!projection) throw new Error(`Unsupported curriculum projection: ${role}`);
+---
+<section class="curriculum-projection" data-curriculum-projection={role} aria-labelledby={`progress-${role}-heading`}>
+  <p class="disclosure" data-i18n="progress.disclosure">Interactive Demo — simulated curriculum, language settings and browser-local progress.</p>
+  <div class="projection-heading"><div><span data-i18n="progress.readOnly">Read-only projection · presentation actions do not change progress</span><h2 id={`progress-${role}-heading`} data-i18n={`progress.heading.${role}`}>Creative App Lab</h2><p data-i18n={`progress.explanation.${role}`}></p></div></div>
+  <ol>
+    {projection.modules.map((module) => <li class={module.state} data-module-id={module.id}>
+      <span data-i18n="progress.module" data-i18n-params={JSON.stringify({number: module.sequence})}>Module {module.sequence}</span>
+      <strong data-i18n={`module.${module.id}.title`}></strong>
+      <p data-i18n={`module.${module.id}.summary`}></p>
+      <em data-i18n={`progress.state.${module.state}`}></em>
+    </li>)}
+  </ol>
+  <CognitLanguageControls {role} {personId} {centerAdmin} />
+</section>
+<style>
+  .curriculum-projection{margin:24px 0;padding:clamp(18px,3vw,30px);border:1px solid var(--color-border);border-radius:18px;background:#fff;color:var(--color-ink);font-size:16px}.disclosure{padding:10px 12px;border-radius:9px;background:#eef6fa;font-weight:800}.projection-heading span{color:var(--color-muted);font-size:16px;font-weight:800}.projection-heading h2{margin:6px 0}.projection-heading p{max-width:75ch;line-height:1.6}.curriculum-projection ol{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:0;list-style:none}.curriculum-projection li{display:grid;align-content:start;gap:7px;padding:15px;border:1px solid var(--color-border);border-radius:12px}.curriculum-projection li.current{border:2px solid #08746f}.curriculum-projection li.locked{background:#f4f6f7}.curriculum-projection li>span,.curriculum-projection li>em{color:var(--color-muted);font-size:16px;font-style:normal;font-weight:800}.curriculum-projection li p{margin:0;line-height:1.5}@media(max-width:900px){.curriculum-projection ol{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.curriculum-projection ol{grid-template-columns:1fr}}
+</style>

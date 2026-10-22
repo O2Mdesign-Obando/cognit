@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Habit Tracker interaction flow</title>
+  <desc id="desc">Three fictional mobile screens show Today, a completed reading habit, and a seven day streak.</desc>
+  <rect width="1200" height="620" rx="32" fill="#eaf5f7"/>
+  <path d="M375 310h95m260 0h95" stroke="#0f4267" stroke-width="12" stroke-linecap="round"/>
+  <path d="m450 286 30 24-30 24m355-48 30 24-30 24" fill="none" stroke="#0f4267" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <g font-family="Inter,Arial,sans-serif" fill="#0b304a">
+    <g transform="translate(75 55)">
+      <rect width="300" height="510" rx="34" fill="#fff" stroke="#8eabbc" stroke-width="4"/>
+      <text x="34" y="70" font-size="24" font-weight="700" fill="#587487">TODAY</text>
+      <text x="34" y="118" font-size="34" font-weight="800">My habits</text>
+      <rect x="28" y="160" width="244" height="108" rx="18" fill="#edf7f3"/>
+      <circle cx="69" cy="214" r="23" fill="#fff" stroke="#14958f" stroke-width="4"/>
+      <text x="108" y="205" font-size="24" font-weight="700">Read</text>
+      <text x="108" y="238" font-size="19" fill="#587487">Not recorded</text>
+      <rect x="28" y="416" width="244" height="58" rx="16" fill="#f4b53f"/>
+      <text x="150" y="453" text-anchor="middle" font-size="22" font-weight="800">Mark complete</text>
+    </g>
+    <g transform="translate(450 55)">
+      <rect width="300" height="510" rx="34" fill="#fff" stroke="#8eabbc" stroke-width="4"/>
+      <text x="34" y="70" font-size="24" font-weight="700" fill="#587487">READ</text>
+      <text x="34" y="118" font-size="34" font-weight="800">Nice work</text>
+      <circle cx="150" cy="248" r="70" fill="#20aaa5"/>
+      <path d="m116 248 23 23 50-58" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="150" y="360" text-anchor="middle" font-size="24" font-weight="700">Reading recorded</text>
+      <text x="150" y="400" text-anchor="middle" font-size="19" fill="#587487">Your streak changed</text>
+    </g>
+    <g transform="translate(825 55)">
+      <rect width="300" height="510" rx="34" fill="#fff" stroke="#8eabbc" stroke-width="4"/>
+      <text x="34" y="70" font-size="24" font-weight="700" fill="#587487">STREAK</text>
+      <text x="34" y="118" font-size="34" font-weight="800">Seven days</text>
+      <rect x="28" y="160" width="244" height="176" rx="18" fill="#0f4267"/>
+      <text x="150" y="248" text-anchor="middle" font-size="76" font-weight="900" fill="#fff">7</text>
+      <text x="150" y="292" text-anchor="middle" font-size="21" fill="#d9eef2">day streak</text>
+      <text x="34" y="390" font-size="21" font-weight="700">Updated just now</text>
+      <text x="34" y="426" font-size="18" fill="#587487">Reading · complete</text>
+    </g>
+  </g>
+</svg>

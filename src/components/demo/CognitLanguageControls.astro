@@ -1,0 +1,26 @@
+---
+const { role, personId, centerAdmin = false } = Astro.props;
+---
+<section class="language-controls" data-cognit-language-controls data-role={role} data-person-id={personId} aria-labelledby={`language-${role}-heading`}>
+  <div>
+    <h3 id={`language-${role}-heading`} data-i18n="language.control.label">Language</h3>
+    <label><span data-i18n="language.control.label">Language</span>
+      <select data-language-select>
+        <option value="en-US">English (US)</option><option value="es-US">Español (EE. UU.)</option>
+      </select>
+    </label>
+    <p data-i18n="language.preferenceNotice">Your saved language preference is separate from the Center’s enabled languages.</p>
+  </div>
+  {centerAdmin && <div class="center-setting"><strong data-i18n="language.center.heading">Demo language availability</strong><label><input type="checkbox" data-center-spanish-enable checked /><span data-i18n="language.center.spanish">Enable Spanish for this Center</span></label><p data-i18n="language.center.allowance">Illustrative contract: English default plus ten additional language slots. Spanish is the only operational additional language in this candidate.</p></div>}
+  <p class="notice" data-language-disabled-notice hidden data-i18n="language.disabledNotice">Spanish is saved as your preference, but this Center has disabled it. English is in use until Spanish is enabled again.</p>
+  <p class="notice" data-language-fallback-notice hidden data-i18n="language.fallbackNotice">Some Spanish text is unavailable.</p>
+  <p class="review" data-i18n="language.reviewNotice">Spanish candidate translation · human review pending.</p>
+  <small data-i18n="language.browserNotice">Simulated Demo setting · saved only in this browser and origin.</small>
+</section>
+<script>
+  import { initializeCognitLocalization } from "../../demo/cognit-localization.js";
+  document.querySelectorAll("[data-cognit-language-controls]").forEach(initializeCognitLocalization);
+</script>
+<style>
+  .language-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0;padding:18px;border:1px solid var(--color-border);border-radius:14px;background:#f7fafb;font-size:16px}.language-controls h3,.language-controls p{margin:0 0 8px}.language-controls label{display:flex;align-items:center;gap:10px;font-weight:800}.language-controls select{min-height:44px;padding:8px 34px 8px 10px;border:1px solid var(--color-border);border-radius:8px;background:#fff;color:inherit;font-size:16px}.center-setting{display:grid;gap:8px}.notice{grid-column:1/-1;padding:10px;border-left:4px solid #f4b53f;background:#fff7e8}.review,.language-controls small{color:var(--color-muted);font-size:16px}.language-controls small{grid-column:1/-1}@media(max-width:700px){.language-controls{grid-template-columns:1fr}}
+</style>
