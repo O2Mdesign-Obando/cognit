@@ -100,7 +100,7 @@ const resources = [
     </section>
     <article class="published-journey" data-center-published-event hidden aria-labelledby="student-published-story-title">
       <header><span class="eyebrow">Published Learning Journey · {model.course.name}</span><h1 id="student-published-story-title">{model.publishedStory}</h1><p>{model.familyUpdate}</p></header>
-      <section class="panel" aria-labelledby="student-story-spine-title"><h2 id="student-story-spine-title">How this learning moved</h2><ol class="journey-spine"><li><span>Completed</span><strong>{model.completed}</strong></li><li><span>Learning focus</span><strong>{model.challenge}</strong></li><li><span>Coach observation</span><strong>{model.observation}</strong></li><li><span>What comes next</span><strong>{model.next}</strong></li></ol></section>
+      <section class="panel" aria-labelledby="student-story-spine-title"><h2 id="student-story-spine-title">How this learning moved</h2><ol class="journey-spine"><li><span>Completed</span><strong>{model.completed}</strong></li><li><span>Learning focus</span><strong>{model.challenge}</strong></li><li><span>Coach observation</span><strong data-i18n-preserve data-authored-original-locale="en-US">{model.observation}</strong></li><li><span>What comes next</span><strong>{model.next}</strong></li></ol></section>
       <section class="panel evidence-summary" aria-labelledby="student-evidence-title"><div class="artifact-preview" aria-hidden="true"><b>Habit</b><strong>Today</strong><span>✓</span></div><div><span class="eyebrow">Your project</span><h2 id="student-evidence-title">{model.artifact.label}</h2><p>The project connected to this learning story.</p></div></section>
     </article>
   </>}

@@ -12,6 +12,9 @@
     "build:demo2": "npm run build --workspace demo2",
     "build": "npm run build:demo2 && astro build",
     "preview": "astro preview",
+    "localization:manifest": "node scripts/generate-cognit-localization-route-manifest.mjs",
+    "localization:manifest:check": "node scripts/generate-cognit-localization-route-manifest.mjs --check",
+    "verify:localization": "npm run localization:manifest:check && node scripts/verify-cognit-curriculum-presentation.mjs",
     "validate:routes": "node scripts/validate-built-routes.mjs",
     "validate:demo2": "node scripts/validate-demo2.mjs",
     "validate": "npm run build && npm run validate:routes && npm run validate:demo2"

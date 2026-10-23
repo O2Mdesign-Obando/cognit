@@ -1,6 +1,15 @@
+import { translateKey } from "./cognit-localization.js";
+
 const root = document.querySelector("[data-hq-view]");
 
 if (root) {
+  const tr = (key, params = {}) => translateKey(document.documentElement.dataset.contentLocale || "en-US", key, params).value;
+  const setTranslated = (element, key, params = {}) => {
+    if (!element) return;
+    element.setAttribute("data-i18n", key);
+    element.dataset.i18nParams = JSON.stringify(params);
+    element.textContent = tr(key, params);
+  };
   const search = root.querySelector("[data-hq-center-search]");
   const status = root.querySelector("[data-hq-center-status]");
   const rows = [...root.querySelectorAll("[data-center-row]")];
@@ -16,14 +25,14 @@ if (root) {
 
   const centerFeedback = root.querySelector("[data-hq-center-feedback]");
   root.querySelector("[data-hq-add-center]")?.addEventListener("click", () => {
-    centerFeedback.textContent = "Center onboarding opened.";
+    setTranslated(centerFeedback, "hq.feedback.centerOnboardingOpened");
   });
 
   const caseFeedback = root.querySelector("[data-hq-case-feedback]");
   root.querySelectorAll("[data-take-case]").forEach((button) => {
     button.addEventListener("click", () => {
-      caseFeedback.textContent = `${button.dataset.takeCase} assigned.`;
-      button.textContent = "Case selected";
+      setTranslated(caseFeedback, "hq.feedback.caseAssigned", { id: button.dataset.takeCase });
+      setTranslated(button, "hq.feedback.caseSelected");
       button.disabled = true;
     });
   });
@@ -43,26 +52,26 @@ if (root) {
       if (input && !input.disabled) input.checked = true;
     });
     applyState(JSON.parse(localStorage.getItem(storageKey) || "null") || defaults);
-    form.addEventListener("change", () => { statusLine.textContent = "Unsaved configuration changes."; });
+    form.addEventListener("change", () => { setTranslated(statusLine, "hq.feedback.unsavedConfiguration"); });
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       localStorage.setItem(storageKey, JSON.stringify(readForm()));
-      statusLine.textContent = "Configuration saved.";
+      setTranslated(statusLine, "hq.feedback.configurationSaved");
       const item = document.createElement("li");
-      item.textContent = "Configuration change recorded.";
+      setTranslated(item, "hq.feedback.configurationRecorded");
       audit.prepend(item);
     });
     workspace.querySelector("[data-module-discard]")?.addEventListener("click", (event) => {
       event.preventDefault();
       form.reset();
       applyState(JSON.parse(localStorage.getItem(storageKey) || "null") || defaults);
-      statusLine.textContent = "Unsaved changes discarded.";
+      setTranslated(statusLine, "hq.feedback.changesDiscarded");
     });
     workspace.querySelector("[data-module-reset]")?.addEventListener("click", () => {
       localStorage.removeItem(storageKey);
       form.reset();
       applyState(defaults);
-      statusLine.textContent = "Configuration restored to its default settings.";
+      setTranslated(statusLine, "hq.feedback.defaultsRestored");
     });
   }
 }

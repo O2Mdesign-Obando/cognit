@@ -1,6 +1,7 @@
 import { enUS } from "./locales/en-US.js";
 import { esUS } from "./locales/es-US.js";
 import { esUSLiterals } from "./locales/es-US-literals.js";
+import { COGNIT_DEMO_LOCALIZATION_MANIFEST } from "./cognit-localization-route-manifest.js";
 
 export const COGNIT_LOCALES = Object.freeze(["en-US", "es-US"]);
 export const COGNIT_LANGUAGE_ENTITLEMENT = Object.freeze({
@@ -8,19 +9,29 @@ export const COGNIT_LANGUAGE_ENTITLEMENT = Object.freeze({
   additionalLanguageSlots: 10,
   operationalAdditionalLocales: Object.freeze(["es-US"])
 });
-export const COGNIT_AUTHORIZED_LOCALE_ROUTES = Object.freeze([
-  "/learninghub/demo/center/courses/creative-app-lab",
-  "/learninghub/demo/coach/learners/eli",
-  "/learninghub/demo/student/lesson",
-  "/learninghub/demo/family/courses"
-]);
+export const COGNIT_AUTHORIZED_LOCALE_ROUTES = COGNIT_DEMO_LOCALIZATION_MANIFEST;
 
 export const CENTER_LANGUAGE_STORAGE_KEY = "cognit:demo-language-enablement:v1";
 export const PERSON_LANGUAGE_STORAGE_PREFIX = "cognit:demo-language-preference:v1:";
+export const ENTRY_LANGUAGE_PERSON_ID = "demo-entry";
 const dictionaries = { "en-US": enUS, "es-US": esUS };
+const intentionalPreserveLiterals = new Set([
+  "Cognit", "AC", "Avery Chen", "Eli Morgan", "Jordan Ellis", "Rachel Morgan", "Marcus R.",
+  "Riverton Learning Studio", "Oak Harbor Lab", "Cedar Grove Collective", "Sunfield Learning Works",
+  "Maple Crossing Studio", "Bluewater Learning Lab", "Northfield Studio", "Harbor Learning Studio",
+  "Creative App Foundations", "Robotics Systems", "Digital Storytelling", "AI Foundations",
+  "Creative Computing Journey", "Engineering Design Journey", "Advanced Problem Solving",
+  "Creative App Foundations 2.4"
+]);
 const memoryStorage = new Map();
 const originalText = new WeakMap();
 const originalAttributes = new WeakMap();
+
+function isIntentionalPreserveLiteral(value) {
+  return intentionalPreserveLiterals.has(value)
+    || /^HQ-\d+(?: · .+)?$/.test(value)
+    || /^[A-Z][A-Za-z ]+, [A-Z]{2}$/.test(value);
+}
 
 function storageRead(storage, key) {
   try { return storage?.getItem(key) ?? memoryStorage.get(key) ?? null; }
@@ -47,8 +58,12 @@ export function isAuthorizedLocaleRoute(pathname) {
   return COGNIT_AUTHORIZED_LOCALE_ROUTES.includes(pathname.replace(/\/$/, ""));
 }
 
-export function readCenterLanguageSetting(storage = globalThis.localStorage) {
-  const raw = storageRead(storage, CENTER_LANGUAGE_STORAGE_KEY);
+function centerLanguageStorageKey(centerId = "northfield") {
+  return centerId === "northfield" ? CENTER_LANGUAGE_STORAGE_KEY : `${CENTER_LANGUAGE_STORAGE_KEY}:${centerId}`;
+}
+
+export function readCenterLanguageSetting(storage = globalThis.localStorage, centerId = "northfield") {
+  const raw = storageRead(storage, centerLanguageStorageKey(centerId));
   if (raw === null) return { spanishEnabled: true };
   try {
     const parsed = JSON.parse(raw);
@@ -56,21 +71,25 @@ export function readCenterLanguageSetting(storage = globalThis.localStorage) {
   } catch { return { spanishEnabled: true }; }
 }
 
-export function writeCenterLanguageSetting(spanishEnabled, storage = globalThis.localStorage) {
-  storageWrite(storage, CENTER_LANGUAGE_STORAGE_KEY, JSON.stringify({ spanishEnabled: Boolean(spanishEnabled) }));
+export function writeCenterLanguageSetting(spanishEnabled, storage = globalThis.localStorage, centerId = "northfield") {
+  storageWrite(storage, centerLanguageStorageKey(centerId), JSON.stringify({ spanishEnabled: Boolean(spanishEnabled) }));
+}
+
+function readSavedLocaleValue(personId, storage = globalThis.localStorage) {
+  const value = storageRead(storage, `${PERSON_LANGUAGE_STORAGE_PREFIX}${personId}`);
+  return COGNIT_LOCALES.includes(value) ? value : null;
 }
 
 export function readSavedLocale(personId, storage = globalThis.localStorage) {
-  const value = storageRead(storage, `${PERSON_LANGUAGE_STORAGE_PREFIX}${personId}`);
-  return COGNIT_LOCALES.includes(value) ? value : "en-US";
+  return readSavedLocaleValue(personId, storage) ?? "en-US";
 }
 
 export function writeSavedLocale(personId, locale, storage = globalThis.localStorage) {
   storageWrite(storage, `${PERSON_LANGUAGE_STORAGE_PREFIX}${personId}`, COGNIT_LOCALES.includes(locale) ? locale : "en-US");
 }
 
-export function resolveEffectiveLocale(savedLocale, centerSetting = { spanishEnabled: true }) {
-  return savedLocale === "es-US" && centerSetting.spanishEnabled ? "es-US" : "en-US";
+export function resolveEffectiveLocale(savedLocale, centerSetting = { spanishEnabled: true }, centerScoped = true) {
+  return savedLocale === "es-US" && (!centerScoped || centerSetting.spanishEnabled) ? "es-US" : "en-US";
 }
 
 export function translateKey(locale, key, params = {}) {
@@ -94,9 +113,11 @@ function translateElement(element, locale) {
 }
 
 function translateLiteralText(root, locale) {
+  root.querySelectorAll("[data-literal-english-fallback]").forEach((element) => element.removeAttribute("data-literal-english-fallback"));
+  let fallbackCount = 0;
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode(node) {
-      return node.parentElement?.closest("script, style, [data-i18n], [data-i18n-preserve]") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+      return node.parentElement?.closest("script, style, pre, code, textarea, [data-i18n], [data-i18n-preserve]") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
     }
   });
   const nodes = [];
@@ -114,6 +135,10 @@ function translateLiteralText(root, locale) {
     const translated = locale === "es-US" ? esUSLiterals[trimmed] : undefined;
     const nextValue = translated === undefined ? source : source.replace(trimmed, translated);
     if (node.nodeValue !== nextValue) node.nodeValue = nextValue;
+    if (locale === "es-US" && translated === undefined && !isIntentionalPreserveLiteral(trimmed) && /[A-Za-z]{2}/.test(trimmed)) {
+      fallbackCount += 1;
+      node.parentElement?.setAttribute("data-literal-english-fallback", "true");
+    }
   });
   ["aria-label", "placeholder", "title", "data-center-local-action"].forEach((attribute) => {
     root.querySelectorAll(`[${attribute}]`).forEach((element) => {
@@ -125,8 +150,13 @@ function translateLiteralText(root, locale) {
       const translated = locale === "es-US" ? esUSLiterals[source] : undefined;
       const nextValue = translated ?? source;
       if (element.getAttribute(attribute) !== nextValue) element.setAttribute(attribute, nextValue);
+      if (locale === "es-US" && translated === undefined && /[A-Za-z]{2}/.test(source || "")) {
+        fallbackCount += 1;
+        element.setAttribute("data-literal-english-fallback", "true");
+      }
     });
   });
+  return fallbackCount;
 }
 
 export function applyCognitLocale(locale, root = document) {
@@ -142,8 +172,8 @@ export function applyCognitLocale(locale, root = document) {
   });
   document.documentElement.lang = locale;
   document.documentElement.dataset.contentLocale = locale;
+  fallbackCount += translateLiteralText(root, locale);
   root.querySelectorAll("[data-language-fallback-notice]").forEach((element) => { element.hidden = fallbackCount === 0; });
-  translateLiteralText(root, locale);
   return fallbackCount;
 }
 
@@ -152,25 +182,33 @@ export function initializeCognitLocalization(control) {
   if (!isAuthorizedLocaleRoute(location.pathname)) return;
   control.dataset.ready = "true";
   const personId = control.dataset.personId;
+  const centerId = control.dataset.centerId || "northfield";
+  const centerScoped = control.dataset.centerScoped !== "false";
   const select = control.querySelector("[data-language-select]");
   const toggle = control.querySelector("[data-center-spanish-enable]");
   const disabledNotice = control.querySelector("[data-language-disabled-notice]");
   const render = () => {
-    const centerSetting = readCenterLanguageSetting();
-    const savedLocale = readSavedLocale(personId);
-    const effectiveLocale = resolveEffectiveLocale(savedLocale, centerSetting);
+    const centerSetting = readCenterLanguageSetting(globalThis.localStorage, centerId);
+    const ownLocale = readSavedLocaleValue(personId);
+    const savedLocale = ownLocale ?? (personId === ENTRY_LANGUAGE_PERSON_ID ? "en-US" : readSavedLocale(ENTRY_LANGUAGE_PERSON_ID));
+    const effectiveLocale = resolveEffectiveLocale(savedLocale, centerSetting, centerScoped);
     if (select instanceof HTMLSelectElement) select.value = savedLocale;
     if (toggle instanceof HTMLInputElement) toggle.checked = centerSetting.spanishEnabled;
     if (disabledNotice instanceof HTMLElement) disabledNotice.hidden = !(savedLocale === "es-US" && effectiveLocale === "en-US");
     control.dataset.savedLocale = savedLocale;
     control.dataset.effectiveLocale = effectiveLocale;
+    control.dataset.preferenceSource = ownLocale ? "own" : personId === ENTRY_LANGUAGE_PERSON_ID ? "default" : "entry";
     applyCognitLocale(effectiveLocale);
     document.dispatchEvent(new CustomEvent("cognit:language-changed", { detail: { personId, savedLocale, effectiveLocale } }));
   };
   select?.addEventListener("change", () => { if (select instanceof HTMLSelectElement) writeSavedLocale(personId, select.value); render(); select.focus(); });
-  toggle?.addEventListener("change", () => { if (toggle instanceof HTMLInputElement) writeCenterLanguageSetting(toggle.checked); render(); toggle.focus(); });
+  toggle?.addEventListener("change", () => { if (toggle instanceof HTMLInputElement) writeCenterLanguageSetting(toggle.checked, globalThis.localStorage, centerId); render(); toggle.focus(); });
   addEventListener("storage", render);
-  const observer = new MutationObserver(() => queueMicrotask(() => translateLiteralText(document, control.dataset.effectiveLocale || "en-US")));
+  const observer = new MutationObserver(() => queueMicrotask(() => {
+    const locale = control.dataset.effectiveLocale || "en-US";
+    const fallbackCount = translateLiteralText(document, locale) + document.querySelectorAll("[data-english-fallback]").length;
+    document.querySelectorAll("[data-language-fallback-notice]").forEach((element) => { element.hidden = fallbackCount === 0; });
+  }));
   observer.observe(document.body, { childList: true, subtree: true, characterData: true });
   render();
 }

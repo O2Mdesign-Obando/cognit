@@ -2,6 +2,7 @@
 import "../../styles/global.css";
 import Header from "./Header.astro";
 import Footer from "./Footer.astro";
+import CognitLanguageControls from "../demo/CognitLanguageControls.astro";
 
 const {
   title = "Cognit Learning Hub",
@@ -9,6 +10,27 @@ const {
   footerVariant = "default",
   demoPerspective = ""
 } = Astro.props;
+const pathname = Astro.url.pathname.replace(/\/$/, "");
+const acceptedControlRoutes = new Set([
+  "/learninghub/demo/center/courses/creative-app-lab",
+  "/learninghub/demo/coach/learners/eli",
+  "/learninghub/demo/student/lesson",
+  "/learninghub/demo/family/courses"
+]);
+const isCanonicalDemoRoute = pathname === "/learninghub/demo" || pathname.startsWith("/learninghub/demo/");
+const showSharedLanguageControl = isCanonicalDemoRoute && !acceptedControlRoutes.has(pathname);
+const localeRole = pathname === "/learninghub/demo" ? "entry" : demoPerspective;
+const localePeople = {
+  entry: "demo-entry",
+  center: "demo-center-director-maya-chen",
+  coach: "demo-coach-jordan-ellis",
+  student: "demo-student-eli-morgan",
+  family: "demo-guardian-rachel-morgan",
+  hq: "demo-hq-administrator-avery-chen"
+};
+const localePersonId = localePeople[localeRole] || `demo-${localeRole || "entry"}`;
+const centerId = pathname.includes("/center/context/harbor") ? "harbor" : "northfield";
+const centerScoped = !["entry", "hq"].includes(localeRole);
 ---
 
 <!doctype html>
@@ -23,6 +45,7 @@ const {
   </head>
   <body>
     <Header variant={shellVariant} demoPerspective={demoPerspective} />
+    {showSharedLanguageControl && <CognitLanguageControls role={localeRole} personId={localePersonId} centerAdmin={localeRole === "center"} {centerId} {centerScoped} compact={true} />}
     <slot />
     <Footer variant={footerVariant} />
   </body>
