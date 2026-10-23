@@ -234,5 +234,166 @@ export const esUSLiterals = Object.freeze({
   "Operational correspondence": "Correspondencia operativa", "Finances": "Finanzas", "Local billing and payment capabilities": "Capacidades locales de facturación y pago",
   "Configuration is up to date.": "La configuración está actualizada.", "Restore defaults": "Restaurar valores predeterminados", "Discard changes": "Descartar cambios",
   "Save configuration": "Guardar configuración", "Configuration history": "Historial de configuración", "Module availability set.": "Disponibilidad de módulos establecida.",
-  "← Back to Center Management": "← Volver a Administración de Centros"
+  "← Back to Center Management": "← Volver a Administración de Centros",
+
+  "Coach · Cognit Learning Hub": "Instructor/a · Centro de aprendizaje de Cognit",
+  "Coach profile menu": "Menú de perfil del Instructor",
+  "coach sections": "Secciones del Instructor",
+  "Coach overview": "Resumen del Instructor",
+  "Good afternoon, Jordan.": "Buenas tardes, Jordan.",
+  "Everything needed for today’s teaching is in one place.": "Todo lo necesario para la enseñanza de hoy está en un solo lugar.",
+  "Next class ·": "Próxima clase ·",
+  "Creative App Lab starts at 4:00 PM": "Creative App Lab comienza a las 4:00 p. m.",
+  "Prototype a simple habit-tracking app and improve the interaction flow after testing.": "Crea un prototipo sencillo de una aplicación para registrar hábitos y mejora el flujo de interacción después de probarlo.",
+  "Review readiness →": "Revisar preparación →",
+  "Today’s teaching": "Enseñanza de hoy",
+  "Assigned classes": "Clases asignadas",
+  "End-of-day review": "Revisión de fin del día",
+  "4:00–5:30 PM ·": "4:00–5:30 p. m. ·",
+  "Saturday · 10:00–11:30 AM ·": "Sábado · 10:00–11:30 a. m. ·",
+  "Wednesday · 3:30–5:00 PM ·": "Miércoles · 3:30–5:00 p. m. ·",
+  "My learners": "Mis estudiantes",
+  "Today’s roster": "Lista de hoy",
+  "Creative App Lab · current focus ready": "Creative App Lab · enfoque actual listo",
+  "Two active course paths": "Dos trayectorias de curso activas",
+  "Coach correspondence": "Correspondencia del Instructor",
+  "Keep each follow-up in the right relationship.": "Mantén cada seguimiento en la relación correcta.",
+  "Prepare a scoped note for the Center or Eli’s authorized Family without mixing recipients or inventing history.": "Prepara una nota delimitada para el Centro o la Familia autorizada de Eli sin mezclar destinatarios ni inventar antecedentes.",
+  "Open correspondence": "Abrir correspondencia",
+  "What’s new": "Novedades",
+  "Before class": "Antes de la clase",
+  "Creative App Lab is ready.": "Creative App Lab está listo.",
+  "Review the learning focus, expected outcome, continuity, and roster before starting the session.": "Revisa el enfoque de aprendizaje, el resultado esperado, la continuidad y la lista antes de iniciar la sesión.",
+  "Today ·": "Hoy ·",
+  "Ready to start": "Listo para comenzar",
+  "Objective": "Objetivo",
+  "Prototype the habit-tracking flow and explain one design change.": "Crea el prototipo del flujo de registro de hábitos y explica un cambio de diseño.",
+  "Expected outcome": "Resultado esperado",
+  "A working primary screen, navigation, and one interaction test.": "Una pantalla principal funcional, navegación y una prueba de interacción.",
+  "Continuity": "Continuidad",
+  "Eli Morgan: Set up the primary screen and basic navigation.": "Eli Morgan: Configuró la pantalla principal y la navegación básica.",
+  "Coach note": "Nota del Instructor",
+  "Give both learners time to test a confusing step with a classmate.": "Da tiempo a ambos estudiantes para probar con un compañero un paso que resulte confuso.",
+  "Roster": "Lista",
+  "View learning plan": "Ver plan de aprendizaje",
+  "Begin class →": "Comenzar clase →",
+  "Active session": "Sesión activa",
+  "Switch class⌄": "Cambiar clase⌄",
+  "Creative App Lab · 2 learners": "Creative App Lab · 2 estudiantes",
+  "Digital Storytelling Lab · 2 learners": "Digital Storytelling Lab · 2 estudiantes",
+  "Harbor Creative App Lab · 1 learner": "Harbor Creative App Lab · 1 estudiante",
+  "elapsed": "transcurrido",
+  "2 learners present today": "2 estudiantes presentes hoy",
+  "Active class roster": "Lista de la clase activa",
+  "Capture evidence": "Capturar evidencia",
+  "End class": "Finalizar clase",
+  "Quick note · optional": "Nota rápida · opcional",
+  "Jot observations": "Anotar observaciones",
+  "Notes stay with the selected learner. Switching learners never carries text into another learner’s record.": "Las notas permanecen con el estudiante seleccionado. Cambiar de estudiante nunca lleva texto al registro de otro estudiante.",
+  "Whole class": "Clase completa",
+  "Quick observation note for Eli Morgan": "Nota rápida de observación para Eli Morgan",
+  "Quick observation note for Lena Grant": "Nota rápida de observación para Lena Grant",
+  "Quick observation note for Whole class": "Nota rápida de observación para la clase completa",
+  "Capture a short moment without interrupting teaching.": "Registra un momento breve sin interrumpir la enseñanza.",
+  "Drafting for Eli Morgan.": "Redactando para Eli Morgan.",
+  "0 notes captured this session": "0 notas registradas en esta sesión",
+  "Save note": "Guardar nota",
+  "Keep class active": "Mantener clase activa",
+  "End active class": "Finalizar clase activa",
+  "Move Creative App Lab to after-class reporting?": "¿Pasar Creative App Lab a los informes posteriores a la clase?",
+  "The timer will stop. Saved learner notes and the current class context remain available for reporting.": "El temporizador se detendrá. Las notas guardadas de los estudiantes y el contexto actual de la clase seguirán disponibles para los informes.",
+  "End class & review": "Finalizar clase y revisar",
+  "Connect a learning moment.": "Conecta un momento de aprendizaje.",
+  "Choose the evidence that best represents this learning moment.": "Elige la evidencia que mejor representa este momento de aprendizaje.",
+  "Return to active class": "Volver a la clase activa",
+  "Photo": "Foto", "Video": "Video",
+  "Assign this capture to": "Asignar esta captura a",
+  "Assignment stays attached while you return to the active class.": "La asignación permanece vinculada mientras vuelves a la clase activa.",
+  "Recent captures": "Capturas recientes",
+  "3 captures in this session.": "3 capturas en esta sesión.",
+  "Switch class": "Cambiar clase",
+  "2 learners · In progress": "2 estudiantes · En curso",
+  "2 learners · Upcoming": "2 estudiantes · Próximamente",
+  "1 learner · Upcoming": "1 estudiante · Próximamente",
+  "Pending deliverables": "Entregables pendientes",
+  "End-of-day review": "Revisión de fin del día",
+  "Resume unfinished Coach reporting without losing the class relationship.": "Reanuda los informes pendientes del Instructor sin perder la relación con la clase.",
+  "1 of 2 complete": "1 de 2 completadas",
+  "0 of 2 complete": "0 de 2 completadas",
+  "Resume report": "Reanudar informe",
+  "Review queue": "Revisar cola",
+  "Return to today’s teaching": "Volver a la enseñanza de hoy",
+
+  "Class complete · reporting": "Clase finalizada · informes",
+  "Turn teaching moments into learning records.": "Convierte los momentos de enseñanza en registros de aprendizaje.",
+  "Complete each learner observation, then submit the class report.": "Completa la observación de cada estudiante y luego envía el informe de la clase.",
+  "Pending learner observations": "Observaciones de estudiantes pendientes",
+  "Canonical source record · Eli Morgan": "Registro fuente canónico · Eli Morgan",
+  "One teaching event, one connected record": "Un evento de enseñanza, un registro conectado",
+  "Coach source": "Fuente del Instructor",
+  "Learning focus": "Enfoque de aprendizaje",
+  "What comes next": "Lo que sigue",
+  "The Coach authors the source record. Center review and publication remain separate decisions.": "El Instructor crea el registro fuente. La revisión del Centro y la publicación siguen siendo decisiones separadas.",
+  "Student feedback loop": "Ciclo de retroalimentación del Estudiante",
+  "Observation for Eli Morgan": "Observación para Eli Morgan",
+  "Observation for Lena Grant": "Observación para Lena Grant",
+  "Evidence from class": "Evidencia de la clase",
+  "Prototype screen": "Pantalla del prototipo",
+  "Testing moment": "Momento de prueba",
+  "Short video": "Video breve",
+  "No capture is assigned to Lena.": "No hay ninguna captura asignada a Lena.",
+  "Her observation can still be saved without inheriting Eli’s evidence.": "Su observación aún puede guardarse sin heredar la evidencia de Eli.",
+  "What happened today?": "¿Qué ocurrió hoy?",
+  "Refine wording": "Mejorar redacción",
+  "Suggested wording is ready; Coach remains the author.": "La redacción sugerida está lista; el Instructor sigue siendo el autor.",
+  "Skills demonstrated": "Habilidades demostradas",
+  "Interaction testing": "Pruebas de interacción",
+  "Independent building": "Creación independiente",
+  "+ Add skill": "+ Agregar habilidad",
+  "Any roadblocks?": "¿Algún obstáculo?",
+  "No roadblock recorded": "No se registró ningún obstáculo",
+  "Where should learning continue?": "¿Dónde debe continuar el aprendizaje?",
+  "Previous learner": "Estudiante anterior",
+  "Save & next learner": "Guardar y pasar al siguiente estudiante",
+  "Overall class observation · optional": "Observación general de la clase · opcional",
+  "Capture the cohort dynamic": "Registra la dinámica del grupo",
+  "Describe how the learners worked together.": "Describe cómo trabajaron juntos los estudiantes.",
+  "Direct Center note": "Nota directa para el Centro",
+  "Flag operational follow-up": "Señalar seguimiento operativo",
+  "Equipment": "Equipo", "Positive highlight": "Aspecto positivo",
+  "Add operational follow-up for Center review.": "Agrega un seguimiento operativo para la revisión del Centro.",
+  "Save draft & pause": "Guardar borrador y pausar",
+  "Complete both learner observations to submit.": "Completa ambas observaciones de estudiantes para enviar.",
+  "Submit all observations": "Enviar todas las observaciones",
+  "Submission receipt": "Comprobante de envío",
+  "Creative App Lab reporting complete.": "Informe de Creative App Lab completado.",
+  "Two learner observations were submitted for Center review. Family publication remains separate.": "Se enviaron dos observaciones de estudiantes para revisión del Centro. La publicación para la Familia sigue siendo independiente."
+  , "Next class · Northfield Studio": "Próxima clase · Northfield Studio"
+  , "4:00–5:30 PM · Eli Morgan, Lena Grant": "4:00–5:30 p. m. · Eli Morgan, Lena Grant"
+  , "Saturday · 10:00–11:30 AM · Mina Park, Ava Thompson": "Sábado · 10:00–11:30 a. m. · Mina Park, Ava Thompson"
+  , "Wednesday · 3:30–5:00 PM · Noah Bennett": "Miércoles · 3:30–5:00 p. m. · Noah Bennett"
+  , "Creative App Lab · Northfield Studio": "Creative App Lab · Northfield Studio"
+  , "Creative App Lab 2 learners · In progress": "Creative App Lab · 2 estudiantes · En curso"
+  , "Digital Storytelling Lab 2 learners · Upcoming": "Digital Storytelling Lab · 2 estudiantes · Próximamente"
+  , "Harbor Creative App Lab 1 learner · Upcoming": "Harbor Creative App Lab · 1 estudiante · Próximamente"
+  , "HabitToday": "HabitHoy", "HabitToday✓": "HabitHoy✓", "Optional": "Opcional", "Submitted": "Enviado"
+  , "Observation for": "Observación para"
+  , "Habit": "Habit", "Harbor Academy · Creative App Lab": "Harbor Academy · Creative App Lab"
+  , "Eli Morgan · Lena Grant": "Eli Morgan · Lena Grant", "Mina Park · Ava Thompson": "Mina Park · Ava Thompson"
+  , "Drafting for Lena Grant.": "Redactando para Lena Grant."
+  , "Drafting for Whole class.": "Redactando para la clase completa."
+  , "Add a note for Eli Morgan before saving.": "Agrega una nota para Eli Morgan antes de guardar."
+  , "Add a note for Lena Grant before saving.": "Agrega una nota para Lena Grant antes de guardar."
+  , "Add a note for Whole class before saving.": "Agrega una nota para la clase completa antes de guardar."
+  , "1 note captured this session": "1 nota registrada en esta sesión"
+  , "2 notes captured this session": "2 notas registradas en esta sesión"
+  , "Saved for Eli Morgan.": "Guardado para Eli Morgan."
+  , "Saved for Lena Grant.": "Guardado para Lena Grant."
+  , "Saved for Whole class.": "Guardado para la clase completa."
+  , "Capture saved and assigned to Eli Morgan.": "Captura guardada y asignada a Eli Morgan."
+  , "Capture saved and assigned to Lena Grant.": "Captura guardada y asignada a Lena Grant."
+  , "Capture saved and assigned to Whole class.": "Captura guardada y asignada a la clase completa."
+  , "Suggested wording placed in the Coach draft; review before saving.": "La redacción sugerida se colocó en el borrador del Instructor; revísala antes de guardar."
+  , "Add a Coach-authored observation before requesting wording help.": "Agrega una observación escrita por el Instructor antes de solicitar ayuda de redacción."
+  , "Submission complete.": "Envío completado."
 });

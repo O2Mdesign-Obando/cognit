@@ -22,6 +22,9 @@ const intentionalPreserveLiterals = new Set([
   "Creative App Foundations", "Robotics Systems", "Digital Storytelling", "AI Foundations",
   "Creative Computing Journey", "Engineering Design Journey", "Advanced Problem Solving",
   "Creative App Foundations 2.4"
+  , "Creative App Lab", "Digital Storytelling Lab", "Harbor Creative App Lab", "Robotics Studio",
+  "Habit Tracker", "Habit Tracker — interaction flow prototype", "Lena Grant", "Mina Park", "Ava Thompson",
+  "Noah Bennett", "Sofia Reyes", "Morgan Family", "Northfield Studio Center team"
 ]);
 const memoryStorage = new Map();
 const originalText = new WeakMap();
