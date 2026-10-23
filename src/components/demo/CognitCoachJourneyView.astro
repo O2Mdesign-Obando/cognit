@@ -127,7 +127,7 @@ const releases = [
       </nav>
 
       {workspaceTab === "overview" && (
-        <section class="workspace-panel" aria-labelledby="workspace-overview-title"><div class="section-heading"><div><span class="eyebrow">One learner · one course record</span><h2 id="workspace-overview-title">Current learning record</h2></div><strong>2 of 3 steps</strong></div><div class="fact-grid three"><article><span>Completed</span><strong>{model.primary.completed}</strong></article><article class="current"><span>Current</span><strong>{model.primary.challenge}</strong></article><article><span>Next</span><strong>{model.primary.next}</strong></article></div><div class="two-column supporting-records"><article class="inset"><span class="eyebrow">Latest Coach observation</span><p>{model.primary.observation}</p><a href="/learninghub/demo/coach/learners/eli/observations">Review observations →</a></article><article class="inset"><span class="eyebrow">Connected evidence</span><p><strong>{model.primary.evidence.label}</strong><br/>{model.primary.evidence.type.replace("_", " ")} · {model.primary.evidence.status}</p><a href="/learninghub/demo/coach/learners/eli/evidence">Inspect evidence →</a></article></div></section>
+        <section class="workspace-panel" aria-labelledby="workspace-overview-title"><div class="section-heading"><div><span class="eyebrow">One learner · one course record</span><h2 id="workspace-overview-title">Current learning record</h2></div><strong>2 of 3 steps</strong></div><div class="fact-grid three"><article><span>Completed</span><strong>{model.primary.completed}</strong></article><article class="current"><span>Current</span><strong>{model.primary.challenge}</strong></article><article><span>Next</span><strong>{model.primary.next}</strong></article></div><div class="two-column supporting-records"><article class="inset"><span class="eyebrow">Latest Coach observation</span><p data-i18n-preserve>{model.primary.observation}</p><a href="/learninghub/demo/coach/learners/eli/observations">Review observations →</a></article><article class="inset"><span class="eyebrow">Connected evidence</span><p><strong>{model.primary.evidence.label}</strong><br/>{model.primary.evidence.type.replace("_", " ")} · {model.primary.evidence.status}</p><a href="/learninghub/demo/coach/learners/eli/evidence">Inspect evidence →</a></article></div></section>
       )}
       {workspaceTab === "overview" && <CognitCurriculumProjection role="coach" personId="demo-coach-jordan-ellis" />}
       {workspaceTab === "overview" && <CognitCurriculumWorkspace audience="coach" personId="demo-coach-jordan-ellis" />}
@@ -141,7 +141,7 @@ const releases = [
       )}
 
       {workspaceTab === "observations" && (
-        <section class="workspace-panel observations-panel" aria-labelledby="workspace-observations-title"><div class="section-heading"><div><span class="eyebrow">Coach-authored interpretation</span><h2 id="workspace-observations-title">Observation connected to the work</h2></div><span class="status">Draft source record</span></div><blockquote>{model.primary.observation}</blockquote><div class="fact-grid"><article><span>Evidence reference</span><strong>{model.primary.evidence.label}</strong></article><article><span>Where learning continues</span><strong>{model.primary.next}</strong></article></div><p class="record-boundary">Private quick-note drafts and learner reflections are not included in the Center submission package.</p></section>
+        <section class="workspace-panel observations-panel" aria-labelledby="workspace-observations-title"><div class="section-heading"><div><span class="eyebrow">Coach-authored interpretation</span><h2 id="workspace-observations-title">Observation connected to the work</h2></div><span class="status">Draft source record</span></div><blockquote data-i18n-preserve>{model.primary.observation}</blockquote><div class="fact-grid"><article><span>Evidence reference</span><strong>{model.primary.evidence.label}</strong></article><article><span>Where learning continues</span><strong>{model.primary.next}</strong></article></div><p class="record-boundary">Private quick-note drafts and learner reflections are not included in the Center submission package.</p></section>
       )}
 
       <section class="submission-panel" aria-labelledby="submit-center-title">
@@ -250,7 +250,69 @@ const releases = [
     const workspace = root.querySelector("[data-learner-workspace]");
     if (workspace) { const submitKey = "cognit:coach-eli-center-submission:v1"; const dialog = workspace.querySelector("[data-center-submit-dialog]"); const backdrop = workspace.querySelector("[data-center-submit-backdrop]"); const receipt = workspace.querySelector("[data-center-submit-receipt]"); const submitButton = workspace.querySelector("[data-open-center-submit]"); const setSubmitDialog = (open) => { if (dialog instanceof HTMLElement) { dialog.hidden = !open; if (open) dialog.querySelector("button")?.focus(); else if (submitButton instanceof HTMLElement) submitButton.focus(); } if (backdrop instanceof HTMLElement) backdrop.hidden = !open; }; submitButton?.addEventListener("click", () => setSubmitDialog(true)); workspace.addEventListener("keydown", (event) => { if (event.key === "Escape" && dialog instanceof HTMLElement && !dialog.hidden) setSubmitDialog(false); }); const renderSubmitted = () => { const submitted = localStorage.getItem(submitKey) === "submitted"; if (receipt instanceof HTMLElement) receipt.hidden = !submitted; if (submitButton instanceof HTMLButtonElement) { submitButton.disabled = submitted; submitButton.textContent = submitted ? "Submitted to Center" : "Submit to Center"; } const status = workspace.querySelector("[data-workspace-status]"); if (status) status.textContent = submitted ? "Submitted · awaiting Center review" : "Coach record in progress"; }; workspace.querySelectorAll("[data-close-center-submit]").forEach((button) => button.addEventListener("click", () => setSubmitDialog(false))); backdrop?.addEventListener("click", () => setSubmitDialog(false)); workspace.querySelector("[data-confirm-center-submit]")?.addEventListener("click", () => { localStorage.setItem(submitKey, "submitted"); setSubmitDialog(false); renderSubmitted(); if (receipt instanceof HTMLElement) receipt.focus(); }); renderSubmitted(); }
     const correspondence = root.querySelector("[data-correspondence]");
-    if (correspondence) { const targets = { center: { recipient: "Northfield Studio Center team", subject: "Creative App Lab follow-up", boundary: "Center correspondence is operational. It does not publish a learning story." }, family: { recipient: "Authorized Morgan Family", subject: "Eli’s Creative App Lab update", boundary: "Family correspondence is scoped to Eli and Creative App Lab. It does not include other learners or private drafts." } }; const draftKey = "cognit:coach-correspondence-drafts:v1"; let drafts = {}; try { drafts = JSON.parse(sessionStorage.getItem(draftKey) || "{}"); } catch { drafts = {}; } let target = new URLSearchParams(window.location.search).get("recipient") === "family" ? "family" : "center"; const message = correspondence.querySelector("[data-correspondence-message]"); const subject = correspondence.querySelector("[data-correspondence-subject]"); const saveDraft = () => { drafts[target] = { message: message?.value || "", subject: subject?.value || "" }; sessionStorage.setItem(draftKey, JSON.stringify(drafts)); }; const renderTarget = () => { const config = targets[target]; correspondence.querySelectorAll("[data-correspondence-target]").forEach((button) => { const selected = button.getAttribute("data-correspondence-target") === target; button.classList.toggle("selected", selected); button.setAttribute("aria-pressed", String(selected)); }); correspondence.querySelector("[data-correspondence-recipient]").value = config.recipient; correspondence.querySelector("[data-correspondence-boundary]").textContent = config.boundary; if (subject) subject.value = drafts[target]?.subject || config.subject; if (message) message.value = drafts[target]?.message || ""; }; correspondence.querySelectorAll("[data-correspondence-target]").forEach((button) => button.addEventListener("click", () => { saveDraft(); target = button.getAttribute("data-correspondence-target"); renderTarget(); })); subject?.addEventListener("input", saveDraft); message?.addEventListener("input", saveDraft); correspondence.querySelector("[data-correspondence-form]")?.addEventListener("submit", (event) => { event.preventDefault(); const form = event.currentTarget; const status = correspondence.querySelector("[data-correspondence-status]"); if (!form.checkValidity()) { if (status) status.textContent = "Complete the subject and message before saving."; return; } if (status) status.textContent = `Note saved for ${targets[target].recipient}.`; drafts[target] = { message: "", subject: targets[target].subject }; sessionStorage.setItem(draftKey, JSON.stringify(drafts)); if (message) message.value = ""; }); renderTarget(); }
+    if (correspondence) {
+      const targets = {
+        center: {
+          recipient: { "en-US": "Northfield Studio Center team", "es-US": "Equipo del Centro Northfield Studio" },
+          subject: { "en-US": "Creative App Lab follow-up", "es-US": "Seguimiento de Creative App Lab" },
+          boundary: { "en-US": "Center correspondence is operational. It does not publish a learning story.", "es-US": "La correspondencia del Centro es operativa. No publica una historia de aprendizaje." }
+        },
+        family: {
+          recipient: { "en-US": "Authorized Morgan Family", "es-US": "Familia Morgan autorizada" },
+          subject: { "en-US": "Eli’s Creative App Lab update", "es-US": "Actualización de Creative App Lab de Eli" },
+          boundary: { "en-US": "Family correspondence is scoped to Eli and Creative App Lab. It does not include other learners or private drafts.", "es-US": "La correspondencia con la Familia se limita a Eli y Creative App Lab. No incluye a otros estudiantes ni borradores privados." }
+        }
+      };
+      const draftKey = "cognit:coach-correspondence-drafts:v1";
+      let drafts = {};
+      try { drafts = JSON.parse(sessionStorage.getItem(draftKey) || "{}"); } catch { drafts = {}; }
+      let target = new URLSearchParams(window.location.search).get("recipient") === "family" ? "family" : "center";
+      const message = correspondence.querySelector("[data-correspondence-message]");
+      const subject = correspondence.querySelector("[data-correspondence-subject]");
+      const locale = () => document.documentElement.lang === "es-US" ? "es-US" : "en-US";
+      const persistDrafts = () => sessionStorage.setItem(draftKey, JSON.stringify(drafts));
+      const renderTarget = () => {
+        const config = targets[target];
+        const activeLocale = locale();
+        correspondence.querySelectorAll("[data-correspondence-target]").forEach((button) => {
+          const selected = button.getAttribute("data-correspondence-target") === target;
+          button.classList.toggle("selected", selected);
+          button.setAttribute("aria-pressed", String(selected));
+        });
+        correspondence.querySelector("[data-correspondence-recipient]").value = config.recipient[activeLocale];
+        correspondence.querySelector("[data-correspondence-boundary]").textContent = config.boundary[activeLocale];
+        if (subject) subject.value = drafts[target]?.subjectDirty ? drafts[target].subject : config.subject[activeLocale];
+        if (message) message.value = drafts[target]?.message || "";
+      };
+      correspondence.querySelectorAll("[data-correspondence-target]").forEach((button) => button.addEventListener("click", () => {
+        target = button.getAttribute("data-correspondence-target");
+        renderTarget();
+      }));
+      subject?.addEventListener("input", () => {
+        drafts[target] = { ...drafts[target], subject: subject.value, subjectDirty: true, message: message?.value || "" };
+        persistDrafts();
+      });
+      message?.addEventListener("input", () => {
+        drafts[target] = { ...drafts[target], message: message.value };
+        persistDrafts();
+      });
+      correspondence.querySelector("[data-correspondence-form]")?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const status = correspondence.querySelector("[data-correspondence-status]");
+        if (!form.checkValidity()) {
+          if (status) status.textContent = locale() === "es-US" ? "Completa el asunto y el mensaje antes de guardar." : "Complete the subject and message before saving.";
+          return;
+        }
+        const recipient = targets[target].recipient[locale()];
+        if (status) status.textContent = locale() === "es-US" ? `Nota guardada para ${recipient}.` : `Note saved for ${recipient}.`;
+        drafts[target] = { message: "", subjectDirty: false };
+        persistDrafts();
+        if (message) message.value = "";
+      });
+      document.addEventListener("cognit:language-changed", renderTarget);
+      renderTarget();
+    }
     root.addEventListener("keydown", (event) => { if (event.key === "Escape" && endDialog instanceof HTMLElement && !endDialog.hidden) setEndDialog(false); });
   });
 </script>
