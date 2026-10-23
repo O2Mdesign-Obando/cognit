@@ -136,7 +136,7 @@ export function reduceCoachInteraction(state, action) {
   }
 
   if (action.type === "accept-wording-suggestion" && learner.observationSuggestion) {
-    learner.observationDraft = learner.observationSuggestion;
+    learner.observationDraft = String(action.value || learner.observationSuggestion);
     learner.observationSuggestion = "";
     learner.observationSaved = false;
   }

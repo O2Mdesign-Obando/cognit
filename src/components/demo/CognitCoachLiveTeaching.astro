@@ -155,7 +155,7 @@ const lena = model.roster.find((learner) => learner.id === "demo-student-lena-gr
           <div><dt>Course</dt><dd>Creative App Lab</dd></div>
           <div><dt>Progress</dt><dd data-receipt-progress>3 of 3 complete</dd></div>
           <div><dt>Evidence</dt><dd data-receipt-evidence>Habit Tracker — interaction flow prototype</dd></div>
-          <div><dt>Observation</dt><dd data-receipt-observation></dd></div>
+          <div><dt>Observation</dt><dd data-receipt-observation data-i18n-preserve></dd></div>
           <div><dt>Status</dt><dd>Submitted</dd></div>
         </dl>
         <p>Center has not reviewed this report, and nothing has been published to Family.</p>
@@ -355,7 +355,8 @@ const lena = model.roster.find((learner) => learner.id === "demo-student-lena-gr
     });
 
     find("[data-accept-wording]")?.addEventListener("click", () => {
-      state = reduceCoachInteraction(state, { type: "accept-wording-suggestion" });
+      const visibleSuggestion = find("[data-suggested-wording]")?.textContent || "";
+      state = reduceCoachInteraction(state, { type: "accept-wording-suggestion", value: visibleSuggestion });
       render();
       announce("Suggestion accepted as editable draft wording. Nothing has been saved.");
       if (observationInput instanceof HTMLTextAreaElement) observationInput.focus();
