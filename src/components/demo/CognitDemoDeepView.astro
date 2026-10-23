@@ -174,7 +174,7 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   )}
 
   {role === "coach" && section === "observations" && (
-    <section class="card-grid two">{data.learningEvents.map((event) => <article class="detail-card"><div class="compact-identity"><DemoImage image={getDemoStudentImage(event.studentId)} size="avatar-sm" /><div><span class="eyebrow">{findCourse(event.courseId).name}</span><h2>{findStudent(studentSlug(event.studentId)).name}</h2></div></div><p>“{event.observation}”</p><small>Evidence: {event.evidence.label} · {event.evidence.status.replaceAll("_", " ")}</small>{event.studentId === "demo-student-eli-morgan" && <a class="primary-link" href="/learninghub/demo/coach/evidence/eli">Inspect evidence →</a>}</article>)}</section>
+    <section class="card-grid two">{data.learningEvents.map((event) => <article class="detail-card"><div class="compact-identity"><DemoImage image={getDemoStudentImage(event.studentId)} size="avatar-sm" /><div><span class="eyebrow">{findCourse(event.courseId).name}</span><h2>{findStudent(studentSlug(event.studentId)).name}</h2></div></div><p data-i18n-preserve>“{event.observation}”</p><small>Evidence: {event.evidence.label} · {event.evidence.status.replaceAll("_", " ")}</small>{event.studentId === "demo-student-eli-morgan" && <a class="primary-link" href="/learninghub/demo/coach/evidence/eli">Inspect evidence →</a>}</article>)}</section>
   )}
 
   {role === "coach" && section === "evidence" && (
@@ -182,7 +182,7 @@ const familyStudent = selectedFamily ? findStudent(studentSlug(selectedFamily.st
   )}
 
   {role === "coach" && section === "reporting" && (
-    <section class="card-grid two"><article class="detail-card positive-card"><span class="eyebrow">No review required</span><h2>Eli Morgan</h2><p>{eliEvent.observation}</p><small>Evidence available · update processed</small></article><article class="detail-card attention-card"><span class="eyebrow">Returned for clarification</span><h2>Sofia Reyes</h2><p>{sofiaEvent.report.reason}</p><small>Next: attach the sensor trial record, then resubmit.</small></article></section>
+    <section class="card-grid two"><article class="detail-card positive-card"><span class="eyebrow">No review required</span><h2>Eli Morgan</h2><p data-i18n-preserve>{eliEvent.observation}</p><small>Evidence available · update processed</small></article><article class="detail-card attention-card"><span class="eyebrow">Returned for clarification</span><h2>Sofia Reyes</h2><p>{sofiaEvent.report.reason}</p><small>Next: attach the sensor trial record, then resubmit.</small></article></section>
   )}
 
   {role === "student" && section === "my-work" && (
