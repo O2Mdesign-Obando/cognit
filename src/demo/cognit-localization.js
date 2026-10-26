@@ -33,6 +33,7 @@ const originalAttributes = new WeakMap();
 function isIntentionalPreserveLiteral(value) {
   return intentionalPreserveLiterals.has(value)
     || /^HQ-\d+(?: · .+)?$/.test(value)
+    || /^(?:NFS|HBR)(?:-DEMO)?-\d+$/.test(value)
     || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
     || /^[A-Z][A-Za-z ]+, [A-Z]{2}$/.test(value);
 }
