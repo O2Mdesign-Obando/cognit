@@ -185,7 +185,7 @@ const billingCounts = {
 
 <div class="center-shell" data-center-root data-context={contextKey} data-view={section} data-item={item} data-scenario-date={scenarioDate} data-attendance-href={href("attendance")} data-schedule-base={JSON.stringify(contextSessions)} data-room-base={JSON.stringify(contextRoomRecords)} data-course-base={JSON.stringify(contextCourses.map((course)=>({id:course.id,name:course.name,capacity:course.capacity})))} data-coach-base={JSON.stringify(contextCoaches.map((coach)=>({id:coach.id,name:coach.name,status:coach.status})))}>
   <header class="center-topline">
-    <div><strong data-center-display-name>{title}</strong><span>Center Operations</span></div>
+    <div><strong data-center-display-name data-i18n-preserve>{title}</strong><span>Center Operations</span></div>
     <div class="top-actions">
       <div class="context-control"><span>Operating context</span><a href={switchHref("northfield")} aria-current={contextKey === "northfield" ? "page" : undefined}>Northfield</a><a href={switchHref("harbor")} aria-current={contextKey === "harbor" ? "page" : undefined}>Harbor</a></div>
       <details class="profile-menu"><summary><span>MC</span>Maya Chen</summary><nav aria-label="User utilities"><a href={href("support")} aria-current={section === "support" ? "page" : undefined}>Support</a><a href={href("whats-new")} aria-current={section === "whats-new" ? "page" : undefined}>What’s New</a><a href={href("configuration")} aria-current={["configuration", "module-control", "migration"].includes(section) ? "page" : undefined}>Settings</a><button type="button" data-center-local-action="Signed out.">Sign out</button></nav></details>
