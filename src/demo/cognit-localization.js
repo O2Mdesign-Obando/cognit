@@ -23,7 +23,7 @@ const intentionalPreserveLiterals = new Set([
   "Creative Computing Journey", "Engineering Design Journey", "Advanced Problem Solving",
   "Creative App Foundations 2.4"
   , "Creative App Lab", "Digital Storytelling Lab", "Harbor Creative App Lab", "Robotics Studio",
-  "Habit Tracker", "Habit Tracker — interaction flow prototype", "Lena Grant", "Mina Park", "Ava Thompson",
+  "Habit Tracker", "Habit Tracker — interaction flow prototype", "Lena Grant", "Mina Park", "Ava Thompson", "Priya Nair", "Avery Cole",
   "Noah Bennett", "Sofia Reyes", "Morgan Family", "Northfield Studio Center team"
 ]);
 const memoryStorage = new Map();
@@ -33,6 +33,7 @@ const originalAttributes = new WeakMap();
 function isIntentionalPreserveLiteral(value) {
   return intentionalPreserveLiterals.has(value)
     || /^HQ-\d+(?: · .+)?$/.test(value)
+    || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
     || /^[A-Z][A-Za-z ]+, [A-Z]{2}$/.test(value);
 }
 
