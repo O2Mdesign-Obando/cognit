@@ -37,6 +37,27 @@ export const COGNIT_COACH_LOCALIZATION_GROUPS = Object.freeze({
   ])
 });
 
+export const COGNIT_STUDENT_LOCALIZATION_GROUPS = Object.freeze({
+  today: Object.freeze(["/learninghub/demo/student"]),
+  activeLesson: Object.freeze(["/learninghub/demo/student/lesson", "/learninghub/demo/student/active", "/learninghub/demo/student/reflection", "/learninghub/demo/student/complete"]),
+  workAndProgress: Object.freeze(["/learninghub/demo/student/my-work", "/learninghub/demo/student/artifact", "/learninghub/demo/student/progress"]),
+  coursesAndJourney: Object.freeze(["/learninghub/demo/student/courses", "/learninghub/demo/student/courses/lena", "/learninghub/demo/student/journey", "/learninghub/demo/student/journey/eli"])
+});
+
+export const COGNIT_FAMILY_LOCALIZATION_GROUPS = Object.freeze({
+  homeAndJourney: Object.freeze(["/learninghub/demo/family", "/learninghub/demo/family/journey", "/learninghub/demo/family/journey/eli"]),
+  attendance: Object.freeze(["/learninghub/demo/family/attendance", "/learninghub/demo/family/attendance/eli", "/learninghub/demo/family/attendance/sofia", "/learninghub/demo/family/absence", "/learninghub/demo/family/absence-confirmed", "/learninghub/demo/family/makeup"]),
+  relationshipAndOperations: Object.freeze(["/learninghub/demo/family/messages", "/learninghub/demo/family/courses", "/learninghub/demo/family/billing", "/learninghub/demo/family/account", "/learninghub/demo/family/support"])
+});
+
+export const COGNIT_CENTER_LOCALIZATION_GROUPS = Object.freeze({
+  overviewAndClasses: Object.freeze([
+    "/learninghub/demo/center", "/learninghub/demo/center/classes", "/learninghub/demo/center/classes/creative", "/learninghub/demo/center/classes/creative/attendance", "/learninghub/demo/center/classes/robotics",
+    "/learninghub/demo/center/context/northfield", "/learninghub/demo/center/context/northfield/classes", "/learninghub/demo/center/context/northfield/classes/creative", "/learninghub/demo/center/context/northfield/classes/creative/attendance", "/learninghub/demo/center/context/northfield/classes/robotics",
+    "/learninghub/demo/center/context/harbor", "/learninghub/demo/center/context/harbor/classes", "/learninghub/demo/center/context/harbor/classes/creative", "/learninghub/demo/center/context/harbor/classes/creative/attendance", "/learninghub/demo/center/context/harbor/classes/robotics"
+  ])
+});
+
 export const COGNIT_LOCALIZATION_COVERAGE = Object.freeze({
   manifest: COGNIT_DEMO_LOCALIZATION_MANIFEST_META,
   reviewStatus: "SPANISH_HUMAN_REVIEW_PENDING",
@@ -55,10 +76,10 @@ export const COGNIT_LOCALIZATION_COVERAGE = Object.freeze({
   }),
   families: Object.freeze({
     entry: Object.freeze({ routes: 1, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
-    center: Object.freeze({ routes: 321, initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
+    center: Object.freeze({ routes: 321, completedRoutes: 15, completedGroups: Object.freeze(["overviewAndClasses"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
     coach: Object.freeze({ routes: 26, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
-    student: Object.freeze({ routes: 12, initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
-    family: Object.freeze({ routes: 14, initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
+    student: Object.freeze({ routes: 12, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
+    family: Object.freeze({ routes: 14, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     hq: Object.freeze({ routes: 11, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" })
   }),
   interactiveStateInventory: Object.freeze([

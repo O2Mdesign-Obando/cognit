@@ -65,7 +65,7 @@ const resources = [
 
       <div class="home-grid">
         <section class="panel" aria-labelledby="courses-title"><h2 id="courses-title">Your courses</h2><article><span class="state-word">Active</span><div><strong>Creative App Lab</strong><small>Habit Tracker · current learning focus</small></div><a href="/learninghub/demo/student/courses">View courses →</a></article><article><span class="state-word upcoming">Continuity</span><div><strong>Lena’s course paths</strong><small>Separate course paths remain separate.</small></div><a href="/learninghub/demo/student/courses/lena">Explore courses →</a></article></section>
-        <section class="panel" aria-labelledby="coach-note-title"><h2 id="coach-note-title">A note from Jordan</h2><blockquote>“Keep the core flow simple, test it with someone else, and notice where they hesitate.”</blockquote><p class="boundary-note">Guidance from Jordan for this activity.</p></section>
+        <section class="panel" aria-labelledby="coach-note-title"><h2 id="coach-note-title">A note from Jordan</h2><blockquote data-i18n-preserve data-authored-original-locale="en-US">“Keep the core flow simple, test it with someone else, and notice where they hesitate.”</blockquote><p class="boundary-note">Original guidance from Jordan for this activity.</p></section>
       </div>
     </div>
   )}
@@ -149,7 +149,7 @@ const resources = [
       <form method="dialog"><button class="dialog-close" value="close" aria-label={`Close ${resource.title}`}>×</button></form>
       <span class="eyebrow">{resource.kind}</span><h2 id={`resource-${resource.id}-title`}>{resource.title}</h2><p>{resource.detail}</p>
       {resource.id === "walkthrough" && <div class="video-shell" role="img" aria-label="Interaction-flow walkthrough"><span aria-hidden="true">▶</span><strong>Walkthrough</strong></div>}
-      {resource.id === "reference" && <pre aria-label="Interaction-flow reference"><code>{`screen = "Today"\nif action == "add_habit":\n    screen = "New habit"\n\n# Test whether the next screen is clear.`}</code></pre>}
+      {resource.id === "reference" && <pre aria-label="Interaction-flow reference" data-i18n-preserve><code>{`screen = "Today"\nif action == "add_habit":\n    screen = "New habit"\n\n# Test whether the next screen is clear.`}</code></pre>}
       {resource.id === "checklist" && <ul class="guide-list"><li>Can someone identify the next action?</li><li>Does the screen explain what changed?</li><li>Which step caused hesitation?</li></ul>}
       <form method="dialog"><button class="primary-button" value="close">Return to lesson</button></form>
     </dialog>
