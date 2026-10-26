@@ -60,6 +60,16 @@ export const COGNIT_CENTER_LOCALIZATION_GROUPS = Object.freeze({
     "/learninghub/demo/center/coaches", "/learninghub/demo/center/coaches/jordan", "/learninghub/demo/center/coaches/priya", "/learninghub/demo/center/coaches/avery",
     "/learninghub/demo/center/context/northfield/coaches", "/learninghub/demo/center/context/northfield/coaches/jordan", "/learninghub/demo/center/context/northfield/coaches/priya", "/learninghub/demo/center/context/northfield/coaches/avery",
     "/learninghub/demo/center/context/harbor/coaches", "/learninghub/demo/center/context/harbor/coaches/jordan", "/learninghub/demo/center/context/harbor/coaches/priya", "/learninghub/demo/center/context/harbor/coaches/avery"
+  ]),
+  families: Object.freeze([
+    "/learninghub/demo/center/families", "/learninghub/demo/center/families/morgan", "/learninghub/demo/center/families/reyes", "/learninghub/demo/center/families/park",
+    "/learninghub/demo/center/context/northfield/families", "/learninghub/demo/center/context/northfield/families/morgan", "/learninghub/demo/center/context/northfield/families/reyes", "/learninghub/demo/center/context/northfield/families/park",
+    "/learninghub/demo/center/context/harbor/families", "/learninghub/demo/center/context/harbor/families/morgan", "/learninghub/demo/center/context/harbor/families/reyes", "/learninghub/demo/center/context/harbor/families/park"
+  ]),
+  students: Object.freeze([
+    "/learninghub/demo/center/students", "/learninghub/demo/center/students/eli", "/learninghub/demo/center/students/sofia", "/learninghub/demo/center/students/noah", "/learninghub/demo/center/students/mina", "/learninghub/demo/center/students/lena", "/learninghub/demo/center/students/ava", "/learninghub/demo/center/students/morgan", "/learninghub/demo/center/students/reyes", "/learninghub/demo/center/students/bennett", "/learninghub/demo/center/students/park", "/learninghub/demo/center/students/grant", "/learninghub/demo/center/students/thompson",
+    "/learninghub/demo/center/context/northfield/students", "/learninghub/demo/center/context/northfield/students/eli", "/learninghub/demo/center/context/northfield/students/sofia", "/learninghub/demo/center/context/northfield/students/noah", "/learninghub/demo/center/context/northfield/students/mina", "/learninghub/demo/center/context/northfield/students/lena", "/learninghub/demo/center/context/northfield/students/ava", "/learninghub/demo/center/context/northfield/students/morgan", "/learninghub/demo/center/context/northfield/students/reyes", "/learninghub/demo/center/context/northfield/students/bennett", "/learninghub/demo/center/context/northfield/students/park", "/learninghub/demo/center/context/northfield/students/grant", "/learninghub/demo/center/context/northfield/students/thompson",
+    "/learninghub/demo/center/context/harbor/students", "/learninghub/demo/center/context/harbor/students/eli", "/learninghub/demo/center/context/harbor/students/sofia", "/learninghub/demo/center/context/harbor/students/noah", "/learninghub/demo/center/context/harbor/students/mina", "/learninghub/demo/center/context/harbor/students/lena", "/learninghub/demo/center/context/harbor/students/ava", "/learninghub/demo/center/context/harbor/students/morgan", "/learninghub/demo/center/context/harbor/students/reyes", "/learninghub/demo/center/context/harbor/students/bennett", "/learninghub/demo/center/context/harbor/students/park", "/learninghub/demo/center/context/harbor/students/grant", "/learninghub/demo/center/context/harbor/students/thompson"
   ])
 });
 
@@ -81,7 +91,7 @@ export const COGNIT_LOCALIZATION_COVERAGE = Object.freeze({
   }),
   families: Object.freeze({
     entry: Object.freeze({ routes: 1, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
-    center: Object.freeze({ routes: 321, completedRoutes: 27, completedGroups: Object.freeze(["overviewAndClasses", "coaches"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
+    center: Object.freeze({ routes: 321, completedRoutes: 78, completedGroups: Object.freeze(["overviewAndClasses", "coaches", "families", "students"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
     coach: Object.freeze({ routes: 26, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     student: Object.freeze({ routes: 12, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     family: Object.freeze({ routes: 14, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
