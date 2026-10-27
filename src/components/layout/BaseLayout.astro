@@ -2,7 +2,6 @@
 import "../../styles/global.css";
 import Header from "./Header.astro";
 import Footer from "./Footer.astro";
-import CognitLanguageControls from "../demo/CognitLanguageControls.astro";
 
 const {
   title = "Cognit Learning Hub",
@@ -11,14 +10,7 @@ const {
   demoPerspective = ""
 } = Astro.props;
 const pathname = Astro.url.pathname.replace(/\/$/, "");
-const acceptedControlRoutes = new Set([
-  "/learninghub/demo/center/courses/creative-app-lab",
-  "/learninghub/demo/coach/learners/eli",
-  "/learninghub/demo/student/lesson",
-  "/learninghub/demo/family/courses"
-]);
 const isCanonicalDemoRoute = pathname === "/learninghub/demo" || pathname.startsWith("/learninghub/demo/");
-const showSharedLanguageControl = isCanonicalDemoRoute && !acceptedControlRoutes.has(pathname);
 const localeRole = pathname === "/learninghub/demo" ? "entry" : demoPerspective;
 const localePeople = {
   entry: "demo-entry",
@@ -44,8 +36,15 @@ const centerScoped = !["entry", "hq"].includes(localeRole);
     <title>{title}</title>
   </head>
   <body>
-    <Header variant={shellVariant} demoPerspective={demoPerspective} />
-    {showSharedLanguageControl && <CognitLanguageControls role={localeRole} personId={localePersonId} centerAdmin={localeRole === "center"} {centerId} {centerScoped} compact={true} />}
+    <Header
+      variant={shellVariant}
+      demoPerspective={demoPerspective}
+      languageControl={isCanonicalDemoRoute}
+      languageRole={localeRole}
+      languagePersonId={localePersonId}
+      {centerId}
+      {centerScoped}
+    />
     <slot />
     <Footer variant={footerVariant} />
   </body>

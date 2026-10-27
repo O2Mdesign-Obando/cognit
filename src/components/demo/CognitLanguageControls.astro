@@ -1,26 +1,60 @@
 ---
-const { role, personId, centerAdmin = false, centerId = "northfield", centerScoped = true, compact = false } = Astro.props;
+const {
+  role,
+  personId,
+  centerId = "northfield",
+  centerScoped = true,
+  mode = "navigation"
+} = Astro.props;
+const isSettings = mode === "settings";
 ---
-<section class:list={["language-controls", compact && "compact"]} data-cognit-language-controls data-role={role} data-person-id={personId} data-center-id={centerId} data-center-scoped={String(centerScoped)} aria-labelledby={`language-${role}-heading`}>
-  <div>
-    <h3 id={`language-${role}-heading`} data-i18n="language.control.label">Language</h3>
-    <label><span data-i18n="language.control.label">Language</span>
-      <select data-language-select>
-        <option value="en-US" data-i18n="language.english">English (US)</option><option value="es-US" data-i18n="language.spanish">Español (EE. UU.)</option>
+{isSettings ? (
+  <section
+    class="center-language-setting"
+    data-cognit-language-controls
+    data-role={role}
+    data-person-id={personId}
+    data-center-id={centerId}
+    data-center-scoped={String(centerScoped)}
+    aria-labelledby={`language-${centerId}-settings-heading`}
+  >
+    <div class="setting-heading">
+      <div>
+        <p class="eyebrow" data-i18n="language.center.eyebrow">Local language setting</p>
+        <h2 id={`language-${centerId}-settings-heading`} data-i18n="language.center.heading">Demo language availability</h2>
+      </div>
+      <span class="ownership-tag" data-i18n="language.center.ownership">Center setting</span>
+    </div>
+    <label class="language-toggle">
+      <input type="checkbox" data-center-spanish-enable checked />
+      <span data-i18n="language.center.spanish">Enable Spanish for this Center</span>
+    </label>
+    <p data-i18n="language.center.allowance">Spanish is the additional Demo language available for this Center.</p>
+  </section>
+) : (
+  <div
+    class="language-navigation-control"
+    data-cognit-language-controls
+    data-role={role}
+    data-person-id={personId}
+    data-center-id={centerId}
+    data-center-scoped={String(centerScoped)}
+  >
+    <label>
+      <span data-i18n="language.control.label">Language</span>
+      <select data-language-select data-i18n-aria-label="language.control.label">
+        <option value="en-US">English</option>
+        <option value="es-US">Español</option>
       </select>
     </label>
-    <p data-i18n={centerScoped ? "language.preferenceNotice" : "language.independentPreferenceNotice"}>{centerScoped ? "Your saved language preference is separate from the Center’s enabled languages." : "This language preference is independent from each Center and person."}</p>
+    <p class="language-status" role="status" data-language-disabled-notice hidden data-i18n="language.disabledNotice">Spanish is saved, but this Center currently uses English.</p>
+    <p class="language-status" role="status" data-language-fallback-notice hidden data-i18n="language.fallbackNotice">Some content is shown in English as a fallback.</p>
   </div>
-  {centerAdmin && <div class="center-setting"><strong data-i18n="language.center.heading">Demo language availability</strong><label><input type="checkbox" data-center-spanish-enable checked /><span data-i18n="language.center.spanish">Enable Spanish for this Center</span></label><p data-i18n="language.center.allowance">Illustrative contract: English default plus ten additional language slots. Spanish is the only operational additional language in this candidate.</p></div>}
-  <p class="notice" data-language-disabled-notice hidden data-i18n="language.disabledNotice">Spanish is saved as your preference, but this Center has disabled it. English is in use until Spanish is enabled again.</p>
-  <p class="notice" data-language-fallback-notice hidden data-i18n="language.fallbackNotice">Some Spanish text is unavailable.</p>
-  <p class="review" data-i18n="language.reviewNotice">Spanish candidate translation · human review pending.</p>
-  <small data-i18n="language.browserNotice">Simulated Demo setting · saved only in this browser and origin.</small>
-</section>
+)}
 <script>
   import { initializeCognitLocalization } from "../../demo/cognit-localization.js";
   document.querySelectorAll("[data-cognit-language-controls]").forEach(initializeCognitLocalization);
 </script>
 <style>
-  .language-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0;padding:18px;border:1px solid var(--color-border);border-radius:14px;background:#f7fafb;font-size:16px}.language-controls.compact{max-width:1360px;margin:12px auto;padding:12px max(18px,calc((100vw - 1360px)/2));border-width:1px 0;border-radius:0}.language-controls.compact>div:first-child{display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px}.language-controls.compact>div:first-child p{flex-basis:100%}.language-controls h3,.language-controls p{margin:0 0 8px}.language-controls label{display:flex;align-items:center;gap:10px;font-weight:800}.language-controls select{min-height:44px;padding:8px 34px 8px 10px;border:1px solid var(--color-border);border-radius:8px;background:#fff;color:inherit;font-size:16px}.center-setting{display:grid;gap:8px}.notice{grid-column:1/-1;padding:10px;border-left:4px solid #f4b53f;background:#fff7e8}.review,.language-controls small{color:var(--color-muted);font-size:16px}.language-controls small{grid-column:1/-1}@media(max-width:700px){.language-controls{grid-template-columns:1fr}.language-controls.compact{padding-inline:16px}}
+  .language-navigation-control{position:relative;flex:0 0 auto}.language-navigation-control label{display:flex;align-items:center;gap:7px;color:var(--color-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}.language-navigation-control select{min-width:108px;min-height:44px;padding:8px 32px 8px 10px;border:1px solid var(--color-border);border-radius:9px;background:#fff;color:var(--color-ink);font:inherit;font-size:.88rem;font-weight:850;text-transform:none}.language-navigation-control select:focus-visible{outline:3px solid var(--color-blue);outline-offset:2px}.language-status{position:absolute;right:0;top:calc(100% + 9px);z-index:30;width:min(320px,calc(100vw - 32px));margin:0;padding:9px 11px;border:1px solid #e5bd65;border-radius:8px;background:#fff8e8;box-shadow:var(--shadow-card);color:var(--color-ink);font-size:.76rem;font-weight:750;line-height:1.35;text-transform:none}.language-status+.language-status:not([hidden]){top:calc(100% + 72px)}.center-language-setting{display:grid;gap:14px;padding:24px;border:1px solid var(--color-border);border-radius:14px;background:#fff;box-shadow:var(--shadow-soft)}.setting-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.setting-heading h2{margin:4px 0 0;color:var(--ink)}.center-language-setting>p{margin:0;color:#536579;line-height:1.55}.language-toggle{display:flex;align-items:center;gap:10px;width:fit-content;min-height:44px;padding:9px 12px;border:1px solid var(--color-border);border-radius:9px;color:var(--ink);font-weight:900}.language-toggle input{width:20px;height:20px;accent-color:var(--ink)}.ownership-tag{display:inline-flex;width:fit-content;padding:6px 9px;border-radius:999px;background:#dff7ee;color:#08785f;font-size:.68rem;font-weight:950}.eyebrow{margin:0;color:var(--color-muted);font-size:.72rem;font-weight:950;text-transform:uppercase}@media(max-width:1080px){.language-navigation-control{margin-left:auto}}@media(max-width:600px){.language-navigation-control label>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.language-navigation-control select{min-width:116px;min-height:48px}.setting-heading{flex-direction:column}}
 </style>

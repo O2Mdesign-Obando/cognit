@@ -16,7 +16,7 @@ export const PERSON_LANGUAGE_STORAGE_PREFIX = "cognit:demo-language-preference:v
 export const ENTRY_LANGUAGE_PERSON_ID = "demo-entry";
 const dictionaries = { "en-US": enUS, "es-US": esUS };
 const intentionalPreserveLiterals = new Set([
-  "Cognit", "AC", "Avery Chen", "Eli Morgan", "Jordan Ellis", "Rachel Morgan", "Marcus R.",
+  "Cognit", "AC", "English", "Español", "Avery Chen", "Eli Morgan", "Jordan Ellis", "Rachel Morgan", "Marcus R.",
   "Riverton Learning Studio", "Oak Harbor Lab", "Cedar Grove Collective", "Sunfield Learning Works",
   "Maple Crossing Studio", "Bluewater Learning Lab", "Northfield Studio", "Harbor Learning Studio",
   "Creative App Foundations", "Robotics Systems", "Digital Storytelling", "AI Foundations",
@@ -167,7 +167,7 @@ function translateLiteralText(root, locale) {
 export function applyCognitLocale(locale, root = document) {
   let fallbackCount = 0;
   root.querySelectorAll("[data-i18n]").forEach((element) => { if (translateElement(element, locale)) fallbackCount += 1; });
-  [["data-i18n-placeholder", "placeholder"], ["data-i18n-aria-label", "aria-label"], ["data-i18n-alt", "alt"]].forEach(([source, target]) => {
+  [["data-i18n-placeholder", "placeholder"], ["data-i18n-aria-label", "aria-label"], ["data-i18n-alt", "alt"], ["data-i18n-state-label", "data-state-label"]].forEach(([source, target]) => {
     root.querySelectorAll(`[${source}]`).forEach((element) => {
       const result = translateKey(locale, element.getAttribute(source));
       element.setAttribute(target, result.value);
@@ -207,7 +207,14 @@ export function initializeCognitLocalization(control) {
     document.dispatchEvent(new CustomEvent("cognit:language-changed", { detail: { personId, savedLocale, effectiveLocale } }));
   };
   select?.addEventListener("change", () => { if (select instanceof HTMLSelectElement) writeSavedLocale(personId, select.value); render(); select.focus(); });
-  toggle?.addEventListener("change", () => { if (toggle instanceof HTMLInputElement) writeCenterLanguageSetting(toggle.checked, globalThis.localStorage, centerId); render(); toggle.focus(); });
+  toggle?.addEventListener("change", () => {
+    if (toggle instanceof HTMLInputElement) writeCenterLanguageSetting(toggle.checked, globalThis.localStorage, centerId);
+    document.dispatchEvent(new CustomEvent("cognit:center-language-setting-changed", { detail: { centerId } }));
+    toggle?.focus();
+  });
+  document.addEventListener("cognit:center-language-setting-changed", (event) => {
+    if (!(event instanceof CustomEvent) || event.detail?.centerId === centerId) render();
+  });
   addEventListener("storage", render);
   const observer = new MutationObserver(() => queueMicrotask(() => {
     const locale = control.dataset.effectiveLocale || "en-US";

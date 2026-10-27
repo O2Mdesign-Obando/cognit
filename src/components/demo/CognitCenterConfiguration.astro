@@ -1,5 +1,6 @@
 ---
 import { SYNTHETIC_COGNIT_DEMO as d } from "../../demo/cognit-demo-data.js";
+import CognitLanguageControls from "./CognitLanguageControls.astro";
 
 const { contextKey, mode = "configuration", configHref, moduleHref, migrationHref, schedulingHref, attendanceHref } = Astro.props;
 const context = contextKey === "harbor" ? d.contexts[1] : d.contexts[0];
@@ -32,7 +33,7 @@ const ownership = (owner) => owner === "Center" ? "Center setting" : owner === "
 
   {mode === "configuration" ? <>
     <nav class="configuration-jump" aria-label="Configuration sections">
-      <a href="#center-profile">Profile</a><a href="#rooms-spaces">Rooms</a><a href="#hours-calendar">Hours &amp; Calendar</a><a href="#operating-policies">Policies</a><a href="#branding">Branding</a><a href="#system-status">System status</a>
+      <a href="#center-profile">Profile</a><a href="#center-languages">Languages</a><a href="#rooms-spaces">Rooms</a><a href="#hours-calendar">Hours &amp; Calendar</a><a href="#operating-policies">Policies</a><a href="#branding">Branding</a><a href="#system-status">System status</a>
     </nav>
 
     <section class="configuration-section" id="center-profile">
@@ -48,6 +49,10 @@ const ownership = (owner) => owner === "Center" ? "Center setting" : owner === "
         <div class="save-row span-all"><button type="submit">Save Center profile</button><p role="status" aria-live="polite" data-config-status>Profile is up to date.</p></div>
       </form>
     </section>
+
+    <div id="center-languages" style="scroll-margin-top:20px">
+      <CognitLanguageControls role="center" personId="demo-center-director-maya-chen" centerId={contextKey} centerScoped={true} mode="settings" />
+    </div>
 
     <section class="configuration-section" id="rooms-spaces">
       <div class="configuration-section-heading"><div><p class="eyebrow">Shared with Scheduling</p><h2>Rooms &amp; Spaces</h2></div><span class="ownership-tag center">Center setting</span></div>
