@@ -850,4 +850,11 @@ export const esUSLiterals = Object.freeze({
   , "Cleaning service": "Servicio de limpieza", "Art supplies": "Materiales de arte", "Tuition": "Matrícula", "Facility": "Instalaciones", "Supplies": "Suministros", "Aug 30": "30 ago.", "Aug 28": "28 ago."
   , "Educational supplies": "Suministros educativos", "Marketing and administration": "Mercadotecnia y administración"
   , "Building lease marked for planning review.": "El arrendamiento del edificio se marcó para revisión de planificación.", "Insurance premium marked for planning review.": "La prima del seguro se marcó para revisión de planificación.", "Learning supplies marked for planning review.": "Los materiales de aprendizaje se marcaron para revisión de planificación."
+
+  // Center billing account details. Learner, Course, Family, contact, account, and payment reference identifiers remain original.
+  , "← Tuition & Billing": "← Matrícula y facturación", "Billing account ·": "Cuenta de facturación ·", "billed to": "facturado a", "Account summary": "Resumen de la cuenta", "Family billing contact": "Contacto de facturación familiar", "Current balance": "Saldo actual", "Auto-pay": "Pago automático", "On": "Activado", "Off": "Desactivado"
+  , "Expires 09/28 · Ready": "Vence 09/28 · Lista", "Expires 11/28 · Payment failed": "Vence 11/28 · Pago fallido", "Expires 07/26 · Card expired": "Vence 07/26 · Tarjeta vencida", "Expires 04/29 · Ready": "Vence 04/29 · Lista", "No payment method on file.": "No hay ningún método de pago registrado."
+  , "Update payment method": "Actualizar método de pago", "Payment history": "Historial de pagos", "0 records": "0 registros", "1 records": "1 registro", "2 records": "2 registros", "Date": "Fecha", "Method": "Método", "Result": "Resultado", "Reference": "Referencia"
+  , "Payment successful": "Pago realizado", "Payment failed": "Pago fallido", "Account boundaries": "Límites de la cuenta", "Tuition, invoices, and balances cannot be edited directly here. Make-Up Tokens do not change this account.": "La matrícula, las facturas y los saldos no se pueden editar directamente aquí. Los créditos de recuperación no modifican esta cuenta."
+  , "Aug 5, 2026": "5 ago. 2026", "Sep 2, 2026 · 10:30 AM": "2 sep. 2026 · 10:30 a. m."
 });
