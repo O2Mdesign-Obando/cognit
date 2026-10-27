@@ -128,6 +128,11 @@ export const COGNIT_CENTER_LOCALIZATION_GROUPS = Object.freeze({
     "/learninghub/demo/center/billing/account/morgan", "/learninghub/demo/center/billing/account/reyes", "/learninghub/demo/center/billing/account/park", "/learninghub/demo/center/billing/account/grant", "/learninghub/demo/center/billing/account/thompson",
     "/learninghub/demo/center/context/northfield/billing/account/morgan", "/learninghub/demo/center/context/northfield/billing/account/reyes", "/learninghub/demo/center/context/northfield/billing/account/park", "/learninghub/demo/center/context/northfield/billing/account/grant", "/learninghub/demo/center/context/northfield/billing/account/thompson",
     "/learninghub/demo/center/context/harbor/billing/account/morgan", "/learninghub/demo/center/context/harbor/billing/account/reyes", "/learninghub/demo/center/context/harbor/billing/account/park", "/learninghub/demo/center/context/harbor/billing/account/grant", "/learninghub/demo/center/context/harbor/billing/account/thompson"
+  ]),
+  billingPaymentMethods: Object.freeze([
+    "/learninghub/demo/center/billing/account/morgan/method", "/learninghub/demo/center/billing/account/reyes/method", "/learninghub/demo/center/billing/account/park/method", "/learninghub/demo/center/billing/account/grant/method", "/learninghub/demo/center/billing/account/thompson/method",
+    "/learninghub/demo/center/context/northfield/billing/account/morgan/method", "/learninghub/demo/center/context/northfield/billing/account/reyes/method", "/learninghub/demo/center/context/northfield/billing/account/park/method", "/learninghub/demo/center/context/northfield/billing/account/grant/method", "/learninghub/demo/center/context/northfield/billing/account/thompson/method",
+    "/learninghub/demo/center/context/harbor/billing/account/morgan/method", "/learninghub/demo/center/context/harbor/billing/account/reyes/method", "/learninghub/demo/center/context/harbor/billing/account/park/method", "/learninghub/demo/center/context/harbor/billing/account/grant/method", "/learninghub/demo/center/context/harbor/billing/account/thompson/method"
   ])
 });
 
@@ -149,7 +154,7 @@ export const COGNIT_LOCALIZATION_COVERAGE = Object.freeze({
   }),
   families: Object.freeze({
     entry: Object.freeze({ routes: 1, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
-    center: Object.freeze({ routes: 321, completedRoutes: 258, completedGroups: Object.freeze(["overviewAndClasses", "coaches", "families", "students", "configuration", "supportAndReleases", "attendanceAndMakeups", "migration", "courses", "reports", "scheduleAliases", "messageAliases", "communicationInboxAndThreads", "communicationComposeAndAnnouncements", "billingOverviewAndDashboard", "billingAccountDetails"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
+    center: Object.freeze({ routes: 321, completedRoutes: 273, completedGroups: Object.freeze(["overviewAndClasses", "coaches", "families", "students", "configuration", "supportAndReleases", "attendanceAndMakeups", "migration", "courses", "reports", "scheduleAliases", "messageAliases", "communicationInboxAndThreads", "communicationComposeAndAnnouncements", "billingOverviewAndDashboard", "billingAccountDetails", "billingPaymentMethods"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
     coach: Object.freeze({ routes: 26, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     student: Object.freeze({ routes: 12, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     family: Object.freeze({ routes: 14, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
