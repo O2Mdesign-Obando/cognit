@@ -61,6 +61,7 @@ document.querySelectorAll("[data-communication-root]").forEach((root) => {
         sender.textContent = "Maya Chen";
         time.textContent = reply.timestamp;
         body.textContent = reply.body;
+        body.setAttribute("data-i18n-preserve", "");
         heading.append(sender, time);
         section.append(heading, body);
         if (reply.attachment) {
@@ -72,6 +73,7 @@ document.querySelectorAll("[data-communication-root]").forEach((root) => {
           const meta = document.createElement("small");
           icon.setAttribute("aria-hidden", "true"); icon.textContent = "▧";
           name.textContent = reply.attachment.name;
+          name.setAttribute("data-i18n-preserve", "");
           meta.textContent = `${reply.attachment.type} · ${reply.attachment.size}`;
           copy.append(name, meta); attachment.append(icon, copy); section.append(attachment);
         }

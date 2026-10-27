@@ -42,13 +42,13 @@ const statusLabel = (value) => value === "ready_to_send" ? "Ready to send" : val
       <aside class="conversation-list" aria-label="Conversations">
         {threads.map((thread) => { const relatedStudent=studentById(thread.relatedStudentId); const relatedCourse=courseById(thread.relatedCourseId); return <a href={href(`thread/${thread.slug}`)} aria-current={thread.id === selectedThread.id ? "page" : undefined} data-thread-card={thread.id} data-thread-type={thread.recipientType} data-thread-read={thread.readState} data-thread-reply={String(thread.replyNeeded)} data-search={`${thread.participantLabel} ${thread.subject} ${relatedStudent?.name || ""} ${relatedCourse?.name || ""}`.toLowerCase()}>
           <span class="conversation-topline"><strong>{thread.participantLabel}</strong><time>{thread.updatedAt}</time></span>
-          <b>{thread.subject}</b><small>{thread.summary}</small>
+          <b data-i18n-preserve data-authored-original-locale="en-US">{thread.subject}</b><small data-i18n-preserve data-authored-original-locale="en-US">{thread.summary}</small>
           <span class="state-row">{thread.readState === "unread" && <em data-unread-state>Unread</em>}{thread.replyNeeded && <em data-reply-state>Reply needed</em>}{thread.priority === "high" && <em>High priority</em>}</span>
         </a>})}
         <div data-local-thread-list></div>
       </aside>
       <article class="conversation-panel" data-thread={selectedThread.id} data-initial-read={selectedThread.readState} data-initial-reply={String(selectedThread.replyNeeded)}>
-        <header><div><span>{selectedThread.recipientType === "coach" ? "Coach" : "Family"} conversation</span><h2>{selectedThread.subject}</h2><p>{selectedThread.participantLabel}</p></div><span class="thread-state" data-thread-state>{selectedThread.replyNeeded ? "Reply needed" : statusLabel(selectedThread.state)}</span></header>
+        <header><div><span>{selectedThread.recipientType === "coach" ? "Coach" : "Family"} conversation</span><h2 data-i18n-preserve data-authored-original-locale="en-US">{selectedThread.subject}</h2><p>{selectedThread.participantLabel}</p><small>Original authored in English.</small></div><span class="thread-state" data-thread-state>{selectedThread.replyNeeded ? "Reply needed" : statusLabel(selectedThread.state)}</span></header>
         <dl class="conversation-context">
           <div><dt>Contact</dt><dd>{selectedThread.participantLabel}</dd></div>
           {selectedThread.relatedStudentId && <div><dt>Student</dt><dd>{studentById(selectedThread.relatedStudentId)?.name}</dd></div>}
@@ -56,7 +56,7 @@ const statusLabel = (value) => value === "ready_to_send" ? "Ready to send" : val
           <div><dt>Priority</dt><dd>{selectedThread.priority === "high" ? "High priority" : "Normal"}</dd></div>
         </dl>
         <div class="message-history" aria-label="Conversation history">
-          {selectedThread.messages.map((message)=><section class={message.senderId === "demo-director-maya-chen" ? "message outgoing" : "message incoming"}><div><strong>{message.senderLabel}</strong><time>{message.timestamp}</time></div><p data-i18n-preserve data-authored-original-locale="en-US">{message.body}</p>{message.attachment && <aside class="attachment"><span aria-hidden="true">▧</span><div><strong>{message.attachment.name}</strong><small>{message.attachment.type} · {message.attachment.size}</small></div></aside>}</section>)}
+          {selectedThread.messages.map((message)=><section class={message.senderId === "demo-director-maya-chen" ? "message outgoing" : "message incoming"}><div><strong>{message.senderLabel}</strong><time>{message.timestamp}</time></div><p data-i18n-preserve data-authored-original-locale="en-US">{message.body}</p>{message.attachment && <aside class="attachment"><span aria-hidden="true">▧</span><div><strong data-i18n-preserve>{message.attachment.name}</strong><small>{message.attachment.type} · {message.attachment.size}</small></div></aside>}</section>)}
           <div data-local-replies></div>
         </div>
         <form class="reply-composer" data-reply-form data-thread-id={selectedThread.id} data-participant={selectedThread.participantLabel}>

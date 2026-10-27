@@ -105,6 +105,9 @@ export const COGNIT_CENTER_LOCALIZATION_GROUPS = Object.freeze({
     "/learninghub/demo/center/schedule", "/learninghub/demo/center/schedule/creative",
     "/learninghub/demo/center/context/northfield/schedule", "/learninghub/demo/center/context/northfield/schedule/creative",
     "/learninghub/demo/center/context/harbor/schedule", "/learninghub/demo/center/context/harbor/schedule/creative"
+  ]),
+  messageAliases: Object.freeze([
+    "/learninghub/demo/center/messages", "/learninghub/demo/center/context/northfield/messages", "/learninghub/demo/center/context/harbor/messages"
   ])
 });
 
@@ -126,7 +129,7 @@ export const COGNIT_LOCALIZATION_COVERAGE = Object.freeze({
   }),
   families: Object.freeze({
     entry: Object.freeze({ routes: 1, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
-    center: Object.freeze({ routes: 321, completedRoutes: 201, completedGroups: Object.freeze(["overviewAndClasses", "coaches", "families", "students", "configuration", "supportAndReleases", "attendanceAndMakeups", "migration", "courses", "reports", "scheduleAliases"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
+    center: Object.freeze({ routes: 321, completedRoutes: 204, completedGroups: Object.freeze(["overviewAndClasses", "coaches", "families", "students", "configuration", "supportAndReleases", "attendanceAndMakeups", "migration", "courses", "reports", "scheduleAliases", "messageAliases"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
     coach: Object.freeze({ routes: 26, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     student: Object.freeze({ routes: 12, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     family: Object.freeze({ routes: 14, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
