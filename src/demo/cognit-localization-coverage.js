@@ -118,6 +118,11 @@ export const COGNIT_CENTER_LOCALIZATION_GROUPS = Object.freeze({
     "/learninghub/demo/center/communication/compose", "/learninghub/demo/center/communication/announcements", "/learninghub/demo/center/communication/announcements/new",
     "/learninghub/demo/center/context/northfield/communication/compose", "/learninghub/demo/center/context/northfield/communication/announcements", "/learninghub/demo/center/context/northfield/communication/announcements/new",
     "/learninghub/demo/center/context/harbor/communication/compose", "/learninghub/demo/center/context/harbor/communication/announcements", "/learninghub/demo/center/context/harbor/communication/announcements/new"
+  ]),
+  billingOverviewAndDashboard: Object.freeze([
+    "/learninghub/demo/center/billing", "/learninghub/demo/center/billing/dashboard",
+    "/learninghub/demo/center/context/northfield/billing", "/learninghub/demo/center/context/northfield/billing/dashboard",
+    "/learninghub/demo/center/context/harbor/billing", "/learninghub/demo/center/context/harbor/billing/dashboard"
   ])
 });
 
@@ -139,7 +144,7 @@ export const COGNIT_LOCALIZATION_COVERAGE = Object.freeze({
   }),
   families: Object.freeze({
     entry: Object.freeze({ routes: 1, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
-    center: Object.freeze({ routes: 321, completedRoutes: 237, completedGroups: Object.freeze(["overviewAndClasses", "coaches", "families", "students", "configuration", "supportAndReleases", "attendanceAndMakeups", "migration", "courses", "reports", "scheduleAliases", "messageAliases", "communicationInboxAndThreads", "communicationComposeAndAnnouncements"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
+    center: Object.freeze({ routes: 321, completedRoutes: 243, completedGroups: Object.freeze(["overviewAndClasses", "coaches", "families", "students", "configuration", "supportAndReleases", "attendanceAndMakeups", "migration", "courses", "reports", "scheduleAliases", "messageAliases", "communicationInboxAndThreads", "communicationComposeAndAnnouncements", "billingOverviewAndDashboard"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
     coach: Object.freeze({ routes: 26, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     student: Object.freeze({ routes: 12, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     family: Object.freeze({ routes: 14, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
