@@ -90,6 +90,11 @@ export const COGNIT_CENTER_LOCALIZATION_GROUPS = Object.freeze({
     "/learninghub/demo/center/migration", "/learninghub/demo/center/migration/map", "/learninghub/demo/center/migration/preview", "/learninghub/demo/center/migration/processing", "/learninghub/demo/center/migration/ready", "/learninghub/demo/center/migration/select", "/learninghub/demo/center/migration/source",
     "/learninghub/demo/center/context/northfield/migration", "/learninghub/demo/center/context/northfield/migration/map", "/learninghub/demo/center/context/northfield/migration/preview", "/learninghub/demo/center/context/northfield/migration/processing", "/learninghub/demo/center/context/northfield/migration/ready", "/learninghub/demo/center/context/northfield/migration/select", "/learninghub/demo/center/context/northfield/migration/source",
     "/learninghub/demo/center/context/harbor/migration", "/learninghub/demo/center/context/harbor/migration/map", "/learninghub/demo/center/context/harbor/migration/preview", "/learninghub/demo/center/context/harbor/migration/processing", "/learninghub/demo/center/context/harbor/migration/ready", "/learninghub/demo/center/context/harbor/migration/select", "/learninghub/demo/center/context/harbor/migration/source"
+  ]),
+  courses: Object.freeze([
+    "/learninghub/demo/center/courses", "/learninghub/demo/center/courses/creative-app-lab", "/learninghub/demo/center/courses/robotics-studio", "/learninghub/demo/center/courses/digital-storytelling-lab",
+    "/learninghub/demo/center/context/northfield/courses", "/learninghub/demo/center/context/northfield/courses/creative-app-lab", "/learninghub/demo/center/context/northfield/courses/robotics-studio", "/learninghub/demo/center/context/northfield/courses/digital-storytelling-lab",
+    "/learninghub/demo/center/context/harbor/courses", "/learninghub/demo/center/context/harbor/courses/creative-app-lab", "/learninghub/demo/center/context/harbor/courses/robotics-studio", "/learninghub/demo/center/context/harbor/courses/digital-storytelling-lab"
   ])
 });
 
@@ -111,7 +116,7 @@ export const COGNIT_LOCALIZATION_COVERAGE = Object.freeze({
   }),
   families: Object.freeze({
     entry: Object.freeze({ routes: 1, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
-    center: Object.freeze({ routes: 321, completedRoutes: 159, completedGroups: Object.freeze(["overviewAndClasses", "coaches", "families", "students", "configuration", "supportAndReleases", "attendanceAndMakeups", "migration"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
+    center: Object.freeze({ routes: 321, completedRoutes: 171, completedGroups: Object.freeze(["overviewAndClasses", "coaches", "families", "students", "configuration", "supportAndReleases", "attendanceAndMakeups", "migration", "courses"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
     coach: Object.freeze({ routes: 26, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     student: Object.freeze({ routes: 12, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     family: Object.freeze({ routes: 14, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
