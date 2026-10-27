@@ -89,7 +89,7 @@ const statusLabel = (value) => value === "ready_to_send" ? "Ready to send" : val
       <div class="communication-actions"><button class="secondary" type="button" data-save-message-draft>Save draft</button><button type="submit">Send</button></div>
       <p role="status" aria-live="polite" data-compose-status></p>
     </form>
-    <section class="sent-confirmation" data-sent-confirmation tabindex="-1" hidden><span aria-hidden="true">✓</span><h2>Sent</h2><p>The conversation has been updated.</p><dl><div><dt>Recipient</dt><dd data-sent-recipient></dd></div><div><dt>Subject</dt><dd data-sent-subject></dd></div><div><dt>State</dt><dd>Sent</dd></div></dl><a class="communication-primary" href={href()}>Open Messages</a></section>
+    <section class="sent-confirmation" data-sent-confirmation tabindex="-1" hidden><span aria-hidden="true">✓</span><h2>Sent</h2><p>The conversation has been updated.</p><dl><div><dt>Recipient</dt><dd data-sent-recipient></dd></div><div><dt>Subject</dt><dd data-sent-subject data-i18n-preserve></dd></div><div><dt>State</dt><dd>Sent</dd></div></dl><a class="communication-primary" href={href()}>Open Messages</a></section>
   </>}
 
   {isAnnouncements && !isNewAnnouncement && <section class="announcement-list" data-announcement-list>
@@ -108,7 +108,7 @@ const statusLabel = (value) => value === "ready_to_send" ? "Ready to send" : val
       <div class="communication-actions"><button class="secondary" type="button" data-preview-announcement>Preview</button><button type="button" data-save-announcement-draft>Save draft</button><button type="submit" data-publish-announcement>Publish now</button></div>
       <p role="status" aria-live="polite" data-announcement-status></p>
     </form>
-    <dialog class="announcement-dialog" data-announcement-dialog><form method="dialog"><span class="announcement-status draft">Preview</span><h2 data-preview-title>Announcement title</h2><p data-preview-body>Announcement body</p><dl><div><dt>Audience</dt><dd data-preview-audience></dd></div></dl><button type="submit">Return to editing</button></form></dialog>
+    <dialog class="announcement-dialog" data-announcement-dialog><form method="dialog"><span class="announcement-status draft">Preview</span><h2 data-preview-title data-i18n-preserve>Announcement title</h2><p data-preview-body data-i18n-preserve>Announcement body</p><dl><div><dt>Audience</dt><dd data-preview-audience data-i18n-preserve></dd></div></dl><button type="submit">Return to editing</button></form></dialog>
   </>}
 </section>
 

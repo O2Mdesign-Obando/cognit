@@ -278,6 +278,15 @@ document.querySelectorAll("[data-communication-root]").forEach((root) => {
     });
   }
 
+  const audienceSpanish = {
+    "All Coaches · Northfield Studio": "Todos los Instructores · Northfield Studio",
+    "All Families · Northfield Studio": "Todas las Familias · Northfield Studio",
+    "All Coaches · Harbor Academy Program": "Todos los Instructores · Harbor Academy Program",
+    "Course group · Creative App Lab": "Grupo del curso · Creative App Lab",
+    "Course group · Robotics Studio": "Grupo del curso · Robotics Studio",
+    "Course group · Digital Storytelling Lab": "Grupo del curso · Digital Storytelling Lab"
+  };
+  const audienceEnglish = Object.fromEntries(Object.entries(audienceSpanish).map(([english, spanish]) => [spanish, english]));
   const renderLocalAnnouncements = () => {
     const list = root.querySelector("[data-local-announcements]");
     if (!list) return;
@@ -292,12 +301,18 @@ document.querySelectorAll("[data-communication-root]").forEach((root) => {
       status.textContent = announcement.state[0].toUpperCase() + announcement.state.slice(1);
       heading.textContent = announcement.title;
       body.textContent = announcement.body;
-      audience.textContent = `Audience · ${announcement.audienceLabel}`;
+      heading.setAttribute("data-i18n-preserve", "");
+      body.setAttribute("data-i18n-preserve", "");
+      const spanish = document.documentElement.dataset.contentLocale === "es-US";
+      const audienceLabel = spanish ? (audienceSpanish[announcement.audienceLabel] || announcement.audienceLabel) : (audienceEnglish[announcement.audienceLabel] || announcement.audienceLabel);
+      audience.textContent = `${spanish ? "Audiencia" : "Audience"} · ${audienceLabel}`;
+      audience.setAttribute("data-i18n-preserve", "");
       article.append(status, heading, body, audience);
       list.append(article);
     });
   };
   renderLocalAnnouncements();
+  document.addEventListener("cognit:language-changed", renderLocalAnnouncements);
 
   root.querySelectorAll("[data-announcement-action]").forEach((button) => button.addEventListener("click", () => {
     button.textContent = button.dataset.announcementAction === "review" ? "Schedule reviewed" : "Announcement viewed";
