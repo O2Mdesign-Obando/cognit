@@ -133,6 +133,11 @@ export const COGNIT_CENTER_LOCALIZATION_GROUPS = Object.freeze({
     "/learninghub/demo/center/billing/account/morgan/method", "/learninghub/demo/center/billing/account/reyes/method", "/learninghub/demo/center/billing/account/park/method", "/learninghub/demo/center/billing/account/grant/method", "/learninghub/demo/center/billing/account/thompson/method",
     "/learninghub/demo/center/context/northfield/billing/account/morgan/method", "/learninghub/demo/center/context/northfield/billing/account/reyes/method", "/learninghub/demo/center/context/northfield/billing/account/park/method", "/learninghub/demo/center/context/northfield/billing/account/grant/method", "/learninghub/demo/center/context/northfield/billing/account/thompson/method",
     "/learninghub/demo/center/context/harbor/billing/account/morgan/method", "/learninghub/demo/center/context/harbor/billing/account/reyes/method", "/learninghub/demo/center/context/harbor/billing/account/park/method", "/learninghub/demo/center/context/harbor/billing/account/grant/method", "/learninghub/demo/center/context/harbor/billing/account/thompson/method"
+  ]),
+  schedulingProjections: Object.freeze([
+    "/learninghub/demo/center/scheduling", "/learninghub/demo/center/scheduling/daily", "/learninghub/demo/center/scheduling/weekly", "/learninghub/demo/center/scheduling/monthly", "/learninghub/demo/center/scheduling/season",
+    "/learninghub/demo/center/context/northfield/scheduling", "/learninghub/demo/center/context/northfield/scheduling/daily", "/learninghub/demo/center/context/northfield/scheduling/weekly", "/learninghub/demo/center/context/northfield/scheduling/monthly", "/learninghub/demo/center/context/northfield/scheduling/season",
+    "/learninghub/demo/center/context/harbor/scheduling", "/learninghub/demo/center/context/harbor/scheduling/daily", "/learninghub/demo/center/context/harbor/scheduling/weekly", "/learninghub/demo/center/context/harbor/scheduling/monthly", "/learninghub/demo/center/context/harbor/scheduling/season"
   ])
 });
 
@@ -154,7 +159,7 @@ export const COGNIT_LOCALIZATION_COVERAGE = Object.freeze({
   }),
   families: Object.freeze({
     entry: Object.freeze({ routes: 1, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
-    center: Object.freeze({ routes: 321, completedRoutes: 273, completedGroups: Object.freeze(["overviewAndClasses", "coaches", "families", "students", "configuration", "supportAndReleases", "attendanceAndMakeups", "migration", "courses", "reports", "scheduleAliases", "messageAliases", "communicationInboxAndThreads", "communicationComposeAndAnnouncements", "billingOverviewAndDashboard", "billingAccountDetails", "billingPaymentMethods"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
+    center: Object.freeze({ routes: 321, completedRoutes: 288, completedGroups: Object.freeze(["overviewAndClasses", "coaches", "families", "students", "configuration", "supportAndReleases", "attendanceAndMakeups", "migration", "courses", "reports", "scheduleAliases", "messageAliases", "communicationInboxAndThreads", "communicationComposeAndAnnouncements", "billingOverviewAndDashboard", "billingAccountDetails", "billingPaymentMethods", "schedulingProjections"]), initialCopy: "partial_with_explicit_fallback", interactiveStates: "partial_with_explicit_fallback" }),
     coach: Object.freeze({ routes: 26, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     student: Object.freeze({ routes: 12, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),
     family: Object.freeze({ routes: 14, initialCopy: "candidate_spanish_drafted", interactiveStates: "candidate_spanish_drafted" }),

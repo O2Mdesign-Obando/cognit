@@ -865,4 +865,14 @@ export const esUSLiterals = Object.freeze({
   , "Confirm payment": "Confirmar pago", "Confirm this payment?": "¿Confirmar este pago?", "Confirm the amount and payment method before continuing.": "Confirma el importe y el método de pago antes de continuar.", "Amount": "Importe"
   , "Payment method saved.": "Método de pago guardado.", "recorded on this account.": "registrado en esta cuenta.", "Timestamp": "Fecha y hora", "Reference ID": "ID de referencia", "View updated account": "Ver cuenta actualizada", "Receipt": "Comprobante", "Receipt details are ready with the reference above.": "Los datos del comprobante están listos con la referencia anterior."
   , "The payment method was not accepted.": "El método de pago no fue aceptado.", "Amount attempted": "Importe intentado", "Reason": "Motivo", "Payment could not be completed with this method.": "No se pudo completar el pago con este método.", "Try again": "Intentar de nuevo"
+
+  // Center schedule projections across Northfield and Harbor contexts.
+  , "Week of August 31": "Semana del 31 de agosto", "weekly projection": "proyección semanal", "monthly projection": "proyección mensual", "season projection": "proyección de temporada", "Unassigned": "Sin asignar"
+  , "10:00 AM": "10:00 a. m.", "11:30 AM": "11:30 a. m.", "3:30 PM": "3:30 p. m.", "5:00 PM": "5:00 p. m."
+  , "Sat, Sep 5 · Saturday": "Sáb., 5 sep. · Sábado", "Tue, Sep 1 · One-time session": "Mar., 1 sep. · Sesión única", "Tue, Sep 1 · Tuesday and Friday": "Mar., 1 sep. · Martes y viernes", "Wed, Sep 2 · Wednesday": "Mié., 2 sep. · Miércoles", "Sat, Sep 5 · One-time session": "Sáb., 5 sep. · Sesión única"
+  , "Connect a branching story scene with sound and visual feedback.": "Conecta una escena narrativa ramificada con retroalimentación sonora y visual.", "Optional sensor calibration clinic for learners needing another trial.": "Clínica opcional de calibración de sensores para estudiantes que necesitan otra prueba.", "Calibrate sensor response through repeated arena trials.": "Calibra la respuesta del sensor mediante pruebas repetidas en la arena."
+  , "Prototype an app interaction and explain one design decision.": "Crea el prototipo de una interacción de la aplicación y explica una decisión de diseño.", "Share prototype decisions with the Harbor learning community.": "Comparte las decisiones del prototipo con la comunidad de aprendizaje de Harbor."
+  , "Coach unassigned": "Instructor sin asignar", "Coach assignment required before activation": "Se requiere asignar un Instructor antes de la activación", "Room must be resolved before activation": "Se debe resolver la sala antes de la activación", "Partner-program showcase": "Presentación del programa asociado"
+  , "staffing required": "se requiere personal", "draft": "borrador", "scheduled": "programada", "in progress": "en curso", "1 unresolved": "1 sin resolver", "learner": "estudiante"
+  , "Mon, Aug 31": "Lun., 31 ago.", "Mon, Sep 7": "Lun., 7 sep."
 });
