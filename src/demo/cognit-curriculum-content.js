@@ -13,5 +13,5 @@ const activities = [
     { id:"test-reflect", blocks:[{type:"question",key:"group.test-reflect.question"}]}
   ]}
 ].map(activity => ({...activity,titleKey:`activity.${activity.id}.title`,summaryKey:`activity.${activity.id}.summary`,groups:activity.groups.map(group=>({...group,titleKey:`group.${group.id}.title`}))}));
-export const creativeAppLabPresentation = Object.freeze({id:"creative-app-lab",modules,presentedModuleId:"creative-prototype",activities,contentProvenance:{kind:"original-fictional-demo-content",sourceRevision:"d0320f988a1fa6b33b4c3d302c55957c922c268b",sourceLocale:"en-US",targetLocale:"es-US",translationStatus:"candidate-human-review-pending",providerMaterialIncluded:false}});
+export const creativeAppLabPresentation = Object.freeze({id:"creative-app-lab",modules,presentedModuleId:"creative-prototype",activities,contentProvenance:{kind:"original-fictional-demo-content",sourceRevision:"d0320f988a1fa6b33b4c3d302c55957c922c268b",sourceLocale:"en-US",targetLocale:"es-US",translationStatus:"candidate-human-review-pending",candidateTranslations:{"es-US":"candidate-human-review-pending","ja-JP":"local-four-route-draft-human-review-pending"},providerMaterialIncluded:false}});
 export function getCreativeAppLabPresentation(audience){return new Set(["coach","student"]).has(audience)?creativeAppLabPresentation:null;}

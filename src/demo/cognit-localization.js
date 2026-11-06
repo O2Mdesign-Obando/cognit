@@ -1,20 +1,37 @@
 import { enUS } from "./locales/en-US.js";
 import { esUS } from "./locales/es-US.js";
 import { esUSLiterals } from "./locales/es-US-literals.js";
+import { jaJP } from "./locales/ja-JP.js";
+import { jaJPLiterals } from "./locales/ja-JP-literals.js";
+import { hiIN } from "./locales/hi-IN.js";
+import { hiINLiterals } from "./locales/hi-IN-literals.js";
 import { COGNIT_DEMO_LOCALIZATION_MANIFEST } from "./cognit-localization-route-manifest.js";
 
-export const COGNIT_LOCALES = Object.freeze(["en-US", "es-US"]);
+export const COGNIT_LOCALES = Object.freeze(["en-US", "es-US", "ja-JP", "hi-IN"]);
+export const COGNIT_FOCUSED_EXPANSION_ROUTES = Object.freeze([
+  "/learninghub/demo/center/courses/creative-app-lab",
+  "/learninghub/demo/center/context/northfield/reports/eli",
+  "/learninghub/demo/coach/capture",
+  "/learninghub/demo/coach/after-class",
+  "/learninghub/demo/student/lesson",
+  "/learninghub/demo/family/journey/eli",
+  "/learninghub/demo/family/messages"
+]);
+export const COGNIT_JAPANESE_PILOT_ROUTES = COGNIT_FOCUSED_EXPANSION_ROUTES;
 export const COGNIT_LANGUAGE_ENTITLEMENT = Object.freeze({
   defaultLocale: "en-US",
   additionalLanguageSlots: 10,
-  operationalAdditionalLocales: Object.freeze(["es-US"])
+  operationalAdditionalLocales: Object.freeze(["es-US"]),
+  localJapaneseCandidateRoutes: COGNIT_FOCUSED_EXPANSION_ROUTES,
+  localHindiCandidateRoutes: COGNIT_FOCUSED_EXPANSION_ROUTES
 });
 export const COGNIT_AUTHORIZED_LOCALE_ROUTES = COGNIT_DEMO_LOCALIZATION_MANIFEST;
 
 export const CENTER_LANGUAGE_STORAGE_KEY = "cognit:demo-language-enablement:v1";
 export const PERSON_LANGUAGE_STORAGE_PREFIX = "cognit:demo-language-preference:v1:";
 export const ENTRY_LANGUAGE_PERSON_ID = "demo-entry";
-const dictionaries = { "en-US": enUS, "es-US": esUS };
+const dictionaries = { "en-US": enUS, "es-US": esUS, "ja-JP": jaJP, "hi-IN": hiIN };
+const literalDictionaries = { "es-US": esUSLiterals, "ja-JP": jaJPLiterals, "hi-IN": hiINLiterals };
 const intentionalPreserveLiterals = new Set([
   "Cognit", "AC", "English", "Español", "Avery Chen", "Eli Morgan", "Jordan Ellis", "Rachel Morgan", "Marcus R.",
   "Riverton Learning Studio", "Oak Harbor Lab", "Cedar Grove Collective", "Sunfield Learning Works",
@@ -63,21 +80,40 @@ export function isAuthorizedLocaleRoute(pathname) {
   return COGNIT_AUTHORIZED_LOCALE_ROUTES.includes(pathname.replace(/\/$/, ""));
 }
 
+export function isJapanesePilotRoute(pathname) {
+  return COGNIT_FOCUSED_EXPANSION_ROUTES.includes(pathname.replace(/\/$/, ""));
+}
+export const isFocusedExpansionLocaleRoute = isJapanesePilotRoute;
+
 function centerLanguageStorageKey(centerId = "northfield") {
   return centerId === "northfield" ? CENTER_LANGUAGE_STORAGE_KEY : `${CENTER_LANGUAGE_STORAGE_KEY}:${centerId}`;
 }
 
 export function readCenterLanguageSetting(storage = globalThis.localStorage, centerId = "northfield") {
   const raw = storageRead(storage, centerLanguageStorageKey(centerId));
-  if (raw === null) return { spanishEnabled: true };
+  if (raw === null) return { spanishEnabled: true, japaneseEnabled: true, hindiEnabled: true };
   try {
     const parsed = JSON.parse(raw);
-    return { spanishEnabled: parsed?.spanishEnabled !== false };
-  } catch { return { spanishEnabled: true }; }
+    return { spanishEnabled: parsed?.spanishEnabled !== false, japaneseEnabled: parsed?.japaneseEnabled !== false, hindiEnabled: parsed?.hindiEnabled !== false };
+  } catch { return { spanishEnabled: true, japaneseEnabled: true, hindiEnabled: true }; }
 }
 
 export function writeCenterLanguageSetting(spanishEnabled, storage = globalThis.localStorage, centerId = "northfield") {
-  storageWrite(storage, centerLanguageStorageKey(centerId), JSON.stringify({ spanishEnabled: Boolean(spanishEnabled) }));
+  storageWrite(storage, centerLanguageStorageKey(centerId), JSON.stringify({
+    ...readCenterLanguageSetting(storage, centerId), spanishEnabled: Boolean(spanishEnabled)
+  }));
+}
+
+export function writeCenterJapaneseSetting(japaneseEnabled, storage = globalThis.localStorage, centerId = "northfield") {
+  storageWrite(storage, centerLanguageStorageKey(centerId), JSON.stringify({
+    ...readCenterLanguageSetting(storage, centerId), japaneseEnabled: Boolean(japaneseEnabled)
+  }));
+}
+
+export function writeCenterHindiSetting(hindiEnabled, storage = globalThis.localStorage, centerId = "northfield") {
+  storageWrite(storage, centerLanguageStorageKey(centerId), JSON.stringify({
+    ...readCenterLanguageSetting(storage, centerId), hindiEnabled: Boolean(hindiEnabled)
+  }));
 }
 
 function readSavedLocaleValue(personId, storage = globalThis.localStorage) {
@@ -93,8 +129,11 @@ export function writeSavedLocale(personId, locale, storage = globalThis.localSto
   storageWrite(storage, `${PERSON_LANGUAGE_STORAGE_PREFIX}${personId}`, COGNIT_LOCALES.includes(locale) ? locale : "en-US");
 }
 
-export function resolveEffectiveLocale(savedLocale, centerSetting = { spanishEnabled: true }, centerScoped = true) {
-  return savedLocale === "es-US" && (!centerScoped || centerSetting.spanishEnabled) ? "es-US" : "en-US";
+export function resolveEffectiveLocale(savedLocale, centerSetting = { spanishEnabled: true, japaneseEnabled: true, hindiEnabled: true }, centerScoped = true, japanesePilotRoute = false) {
+  if (savedLocale === "es-US" && (!centerScoped || centerSetting.spanishEnabled)) return "es-US";
+  if (savedLocale === "ja-JP" && japanesePilotRoute && (!centerScoped || centerSetting.japaneseEnabled)) return "ja-JP";
+  if (savedLocale === "hi-IN" && japanesePilotRoute && (!centerScoped || centerSetting.hindiEnabled)) return "hi-IN";
+  return "en-US";
 }
 
 export function translateKey(locale, key, params = {}) {
@@ -130,17 +169,22 @@ function translateLiteralText(root, locale) {
   nodes.forEach((node) => {
     if (!originalText.has(node)) originalText.set(node, node.nodeValue);
     let source = originalText.get(node);
-    const currentTranslation = esUSLiterals[source.trim()];
-    const expected = currentTranslation === undefined ? source : source.replace(source.trim(), currentTranslation);
-    if (locale === "es-US" && node.nodeValue !== source && node.nodeValue !== expected) {
-      originalText.set(node, node.nodeValue);
-      source = node.nodeValue;
+    if (locale !== "en-US" && node.nodeValue !== source) {
+      const candidates = isJapanesePilotRoute(globalThis.location?.pathname ?? "") ? [esUSLiterals, jaJPLiterals, hiINLiterals] : [esUSLiterals];
+      const wasKnownTranslation = candidates.some((literals) => {
+        const current = literals[source.trim()];
+        return current !== undefined && node.nodeValue === source.replace(source.trim(), current);
+      });
+      if (!wasKnownTranslation) {
+        originalText.set(node, node.nodeValue);
+        source = node.nodeValue;
+      }
     }
     const trimmed = source.trim();
-    const translated = locale === "es-US" ? esUSLiterals[trimmed] : undefined;
+    const translated = literalDictionaries[locale]?.[trimmed];
     const nextValue = translated === undefined ? source : source.replace(trimmed, translated);
     if (node.nodeValue !== nextValue) node.nodeValue = nextValue;
-    if (locale === "es-US" && translated === undefined && !isIntentionalPreserveLiteral(trimmed) && /[A-Za-z]{2}/.test(trimmed)) {
+    if (locale !== "en-US" && translated === undefined && !isIntentionalPreserveLiteral(trimmed) && /[A-Za-z]{2}/.test(trimmed)) {
       fallbackCount += 1;
       node.parentElement?.setAttribute("data-literal-english-fallback", "true");
     }
@@ -152,10 +196,10 @@ function translateLiteralText(root, locale) {
       const values = originalAttributes.get(element);
       if (!(attribute in values)) values[attribute] = element.getAttribute(attribute);
       const source = values[attribute];
-      const translated = locale === "es-US" ? esUSLiterals[source] : undefined;
+      const translated = literalDictionaries[locale]?.[source];
       const nextValue = translated ?? source;
       if (element.getAttribute(attribute) !== nextValue) element.setAttribute(attribute, nextValue);
-      if (locale === "es-US" && translated === undefined && /[A-Za-z]{2}/.test(source || "")) {
+      if (locale !== "en-US" && translated === undefined && /[A-Za-z]{2}/.test(source || "")) {
         fallbackCount += 1;
         element.setAttribute("data-literal-english-fallback", "true");
       }
@@ -191,15 +235,22 @@ export function initializeCognitLocalization(control) {
   const centerScoped = control.dataset.centerScoped !== "false";
   const select = control.querySelector("[data-language-select]");
   const toggle = control.querySelector("[data-center-spanish-enable]");
+  const japaneseToggle = control.querySelector("[data-center-japanese-enable]");
+  const hindiToggle = control.querySelector("[data-center-hindi-enable]");
   const disabledNotice = control.querySelector("[data-language-disabled-notice]");
+  const scopeNotice = control.querySelector("[data-language-scope-notice]");
   const render = () => {
     const centerSetting = readCenterLanguageSetting(globalThis.localStorage, centerId);
     const ownLocale = readSavedLocaleValue(personId);
     const savedLocale = ownLocale ?? (personId === ENTRY_LANGUAGE_PERSON_ID ? "en-US" : readSavedLocale(ENTRY_LANGUAGE_PERSON_ID));
-    const effectiveLocale = resolveEffectiveLocale(savedLocale, centerSetting, centerScoped);
-    if (select instanceof HTMLSelectElement) select.value = savedLocale;
+    const pilotRoute = isJapanesePilotRoute(location.pathname);
+    const effectiveLocale = resolveEffectiveLocale(savedLocale, centerSetting, centerScoped, pilotRoute);
+    if (select instanceof HTMLSelectElement) select.value = (["ja-JP", "hi-IN"].includes(savedLocale) && !pilotRoute) ? "en-US" : savedLocale;
     if (toggle instanceof HTMLInputElement) toggle.checked = centerSetting.spanishEnabled;
-    if (disabledNotice instanceof HTMLElement) disabledNotice.hidden = !(savedLocale === "es-US" && effectiveLocale === "en-US");
+    if (japaneseToggle instanceof HTMLInputElement) japaneseToggle.checked = centerSetting.japaneseEnabled;
+    if (hindiToggle instanceof HTMLInputElement) hindiToggle.checked = centerSetting.hindiEnabled;
+    if (disabledNotice instanceof HTMLElement) disabledNotice.hidden = !((savedLocale === "es-US" || (["ja-JP", "hi-IN"].includes(savedLocale) && pilotRoute)) && effectiveLocale === "en-US");
+    if (scopeNotice instanceof HTMLElement) scopeNotice.hidden = !(["ja-JP", "hi-IN"].includes(savedLocale) && !pilotRoute);
     control.dataset.savedLocale = savedLocale;
     control.dataset.effectiveLocale = effectiveLocale;
     control.dataset.preferenceSource = ownLocale ? "own" : personId === ENTRY_LANGUAGE_PERSON_ID ? "default" : "entry";
@@ -211,6 +262,16 @@ export function initializeCognitLocalization(control) {
     if (toggle instanceof HTMLInputElement) writeCenterLanguageSetting(toggle.checked, globalThis.localStorage, centerId);
     document.dispatchEvent(new CustomEvent("cognit:center-language-setting-changed", { detail: { centerId } }));
     toggle?.focus();
+  });
+  japaneseToggle?.addEventListener("change", () => {
+    if (japaneseToggle instanceof HTMLInputElement) writeCenterJapaneseSetting(japaneseToggle.checked, globalThis.localStorage, centerId);
+    document.dispatchEvent(new CustomEvent("cognit:center-language-setting-changed", { detail: { centerId } }));
+    japaneseToggle?.focus();
+  });
+  hindiToggle?.addEventListener("change", () => {
+    if (hindiToggle instanceof HTMLInputElement) writeCenterHindiSetting(hindiToggle.checked, globalThis.localStorage, centerId);
+    document.dispatchEvent(new CustomEvent("cognit:center-language-setting-changed", { detail: { centerId } }));
+    hindiToggle?.focus();
   });
   document.addEventListener("cognit:center-language-setting-changed", (event) => {
     if (!(event instanceof CustomEvent) || event.detail?.centerId === centerId) render();

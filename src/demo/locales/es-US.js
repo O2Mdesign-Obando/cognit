@@ -1,10 +1,14 @@
 export const esUS = {
   "language.english": "Inglés (EE. UU.)",
   "language.spanish": "Español (EE. UU.)",
+  "language.japanese": "Japonés",
   "language.name": "Español (EE. UU.)",
   "language.control.label": "Idioma",
   "language.center.heading": "Disponibilidad de idiomas de la demostración",
   "language.center.spanish": "Habilitar español para este Centro",
+  "language.center.japanese": "Habilitar japonés para el candidato local de siete rutas",
+  "language.center.hindi": "Habilitar hindi para el candidato local de siete rutas",
+  "language.center.japaneseAllowance": "El japonés y el hindi son borradores locales de siete rutas pendientes de revisión lingüística cualificada. Las demás rutas de la Demo siguen en inglés o español.",
   "language.center.eyebrow": "Configuración local de idioma",
   "language.center.ownership": "Configuración del Centro",
   "language.center.allowance": "El español es el idioma adicional de la demostración disponible para este Centro.",
@@ -12,6 +16,7 @@ export const esUS = {
   "language.preferenceNotice": "Tu preferencia de idioma guardada es independiente de los idiomas habilitados por el Centro.",
   "language.independentPreferenceNotice": "Esta preferencia de idioma es independiente de cada Centro y persona.",
   "language.disabledNotice": "El español está guardado, pero este Centro usa inglés actualmente.",
+  "language.scopeNotice": "El japonés o el hindi está guardado para las siete páginas autorizadas. Esta página usa inglés.",
   "language.fallbackNotice": "Parte del contenido aparece en inglés como respaldo.",
   "language.reviewNotice": "Traducción candidata al español · revisión humana pendiente.",
   "language.englishFallback": "Contenido de respaldo en inglés · traducción pendiente",
@@ -180,5 +185,8 @@ export const esUS = {
   "legacy.center.operatingContext": "Contexto operativo",
   "legacy.center.academics": "Área académica",
   "legacy.center.courses": "Cursos",
-  "legacy.center.scheduling": "Programación"
+  "legacy.center.scheduling": "Programación",
+  "center.courseDescriptionDraftLabel": "Borrador en japonés · pendiente de revisión por una persona cualificada que hable japonés",
+  "center.courseDescription.creativeAppLab": "Los estudiantes convierten una idea personalmente significativa en un prototipo funcional de aplicación, lo prueban con sus compañeros y explican cómo los comentarios cambiaron la experiencia.",
+  "center.originalEnglishSummary": "Resumen original en inglés"
 };

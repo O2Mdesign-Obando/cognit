@@ -1,0 +1,243 @@
+---
+const { perspective, view } = Astro.props;
+const routeKey = `${perspective}:${view}`;
+const isCourse = routeKey === "center:courses/creative-app-lab";
+const isCenterReport = routeKey === "center:context/northfield/reports/eli";
+const isCapture = routeKey === "coach:capture";
+const isAfterClass = routeKey === "coach:after-class";
+const isStudent = routeKey === "student:lesson";
+const isFamilyJourney = routeKey === "family:journey/eli";
+const isMessages = routeKey === "family:messages";
+---
+<section class="connected" data-connected-demo data-route-key={routeKey} data-i18n-preserve>
+  <header class="connected-heading">
+    <div><span class="eyebrow" data-copy="eyebrow">Connected class month</span><h2 data-copy={isCourse ? "courseHeading" : isCapture ? "captureHeading" : isAfterClass ? "reportHeading" : isCenterReport ? "centerHeading" : isStudent ? "studentHeading" : isFamilyJourney ? "familyHeading" : "messageHeading"}></h2></div>
+    <span class="review-badge" data-copy="pendingReview">Japanese and Hindi copy is drafted and pending qualified language review.</span>
+  </header>
+
+  {isCourse && <>
+    <p data-copy="courseIntro"></p>
+    <div class="module-sequence" aria-labelledby="connected-sequence-heading">
+      <h3 id="connected-sequence-heading" data-copy="sequence"></h3>
+      <ol>
+        <li class="done"><span data-copy="completed"></span><b data-copy="module1"></b><code>module-01-design</code></li>
+        <li class="done"><span data-copy="completed"></span><b data-copy="module2"></b><code>module-02-interaction-plan</code></li>
+        <li class="active" aria-current="step"><span data-copy="current"></span><b data-copy="module3"></b><code>module-03-navigation-flow</code></li>
+        <li class="locked"><span data-copy="locked"></span><b data-copy="module4"></b><small data-copy="lockedCopy"></small></li>
+      </ol>
+    </div>
+    <div class="three-column">
+      <article><h3 data-copy="objective"></h3><p data-copy="objectiveCopy"></p></article>
+      <article><h3 data-copy="activity"></h3><p data-copy="activityCopy"></p></article>
+      <article><h3 data-copy="evidence"></h3><p data-copy="evidenceCopy"></p></article>
+    </div>
+  </>}
+
+  {isCapture && <>
+    <div class="capture-grid">
+      <form data-capture-form>
+        <label><span data-copy="target"></span><select name="target" required><option value="" data-copy="choose"></option><option value="demo-student-eli-morgan" data-copy="eli"></option><option value="whole-class" data-copy="wholeClass"></option></select></label>
+        <label><span data-copy="note"></span><textarea name="note" rows="4"></textarea></label>
+        <button type="submit" data-copy="saveNote"></button><p class="inline-status" role="status" data-note-status></p>
+      </form>
+      <section class="audio-panel" aria-labelledby="connected-audio-heading">
+        <h3 id="connected-audio-heading" data-copy="audio"></h3><p data-copy="localOnly"></p>
+        <div class="button-row"><button type="button" data-record data-copy="record"></button><button type="button" data-stop data-copy="stop" disabled></button></div>
+        <p class="inline-status" role="status" data-audio-status></p>
+      </section>
+    </div>
+    <section><h3 data-copy="captures"></h3><div class="capture-list" data-capture-list></div></section>
+  </>}
+
+  {isAfterClass && <>
+    <p data-copy="reportIntro"></p><p class="boundary" data-copy="unsupported"></p>
+    <div class="evidence-list" data-evidence-list></div>
+    <div class="button-row"><button type="button" data-create-report data-copy="createDraft"></button><button type="button" data-review-report data-copy="reviewDraft"></button><button type="button" data-submit-report data-copy="submit"></button></div>
+    <article class="report-card" data-report-card></article><p class="inline-status" role="status" data-report-status></p>
+  </>}
+
+  {isCenterReport && <>
+    <div class="rule-card"><h3 data-copy="rule"></h3><p data-copy="routineRule"></p><p data-copy="manualRule"></p><strong data-copy="eligibility"></strong></div>
+    <article class="report-card" data-report-card></article>
+    <div class="button-row"><button type="button" data-center-accept data-copy="accept"></button><button type="button" data-center-manual data-copy="requireManual"></button></div>
+    <section><h3 data-copy="history"></h3><ol class="history" data-decision-history></ol></section>
+  </>}
+
+  {isStudent && <>
+    <ol class="student-path">
+      <li class="done"><span data-copy="completed"></span><b data-copy="module1"></b></li>
+      <li class="done"><span data-copy="completed"></span><b data-copy="module2"></b></li>
+      <li class="active" aria-current="step"><span data-copy="current"></span><b data-copy="module3"></b><p><strong data-copy="nextAction"></strong>: <span data-copy="nextActionCopy"></span></p></li>
+      <li class="locked"><span data-copy="locked"></span><b data-copy="module4"></b><small data-copy="lockedCopy"></small></li>
+    </ol>
+  </>}
+
+  {isFamilyJourney && <><article class="family-report" data-family-report></article><p class="boundary" data-copy="privacy"></p></>}
+
+  {isMessages && <article class="message-card" data-message-card>
+    <dl><div><dt data-copy="sender"></dt><dd data-message-sender></dd></div><div><dt data-copy="recipient"></dt><dd data-message-recipient></dd></div><div><dt data-copy="status"></dt><dd data-copy="drafted"></dd></div></dl>
+    <p data-message-translation></p><button type="button" data-view-original data-copy="viewOriginal"></button>
+    <div class="original-message" data-original-message hidden><strong data-copy="original"></strong><p data-message-original></p></div>
+    <p class="boundary" data-copy="preferenceSafe"></p>
+  </article>}
+</section>
+
+<script>
+  import { focusedExpansionCopy } from "../../demo/cognit-focused-expansion-copy.js";
+  import { CONNECTED_IDS, readConnectedState, writeConnectedState, reduceConnectedState, saveAudioBlob, loadAudioBlob } from "../../demo/cognit-focused-expansion-state.js";
+
+  const roots = document.querySelectorAll("[data-connected-demo]");
+  const copyFor = (root) => focusedExpansionCopy[document.documentElement.dataset.contentLocale || "en-US"] || focusedExpansionCopy["en-US"];
+  const labelStatus = (copy, status) => copy[status] || status;
+  const setStatus = (node, value) => { if (node) { const key = Object.values(focusedExpansionCopy).flatMap((copy) => Object.entries(copy)).find(([, translated]) => translated === value)?.[0]; if (key) node.dataset.connectedStatusKey = key; else delete node.dataset.connectedStatusKey; node.textContent = value; node.setAttribute("tabindex", "-1"); } };
+
+  roots.forEach((root) => {
+    if (!(root instanceof HTMLElement) || root.dataset.connectedReady) return;
+    root.dataset.connectedReady = "true";
+    let state = readConnectedState();
+    let mediaRecorder;
+    let stream;
+    let chunks = [];
+    const routeKey = root.dataset.routeKey;
+
+    const update = (action) => {
+      state = reduceConnectedState(readConnectedState(), action);
+      try { writeConnectedState(state); render(); return true; }
+      catch (error) { setStatus(root.querySelector("[data-audio-status], [data-note-status], [data-report-status]"), error.message); return false; }
+    };
+
+    const renderCopy = () => {
+      const copy = copyFor(root);
+      root.querySelectorAll("[data-copy]").forEach((node) => { node.textContent = copy[node.getAttribute("data-copy")] || node.getAttribute("data-copy"); });
+      root.querySelectorAll("[data-connected-status-key]").forEach((node) => { node.textContent = copy[node.dataset.connectedStatusKey] || node.textContent; });
+      return copy;
+    };
+
+    const renderCaptures = (copy) => {
+      const list = root.querySelector("[data-capture-list]");
+      if (!list) return;
+      list.replaceChildren();
+      if (!state.captures.length) { const p = document.createElement("p"); p.textContent = copy.noCaptures; list.append(p); return; }
+      state.captures.forEach((capture) => {
+        const article = document.createElement("article"); article.className = "capture-card";
+        const heading = document.createElement("h4"); heading.textContent = `${capture.id} · ${capture.target === "whole-class" ? copy.wholeClass : copy.eli} · audio-v${capture.audioVersion}`;
+        const audio = document.createElement("audio"); audio.controls = true; audio.preload = "none"; audio.setAttribute("aria-label", `${copy.reopen}: ${capture.id}`);
+        const reopen = document.createElement("button"); reopen.type = "button"; reopen.textContent = copy.reopen;
+        reopen.addEventListener("click", async () => { try { const blob = await loadAudioBlob(capture.id); if (!blob) throw new Error(copy.failed); if (audio.src) URL.revokeObjectURL(audio.src); audio.src = URL.createObjectURL(blob); await audio.play().catch(() => {}); } catch (error) { setStatus(root.querySelector("[data-audio-status]"), error.message); } });
+        const simulate = document.createElement("button"); simulate.type = "button"; simulate.textContent = copy.simulate;
+        simulate.addEventListener("click", () => {
+          const audioVersion = capture.audioVersion;
+          update({ type: "SAVE_TRANSCRIPT", captureId: capture.id, audioVersion, text: "Simulation pending…", status: "simulated-pending" });
+          window.setTimeout(() => {
+            const latest = readConnectedState().captures.find((item) => item.id === capture.id);
+            if (latest?.audioVersion === audioVersion && latest.transcript?.status === "simulated-pending") {
+              state = reduceConnectedState(readConnectedState(), { type: "SAVE_TRANSCRIPT", captureId: capture.id, audioVersion, text: "Eli explained that the main action now returns to a visible result.", status: "simulated-unreviewed" });
+              writeConnectedState(state); render();
+            }
+          }, 700);
+        });
+        const label = document.createElement("label"); label.textContent = copy.transcriptLabel;
+        const textarea = document.createElement("textarea"); textarea.value = capture.transcript?.text || ""; textarea.rows = 3; textarea.disabled = !capture.transcript;
+        const save = document.createElement("button"); save.type = "button"; save.textContent = copy.save; save.disabled = !capture.transcript;
+        save.addEventListener("click", () => update({ type: "SAVE_TRANSCRIPT", captureId: capture.id, audioVersion: capture.audioVersion, text: textarea.value, status: "coach-corrected" }));
+        const cancel = document.createElement("button"); cancel.type = "button"; cancel.textContent = copy.cancel; cancel.disabled = !capture.transcript;
+        cancel.addEventListener("click", () => { textarea.value = capture.transcript?.text || ""; cancel.focus(); });
+        const status = document.createElement("small"); status.textContent = capture.transcript ? `${copy.transcriptLabel} · ${capture.transcript.status} · audio-v${capture.transcript.audioVersion}` : copy.pending;
+        const controls = document.createElement("div"); controls.className = "button-row"; controls.append(reopen, simulate, save, cancel);
+        label.append(textarea); article.append(heading, audio, controls, label, status); list.append(article);
+      });
+    };
+
+    const currentReport = () => state.reports.find((report) => report.id === state.currentReportId) || null;
+    const renderReport = (copy) => {
+      const card = root.querySelector("[data-report-card]"); if (!card) return;
+      const report = currentReport(); card.replaceChildren();
+      if (!report) { card.textContent = copy.noDraft; root.querySelectorAll("[data-review-report], [data-submit-report], [data-center-accept], [data-center-manual]").forEach((button) => { button.disabled = true; }); return; }
+      const stale = report.sourceRevision !== state.sourceRevision;
+      const h = document.createElement("h3"); h.textContent = `${report.id} · ${labelStatus(copy, report.status)}`;
+      const p = document.createElement("p"); p.textContent = report.text;
+      const sources = document.createElement("p"); sources.textContent = `${copy.sourceIds}: ${report.sourceIds.join(", ")}`;
+      const meta = document.createElement("p"); meta.textContent = `${report.rule === "manual" ? copy.manual : copy.routine} · source-revision ${report.sourceRevision}`;
+      card.append(h, p, sources, meta);
+      if (stale) { const warning = document.createElement("strong"); warning.textContent = copy.stale; card.append(warning); }
+      const reviewButton = root.querySelector("[data-review-report]"); if (reviewButton) reviewButton.disabled = report.coachReviewed;
+      const submitButton = root.querySelector("[data-submit-report]"); if (submitButton) submitButton.disabled = !report.coachReviewed || report.submitted;
+      root.querySelectorAll("[data-center-accept], [data-center-manual]").forEach((button) => { button.disabled = !report.submitted || stale; });
+    };
+
+    const renderEvidence = (copy) => {
+      const list = root.querySelector("[data-evidence-list]"); if (!list) return;
+      list.replaceChildren(...state.evidence.map((item) => {
+        const row = document.createElement("div"); row.className = "evidence-row";
+        const text = document.createElement("span"); text.textContent = `${item.id} · ${item.kind} · ${item.label}`;
+        const button = document.createElement("button"); button.type = "button"; button.textContent = item.reviewed ? copy.reviewed : copy.confirm; button.disabled = item.reviewed; button.addEventListener("click", () => update({ type: "REVIEW_EVIDENCE", id: item.id }));
+        row.append(text, button); return row;
+      }));
+    };
+
+    const renderHistory = (copy) => {
+      const history = root.querySelector("[data-decision-history]"); if (!history) return; history.replaceChildren();
+      if (!state.decisionHistory.length) { const li = document.createElement("li"); li.textContent = copy.noHistory; history.append(li); return; }
+      [...state.decisionHistory].reverse().forEach((decision) => { const li = document.createElement("li"); li.textContent = `${decision.reportId || "report"} · ${labelStatus(copy, decision.type)} · ${decision.reason}`; history.append(li); });
+    };
+
+    const renderFamily = (copy) => {
+      const card = root.querySelector("[data-family-report]"); if (!card) return;
+      const report = state.reports.find((item) => item.id === state.acceptedReportId && item.status === "accepted" && item.sourceRevision === state.sourceRevision);
+      card.replaceChildren();
+      const h = document.createElement("h3"); h.textContent = report ? `${copy.accepted}: ${report.id}` : copy.noAccepted;
+      const p = document.createElement("p"); p.textContent = report ? report.text : copy.noAcceptedCopy;
+      card.append(h, p); if (report) { const small = document.createElement("small"); small.textContent = copy.acceptedCopy; card.append(small); }
+    };
+
+    const renderMessage = (copy) => {
+      const message = state.messages[0]; const locale = document.documentElement.dataset.contentLocale || "en-US";
+      const translated = message.translations[locale] || message.originalText;
+      const set = (selector, value) => { const node = root.querySelector(selector); if (node) node.textContent = value; };
+      set("[data-message-sender]", message.sender); set("[data-message-recipient]", message.recipient); set("[data-message-translation]", translated); set("[data-message-original]", message.originalText);
+    };
+
+    const render = () => { state = readConnectedState(); const copy = renderCopy(); renderCaptures(copy); renderEvidence(copy); renderReport(copy); renderHistory(copy); renderFamily(copy); renderMessage(copy); };
+
+    const form = root.querySelector("[data-capture-form]");
+    if (form instanceof HTMLFormElement) {
+      form.elements.namedItem("target").value = state.selectedTarget;
+      form.elements.namedItem("note").value = state.typedNote;
+      form.addEventListener("submit", (event) => { event.preventDefault(); if (!form.reportValidity()) return; const values = new FormData(form); const ok = update({ type: "SELECT_TARGET", target: values.get("target") }) && update({ type: "SAVE_NOTE", note: String(values.get("note") || "") }); setStatus(root.querySelector("[data-note-status]"), ok ? copyFor(root).saved : copyFor(root).failed); });
+    }
+    root.querySelector("[data-record]")?.addEventListener("click", async () => {
+      const form = root.querySelector("[data-capture-form]"); if (!(form instanceof HTMLFormElement) || !form.reportValidity()) return;
+      const target = String(new FormData(form).get("target") || ""); update({ type: "SELECT_TARGET", target });
+      const status = root.querySelector("[data-audio-status]");
+      try {
+        if (!navigator.mediaDevices?.getUserMedia || !globalThis.MediaRecorder) throw new Error(copyFor(root).unavailable);
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true }); chunks = []; mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.addEventListener("dataavailable", (event) => { if (event.data.size) chunks.push(event.data); });
+        mediaRecorder.addEventListener("stop", async () => {
+          try {
+            const blob = new Blob(chunks, { type: mediaRecorder.mimeType || "audio/webm" });
+            const id = `audio-${Date.now()}`; await saveAudioBlob(id, blob);
+            update({ type: "ADD_CAPTURE", capture: { id, target, audioVersion: 1, mimeType: blob.type, size: blob.size, savedAt: new Date().toISOString(), transcript: null } });
+            setStatus(status, copyFor(root).saved);
+          } catch (error) { setStatus(status, error.message); }
+          stream?.getTracks().forEach((track) => track.stop());
+        });
+        mediaRecorder.start(); root.querySelector("[data-record]").disabled = true; root.querySelector("[data-stop]").disabled = false; setStatus(status, `${copyFor(root).record}…`);
+      } catch (error) { setStatus(status, error.message); }
+    });
+    root.querySelector("[data-stop]")?.addEventListener("click", () => { if (mediaRecorder?.state === "recording") mediaRecorder.stop(); root.querySelector("[data-record]").disabled = false; root.querySelector("[data-stop]").disabled = true; });
+    root.querySelector("[data-create-report]")?.addEventListener("click", () => update({ type: "CREATE_REPORT", rule: "routine", text: "Eli completed the planning modules and tested the current navigation flow. The reviewed sketch and Coach note support this progress summary." }));
+    root.querySelector("[data-review-report]")?.addEventListener("click", () => { const report = currentReport(); if (report) update({ type: "REVIEW_REPORT", id: report.id }); });
+    root.querySelector("[data-submit-report]")?.addEventListener("click", () => { const report = currentReport(); if (report) update({ type: "SUBMIT_REPORT", id: report.id }); });
+    root.querySelector("[data-center-accept]")?.addEventListener("click", () => { const report = currentReport(); if (report) update({ type: "CENTER_DECIDE", id: report.id, decision: "accepted", reason: "Routine rule passed; Center explicitly accepted this exact version." }); });
+    root.querySelector("[data-center-manual]")?.addEventListener("click", () => { const report = currentReport(); if (report) update({ type: "CENTER_DECIDE", id: report.id, decision: "manual", reason: "Evidence exception requires manual Center review." }); });
+    root.querySelector("[data-view-original]")?.addEventListener("click", (event) => { const original = root.querySelector("[data-original-message]"); if (!(original instanceof HTMLElement)) return; original.hidden = !original.hidden; event.currentTarget.textContent = original.hidden ? copyFor(root).viewOriginal : copyFor(root).hideOriginal; });
+    document.addEventListener("cognit:language-changed", render);
+    globalThis.addEventListener("cognit:connected-state-changed", render);
+    render();
+  });
+</script>
+
+<style>
+  .connected{display:grid;gap:22px;margin-top:28px;padding:clamp(20px,4vw,34px);border:2px solid #a9d8e7;border-radius:20px;background:#f8fcfd;box-shadow:var(--shadow-soft)}.connected-heading{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.connected-heading h2{margin:.3rem 0 0}.eyebrow{color:var(--color-muted);font-size:.74rem;font-weight:950;text-transform:uppercase}.review-badge{max-width:360px;padding:7px 10px;border-radius:999px;background:#fff2cc;color:#684b00;font-size:.75rem;font-weight:850}.module-sequence ol,.student-path{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:0;list-style:none}.module-sequence li,.student-path li,.three-column article,.audio-panel,.capture-grid form,.report-card,.rule-card,.family-report,.message-card,.capture-card{display:grid;gap:9px;padding:17px;border:1px solid var(--color-border);border-radius:13px;background:#fff}.module-sequence li span,.student-path li>span{font-size:.72rem;font-weight:950;text-transform:uppercase}.done{border-top:4px solid #20aaa5!important}.active{border-top:4px solid #177cab!important}.locked{background:#f1f3f5!important;color:#5d6872}.locked small{line-height:1.4}.three-column,.capture-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.capture-grid{grid-template-columns:1fr 1fr}.connected form,.connected label{display:grid;gap:7px}.connected :is(input,select,textarea){width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--color-border);border-radius:9px;background:#fff;font:inherit}.connected button{min-height:44px;padding:10px 14px;border:0;border-radius:9px;background:var(--color-ink);color:#fff;font-weight:900}.connected button:disabled{opacity:.55}.connected :is(button,select,textarea):focus-visible{outline:3px solid var(--color-blue);outline-offset:2px}.button-row{display:flex;flex-wrap:wrap;gap:10px}.capture-list,.evidence-list{display:grid;gap:12px}.capture-card audio{width:100%}.capture-card small{overflow-wrap:anywhere}.evidence-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px;border:1px solid var(--color-border);border-radius:10px;background:#fff}.boundary,.inline-status{margin:0;padding:10px 12px;border-radius:9px;background:#fff3cf;color:#604600}.history{display:grid;gap:8px}.message-card dl{display:grid;gap:8px}.message-card dl div{display:flex;justify-content:space-between;gap:18px}.message-card dd{font-weight:850}.original-message{padding:12px;border-left:4px solid #177cab;background:#edf7fb}.family-report{border-top:5px solid #20aaa5}.student-path{grid-template-columns:repeat(4,minmax(0,1fr))}@media(max-width:800px){.connected-heading{flex-direction:column}.review-badge{max-width:none}.module-sequence ol,.student-path,.three-column,.capture-grid{grid-template-columns:1fr}.evidence-row{align-items:flex-start;flex-direction:column}.connected{padding:18px}.connected button{min-height:48px}.button-row{display:grid;grid-template-columns:1fr}.message-card dl div{align-items:flex-start;flex-direction:column;gap:3px}}
+</style>

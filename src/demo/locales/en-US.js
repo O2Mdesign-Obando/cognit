@@ -1,17 +1,22 @@
 export const enUS = {
   "language.english": "English (US)",
   "language.spanish": "Spanish (US)",
+  "language.japanese": "Japanese",
   "language.name": "English (US)",
   "language.control.label": "Language",
   "language.center.heading": "Demo language availability",
   "language.center.spanish": "Enable Spanish for this Center",
+  "language.center.japanese": "Enable Japanese for the seven-route local candidate",
+  "language.center.hindi": "Enable Hindi for the seven-route local candidate",
+  "language.center.japaneseAllowance": "Japanese and Hindi are local seven-route drafts pending qualified language review. Other Demo routes remain English or Spanish.",
   "language.center.eyebrow": "Local language setting",
   "language.center.ownership": "Center setting",
   "language.center.allowance": "Spanish is the additional Demo language available for this Center.",
   "language.browserNotice": "Simulated Demo setting · saved only in this browser and origin.",
   "language.preferenceNotice": "Your saved language preference is separate from the Center’s enabled languages.",
   "language.independentPreferenceNotice": "This language preference is independent from each Center and person.",
-  "language.disabledNotice": "Spanish is saved, but this Center currently uses English.",
+  "language.disabledNotice": "Your selected language is saved, but this Center currently uses English.",
+  "language.scopeNotice": "Japanese or Hindi is saved for the seven authorized pages. This page uses English.",
   "language.fallbackNotice": "Some content is shown in English as a fallback.",
   "language.reviewNotice": "Spanish candidate translation · human review pending.",
   "language.englishFallback": "English fallback · translation pending",
@@ -181,5 +186,8 @@ export const enUS = {
   "legacy.center.operatingContext": "Operating context",
   "legacy.center.academics": "Academics",
   "legacy.center.courses": "Courses",
-  "legacy.center.scheduling": "Scheduling"
+  "legacy.center.scheduling": "Scheduling",
+  "center.courseDescriptionDraftLabel": "Japanese draft · qualified Japanese-speaking review pending",
+  "center.courseDescription.creativeAppLab": "Learners turn a personally meaningful idea into a working app prototype, test it with peers, and explain how feedback changed the experience.",
+  "center.originalEnglishSummary": "Original English summary"
 };

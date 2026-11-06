@@ -1,4 +1,5 @@
 ---
+import { isFocusedExpansionLocaleRoute } from "../../demo/cognit-localization.js";
 const {
   role,
   personId,
@@ -7,6 +8,7 @@ const {
   mode = "navigation"
 } = Astro.props;
 const isSettings = mode === "settings";
+const focusedLocaleRoute = isFocusedExpansionLocaleRoute(Astro.url.pathname);
 ---
 {isSettings ? (
   <section
@@ -29,7 +31,16 @@ const isSettings = mode === "settings";
       <input type="checkbox" data-center-spanish-enable checked />
       <span data-i18n="language.center.spanish">Enable Spanish for this Center</span>
     </label>
+    {centerId === "northfield" && <label class="language-toggle">
+      <input type="checkbox" data-center-japanese-enable checked />
+      <span data-i18n="language.center.japanese">Enable Japanese for the seven-route local candidate</span>
+    </label>}
+    {centerId === "northfield" && <label class="language-toggle">
+      <input type="checkbox" data-center-hindi-enable checked />
+      <span data-i18n="language.center.hindi">Enable Hindi for the seven-route local candidate</span>
+    </label>}
     <p data-i18n="language.center.allowance">Spanish is the additional Demo language available for this Center.</p>
+    {centerId === "northfield" && <p data-i18n="language.center.japaneseAllowance">Japanese and Hindi are local seven-route drafts pending qualified language review. Other Demo routes remain English or Spanish.</p>}
   </section>
 ) : (
   <div
@@ -45,9 +56,12 @@ const isSettings = mode === "settings";
       <select data-language-select data-i18n-aria-label="language.control.label">
         <option value="en-US">English</option>
         <option value="es-US">Español</option>
+        {focusedLocaleRoute && <option value="ja-JP">日本語</option>}
+        {focusedLocaleRoute && <option value="hi-IN">हिन्दी</option>}
       </select>
     </label>
-    <p class="language-status" role="status" data-language-disabled-notice hidden data-i18n="language.disabledNotice">Spanish is saved, but this Center currently uses English.</p>
+    <p class="language-status" role="status" data-language-disabled-notice hidden data-i18n="language.disabledNotice">Your selected language is saved, but this Center currently uses English.</p>
+    <p class="language-status" role="status" data-language-scope-notice hidden data-i18n="language.scopeNotice">Japanese or Hindi is saved for the seven authorized pages. This page uses English.</p>
     <p class="language-status" role="status" data-language-fallback-notice hidden data-i18n="language.fallbackNotice">Some content is shown in English as a fallback.</p>
   </div>
 )}

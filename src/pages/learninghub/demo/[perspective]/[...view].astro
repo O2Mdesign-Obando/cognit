@@ -7,6 +7,7 @@ import CognitStudentJourneyView from "../../../../components/demo/CognitStudentJ
 import CognitFamilyJourneyView from "../../../../components/demo/CognitFamilyJourneyView.astro";
 import CognitHqView from "../../../../components/demo/CognitHqView.astro";
 import CognitCenterView from "../../../../components/demo/CognitCenterView.astro";
+import CognitFocusedExpansion from "../../../../components/demo/CognitFocusedExpansion.astro";
 import { CENTER_CONTEXT_KEYS, CENTER_SECTION_KEYS } from "../../../../demo/cognit-demo-routes.js";
 
 export function getStaticPaths() {
@@ -54,12 +55,18 @@ const isStudentJourney = perspective === "student" && studentJourneyViews.has(vi
 const isFamilyJourney = perspective === "family";
 const isHqJourney = perspective === "hq";
 const isCenterJourney = perspective === "center";
+const focusedExpansionRoutes = new Set([
+  "center:courses/creative-app-lab", "center:context/northfield/reports/eli", "coach:capture", "coach:after-class",
+  "student:lesson", "family:journey/eli", "family:messages"
+]);
+const hasFocusedExpansion = focusedExpansionRoutes.has(`${perspective}:${view}`);
 ---
 
 <BaseLayout title={`${roleLabel} · Cognit Learning Hub`} shellVariant="demo-shell" footerVariant="compact" demoPerspective={perspective}>
   <main class="deep-demo-page">
     <Container>
       {isCoachJourney ? <CognitCoachJourneyView view={view} /> : isStudentJourney ? <CognitStudentJourneyView view={view} /> : isFamilyJourney ? <CognitFamilyJourneyView view={view} /> : isHqJourney ? <CognitHqView view={view} /> : isCenterJourney ? <CognitCenterView view={view} /> : <CognitDemoDeepView role={perspective} view={view} />}
+      {hasFocusedExpansion && <CognitFocusedExpansion {perspective} {view} />}
       <a class="all-perspectives" href="/learninghub/demo">← All perspectives</a>
     </Container>
   </main>
