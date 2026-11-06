@@ -2,7 +2,7 @@ export const CONNECTED_IDS = Object.freeze({
   course: "course-creative-app-lab",
   classMonth: "class-creative-app-lab-2026-09",
   learner: "demo-student-eli-morgan",
-  currentModule: "module-03-navigation-flow",
+  currentModule: "creative-prototype",
   audioStore: "cognit-connected-audio-v1"
 });
 
@@ -13,6 +13,7 @@ export function createConnectedState() {
     schema: 1,
     sourceRevision: 1,
     selectedTarget: "",
+    selectedCaptureType: "photo",
     typedNote: "Eli connected the primary action to a visible result and explained the revision.",
     evidence: [
       { id: "evidence-photo-01", kind: "photo", label: "Navigation-flow sketch", reviewed: true, version: 1 },
@@ -38,7 +39,7 @@ export function createConnectedState() {
 export function normalizeConnectedState(candidate) {
   const base = createConnectedState();
   if (!candidate || candidate.schema !== 1) return base;
-  return { ...base, ...candidate, evidence: candidate.evidence ?? base.evidence, captures: candidate.captures ?? [], reports: candidate.reports ?? [], decisionHistory: candidate.decisionHistory ?? [], messages: candidate.messages ?? base.messages };
+  return { ...base, ...candidate, selectedCaptureType: candidate.selectedCaptureType ?? base.selectedCaptureType, evidence: candidate.evidence ?? base.evidence, captures: candidate.captures ?? [], reports: candidate.reports ?? [], decisionHistory: candidate.decisionHistory ?? [], messages: candidate.messages ?? base.messages };
 }
 
 export function readConnectedState(storage = globalThis.localStorage) {
@@ -67,6 +68,8 @@ function invalidateAccepted(state, reason) {
 export function reduceConnectedState(state, action) {
   switch (action.type) {
     case "SELECT_TARGET": return { ...state, selectedTarget: action.target };
+    case "SELECT_CAPTURE_TYPE": return { ...state, selectedCaptureType: action.captureType };
+    case "DRAFT_NOTE": return { ...state, typedNote: action.note };
     case "SAVE_NOTE": return invalidateAccepted({ ...state, typedNote: action.note, sourceRevision: state.sourceRevision + 1 }, "Coach note changed after acceptance.");
     case "ADD_CAPTURE": return invalidateAccepted({ ...state, captures: [...state.captures, action.capture], sourceRevision: state.sourceRevision + 1 }, "Audio evidence changed after acceptance.");
     case "SAVE_TRANSCRIPT": return invalidateAccepted({

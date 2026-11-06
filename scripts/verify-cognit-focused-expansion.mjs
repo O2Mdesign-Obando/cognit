@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { createConnectedState, reduceConnectedState, saveAudioBlob, writeConnectedState } from "../src/demo/cognit-focused-expansion-state.js";
 import { focusedExpansionCopy } from "../src/demo/cognit-focused-expansion-copy.js";
+import { creativeAppLabProgression } from "../src/demo/cognit-curriculum-progression.js";
 import { COGNIT_FOCUSED_EXPANSION_ROUTES, readCenterLanguageSetting, resolveEffectiveLocale, writeCenterHindiSetting, writeCenterJapaneseSetting } from "../src/demo/cognit-localization.js";
 
 assert.deepEqual(COGNIT_FOCUSED_EXPANSION_ROUTES, [
@@ -19,6 +20,8 @@ for (const locale of ["en-US", "es-US", "ja-JP", "hi-IN"]) {
 }
 assert.equal(focusedExpansionCopy["es-US"].organization, "Organización");
 assert.equal(focusedExpansionCopy["es-US"].currentLabel, "Vigente");
+assert.equal(creativeAppLabProgression.teachingModuleId, "creative-prototype");
+assert.deepEqual(creativeAppLabProgression.completedModuleIds, ["creative-foundations"]);
 
 let state = createConnectedState();
 state = reduceConnectedState(state, { type: "ADD_CAPTURE", capture: { id: "audio-test-1", target: "demo-student-eli-morgan", audioVersion: 1, transcript: null } });
@@ -72,4 +75,14 @@ assert.match(component, /saveAudioBlob/);
 assert.match(component, /simulated-pending/);
 assert.match(component, /data-family-report/);
 assert.match(component, /data-view-original/);
+assert.doesNotMatch(component, /module-03-navigation-flow/);
+assert.match(component, /creative-prototype/);
+assert.match(component, /data-capture-type="audio"/);
+const copySource = await readFile(new URL("../src/demo/cognit-focused-expansion-copy.js", import.meta.url), "utf8");
+assert.match(copySource, /Demo examples and recordings saved on this device/);
+const coachJourney = await readFile(new URL("../src/components/demo/CognitCoachJourneyView.astro", import.meta.url), "utf8");
+assert.match(coachJourney, /Connect a learning moment/);
+const captureHtml = await readFile(new URL("../dist/learninghub/demo/coach/capture/index.html", import.meta.url), "utf8");
+assert.doesNotMatch(captureHtml, /data-capture-learner/);
+assert.doesNotMatch(captureHtml, /data-capture-placeholder/);
 console.log("Connected class/month state, exact seven-route locale boundary, invalidation, and Family visibility checks passed.");
