@@ -1,0 +1,98 @@
+# Focused Expansion 01 — QA acceptance and Preview readiness
+
+Recorded: 2026-11-09 12:31 EST  
+Branch: `feat/demo-structured-curriculum-multilingual-01`
+
+## Human acceptance receipt
+
+Jorge reported targeted human QA PASS for commit `7eb275ffdcb9333f48b1fd54b297ac317fb04bca`, tree `43beb5ef999d0678ebd5c1c1ffa77486e14e8008`.
+
+Acceptance covers fresh microphone recording, saving, playback after reload, target-specific drafts, and the revised capture UI. It does not establish qualified Japanese/Hindi language review, exhaustive accessibility review, hosted Preview acceptance, or Production acceptance.
+
+## Narrow-phone correction boundary
+
+Readiness inspection found two concrete defects after the accepted checkpoint:
+
+- the Spanish Center report status chip caused narrow-screen horizontal overflow;
+- Coach after-class learner/skill/evidence buttons did not consistently meet a 44 px touch target or expose the intended focus treatment, including dynamically inserted evidence-review buttons.
+
+The correction is commit `072f242137124f1a61332bfaa91a9bd712b9e318`, tree `6b651268781e47169c536aac72d713bec2bd9a33`. It changes:
+
+- `src/components/demo/CognitCenterView.astro`
+- `src/components/demo/CognitCoachJourneyView.astro`
+- `src/components/demo/CognitFocusedExpansion.astro`
+
+Jorge's acceptance remains attached only to `7eb275ffdcb9333f48b1fd54b297ac317fb04bca`. The correction requires targeted human review before any Preview push.
+
+## Verification evidence
+
+Automated browser checks exercised all seven authorized routes at 360 × 780 in en-US, es-US, ja-JP, and hi-IN, and at 320 × 700 in ja-JP and hi-IN:
+
+1. `/learninghub/demo/center/courses/creative-app-lab`
+2. `/learninghub/demo/center/context/northfield/reports/eli`
+3. `/learninghub/demo/coach/capture`
+4. `/learninghub/demo/coach/after-class`
+5. `/learninghub/demo/student/lesson`
+6. `/learninghub/demo/family/journey/eli`
+7. `/learninghub/demo/family/messages`
+
+Results after correction:
+
+- no document-level horizontal overflow at 360 px or 320 px;
+- no visible button, select, checkbox, or radio control below 44 × 44 px; connected mobile evidence controls are at least 48 px high;
+- English, Spanish, Japanese, and Hindi selected the expected effective locale on all seven routes;
+- disabling Northfield Japanese preserved the saved ja-JP preference, used en-US with an explicit status notice, and restored ja-JP after re-enablement;
+- Center publication and Student curriculum image dialogs fit the viewport, opened by keyboard-compatible controls, closed with Escape, returned focus to their trigger, and showed a 3 px visible focus outline;
+- expected status/live regions were present on localized/fallback surfaces;
+- browser console contained zero warnings and zero errors during the corrected route pass.
+
+Repository checks passed:
+
+- production build: 387 pages;
+- exact localization manifest: 385 routes, SHA-256 `818ee5dd04351d544b4b73f214edc8fcfb8fccdcb3ebfdb36f3030b2a43533e4`;
+- structured curriculum, seven-route Japanese/Hindi boundary, connected class/month, stale-result/invalidation, and Family-visibility verification;
+- route validation: 446 HTML pages and 13,680 local references, zero missing;
+- Demo2 validation: 54 declared routes, 59 prerendered routes, 845 local references, zero missing.
+
+The earlier accepted real microphone, reload playback, target-draft, approval/invalidation, and Family-visibility evidence is carried forward. No microphone or state-changing publication flow was repeated for the CSS-only correction.
+
+VoiceOver was not running in the available macOS session. Automated DOM/accessibility inspection and real keyboard interaction were completed, but no real screen-reader session is claimed. Remaining manual check: enable VoiceOver with Command-F5; use VO-Right/VO-Left and VO-Space through the role navbar, language selector, Coach capture/report controls, and both dialogs; confirm live status/fallback announcements, dialog context, Escape/close focus return, and Japanese/Hindi accessible names; then disable VoiceOver with Command-F5.
+
+Japanese and Hindi remain CODEX-drafted and pending qualified language review.
+
+## Canonical authority and read-only Preview readiness
+
+Fresh canonical discovery used registry commit `e253ad3a249f26d869275bd1634a990f9a52dfcb` and passed qualification:
+
+- `pp:request:cognit-demo-connected-class-month-composition-01` → `KEEP_PRODUCT_LOCAL`, `may_proceed: true`;
+- `pp:request:cognit-demo-seven-route-ja-hi-localization-01` → `PRODUCT_LOCAL_CANDIDATE_AUTHORIZED`, `may_proceed: true`.
+
+These receipts permit the existing product-local implementation and verification. They do not authorize a new Cognit push or hosted Preview. Earlier Preview allowances remain consumed.
+
+Read-only Git/Vercel findings:
+
+- repository: `O2Mdesign-Obando/cognit`;
+- origin: `https://github.com/O2Mdesign-Obando/cognit.git`;
+- remote feature branch: `a614ffb245d01b416e5ae69ae056441563468f53`;
+- remote Production branch `main`: `88997bc352d4ccc3508e27acac0465c40edc5510`;
+- the correction is a normal fast-forward descendant of the remote feature branch;
+- Vercel team: `team_743yTzHuhccXpBtcT5qedSlh` (`o2mdesign-obandos-projects`);
+- Vercel project: `prj_AT3X9ZShjfCuZy7mQzWTm3UgDChy` (`cognit`);
+- Git integration: GitHub `O2Mdesign-Obando/cognit`, Production branch `main`;
+- a push to the named non-main feature branch targets a Git-connected Preview;
+- current feature Preview: `dpl_GJvad86zaXZUic4LV52xH123NBjf`, source `a614ffb245d01b416e5ae69ae056441563468f53`, READY;
+- current Production: `dpl_6F6oaQhnkEdcRFutSLPNsi6kHyT5`, source `88997bc352d4ccc3508e27acac0465c40edc5510`, READY;
+- no deployment attributable to `7eb275ffdcb9333f48b1fd54b297ac317fb04bca` or `072f242137124f1a61332bfaa91a9bd712b9e318` exists in the inspected deployment history.
+
+After targeted acceptance of the correction, the exact proposed push is:
+
+```sh
+git push origin 072f242137124f1a61332bfaa91a9bd712b9e318:refs/heads/feat/demo-structured-curriculum-multilingual-01
+```
+
+Do not push documentation HEAD.
+
+## Learning-site boundary
+
+The Learning site remains at local commit `7695680e160838d3a8715c6379a5b2e598fe2165`, tree `3dc1f53250f06ccdbb838a9877e94491e2a96a7b`, on local `main` one commit ahead of its remote. It was not changed or published. No visitor link claims that the older hosted Demo contains this expansion.
+
