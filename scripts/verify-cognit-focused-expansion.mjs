@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { createConnectedState, reduceConnectedState, saveAudioBlob, writeConnectedState } from "../src/demo/cognit-focused-expansion-state.js";
+import { createConnectedState, normalizeConnectedState, reduceConnectedState, saveAudioBlob, validateAudioBlob, writeConnectedState } from "../src/demo/cognit-focused-expansion-state.js";
 import { focusedExpansionCopy } from "../src/demo/cognit-focused-expansion-copy.js";
 import { creativeAppLabProgression } from "../src/demo/cognit-curriculum-progression.js";
 import { COGNIT_FOCUSED_EXPANSION_ROUTES, readCenterLanguageSetting, resolveEffectiveLocale, writeCenterHindiSetting, writeCenterJapaneseSetting } from "../src/demo/cognit-localization.js";
@@ -24,6 +24,18 @@ assert.equal(creativeAppLabProgression.teachingModuleId, "creative-prototype");
 assert.deepEqual(creativeAppLabProgression.completedModuleIds, ["creative-foundations"]);
 
 let state = createConnectedState();
+assert.equal(state.draftsByTarget["demo-student-eli-morgan"].startsWith("Eli"), true);
+assert.equal(state.draftsByTarget["demo-student-lena-chen"], "");
+assert.equal(state.draftsByTarget["whole-class"], "");
+state = reduceConnectedState(state, { type: "DRAFT_NOTE", target: "demo-student-lena-chen", note: "Lena draft" });
+state = reduceConnectedState(state, { type: "DRAFT_NOTE", target: "whole-class", note: "Whole class draft" });
+state = reduceConnectedState(state, { type: "DRAFT_NOTE", target: "demo-student-eli-morgan", note: "Eli draft" });
+assert.equal(state.draftsByTarget["demo-student-lena-chen"], "Lena draft");
+assert.equal(state.draftsByTarget["whole-class"], "Whole class draft");
+assert.equal(state.draftsByTarget["demo-student-eli-morgan"], "Eli draft");
+const migrated = normalizeConnectedState({ ...createConnectedState(), selectedTarget: "whole-class", draftsByTarget: undefined });
+assert.equal(migrated.draftsByTarget["demo-student-eli-morgan"].startsWith("Eli"), true);
+assert.equal(migrated.draftsByTarget["whole-class"], "", "The seeded Eli note must not follow a target switch");
 state = reduceConnectedState(state, { type: "ADD_CAPTURE", capture: { id: "audio-test-1", target: "demo-student-eli-morgan", audioVersion: 1, transcript: null } });
 state = reduceConnectedState(state, { type: "SAVE_TRANSCRIPT", captureId: "audio-test-1", audioVersion: 1, text: "Coach correction", status: "coach-corrected" });
 const corrected = state.captures[0].transcript;
@@ -37,7 +49,7 @@ state = reduceConnectedState(state, { type: "REVIEW_REPORT", id: reportId });
 state = reduceConnectedState(state, { type: "SUBMIT_REPORT", id: reportId });
 state = reduceConnectedState(state, { type: "CENTER_DECIDE", id: reportId, decision: "accepted", reason: "Exact version accepted" });
 assert.equal(state.acceptedReportId, reportId);
-state = reduceConnectedState(state, { type: "SAVE_NOTE", note: "Changed source" });
+state = reduceConnectedState(state, { type: "SAVE_NOTE", target: "demo-student-eli-morgan", note: "Changed source" });
 assert.equal(state.acceptedReportId, null);
 assert.equal(state.reports.find((report) => report.id === reportId).status, "invalidated");
 assert.ok(state.decisionHistory.some((decision) => decision.type === "invalidated"));
@@ -51,6 +63,16 @@ assert.equal(state.reports.find((report) => report.id === manualId).status, "man
 assert.ok(state.decisionHistory.some((decision) => decision.reportId === manualId && decision.reason === "Exception reason remains visible"));
 assert.equal(state.messages[0].originalText, "Eli tested the navigation flow and revised the main action after feedback.");
 await assert.rejects(saveAudioBlob("empty-audio", new Blob([])), /empty/);
+await assert.rejects(validateAudioBlob(new Blob(["x"], { type: "audio/webm" }), async () => ({ supported: true, durationSeconds: 1 })), /no usable audio/);
+await assert.rejects(validateAudioBlob(new Blob([new Uint8Array(128)], { type: "application/octet-stream" }), async () => ({ supported: true, durationSeconds: 1 })), /unsupported media type/);
+for (const [id, target, durationSeconds] of [["fixture-eli", "demo-student-eli-morgan", 1.25], ["fixture-whole", "whole-class", 2.5]]) {
+  const blob = new Blob([new Uint8Array(256)], { type: "audio/webm" });
+  const metadata = await validateAudioBlob(blob, async () => ({ supported: true, durationSeconds }));
+  assert.deepEqual(metadata, { durationSeconds, mimeType: "audio/webm", size: 256 });
+  state = reduceConnectedState(state, { type: "ADD_CAPTURE", capture: { id, target, audioVersion: 1, ...metadata, transcript: null } });
+}
+assert.equal(state.captures.find((capture) => capture.id === "fixture-eli").target, "demo-student-eli-morgan");
+assert.equal(state.captures.find((capture) => capture.id === "fixture-whole").target, "whole-class");
 assert.throws(() => writeConnectedState(state, { setItem() { throw new Error("quota blocked"); } }), /could not be saved/);
 
 const values = new Map();
@@ -72,6 +94,8 @@ assert.doesNotMatch(outside, /<option value="hi-IN"/);
 const component = await readFile(new URL("../src/components/demo/CognitFocusedExpansion.astro", import.meta.url), "utf8");
 assert.match(component, /navigator\.mediaDevices\?\.getUserMedia/);
 assert.match(component, /saveAudioBlob/);
+assert.match(component, /validateAudioBlob/);
+assert.match(component, /:global\(\.connected \.capture-card\)/);
 assert.match(component, /simulated-pending/);
 assert.match(component, /data-family-report/);
 assert.match(component, /data-view-original/);

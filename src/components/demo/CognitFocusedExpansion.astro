@@ -40,7 +40,7 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
   {isCapture && <>
     <form class="capture-workspace" data-capture-form>
       <div class="capture-setup">
-        <label><span data-copy="target"></span><select name="target" required><option value="" data-copy="choose"></option><option value="demo-student-eli-morgan" data-copy="eli"></option><option value="whole-class" data-copy="wholeClass"></option></select></label>
+        <label><span data-copy="target"></span><select name="target" required><option value="" data-copy="choose"></option><option value="demo-student-eli-morgan" data-copy="eli"></option><option value="demo-student-lena-chen" data-copy="lena"></option><option value="whole-class" data-copy="wholeClass"></option></select></label>
         <fieldset class="capture-types"><legend data-copy="captureType"></legend><div class="segmented-controls"><button type="button" data-capture-type="photo" aria-pressed="true" data-copy="photo"></button><button type="button" data-capture-type="video" aria-pressed="false" data-copy="video"></button><button type="button" data-capture-type="audio" aria-pressed="false" data-copy="audio"></button></div></fieldset>
         <label><span data-copy="note"></span><textarea name="note" rows="4"></textarea></label>
         <button type="submit" data-copy="saveNote"></button><p class="inline-status" role="status" data-note-status hidden></p>
@@ -88,7 +88,7 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
 
 <script>
   import { focusedExpansionCopy } from "../../demo/cognit-focused-expansion-copy.js";
-  import { CONNECTED_IDS, readConnectedState, writeConnectedState, reduceConnectedState, saveAudioBlob, loadAudioBlob } from "../../demo/cognit-focused-expansion-state.js";
+  import { CONNECTED_STATE_KEY, readConnectedState, writeConnectedState, reduceConnectedState, saveAudioBlob, loadAudioRecord, validateAudioBlob } from "../../demo/cognit-focused-expansion-state.js";
 
   const roots = document.querySelectorAll("[data-connected-demo]");
   const copyFor = (root) => focusedExpansionCopy[document.documentElement.dataset.contentLocale || "en-US"] || focusedExpansionCopy["en-US"];
@@ -102,7 +102,31 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
     let mediaRecorder;
     let stream;
     let chunks = [];
-    const routeKey = root.dataset.routeKey;
+    const editingTranscripts = new Set();
+    const audioObjectUrls = new Map();
+
+    const targetLabel = (copy, target) => target === "whole-class" ? copy.wholeClass : target === "demo-student-lena-chen" ? copy.lena : copy.eli;
+    const probeAudio = async (blob) => {
+      const audio = document.createElement("audio");
+      const supported = Boolean(audio.canPlayType(blob.type));
+      if (!supported) return { supported: false, durationSeconds: 0 };
+      const metadataDuration = await new Promise((resolve) => {
+        const url = URL.createObjectURL(blob); let settled = false;
+        const finish = (duration = 0) => { if (settled) return; settled = true; window.clearTimeout(timeout); audio.removeAttribute("src"); audio.load(); URL.revokeObjectURL(url); resolve(duration); };
+        const timeout = window.setTimeout(() => finish(), 1800);
+        audio.preload = "metadata";
+        audio.addEventListener("loadedmetadata", () => finish(audio.duration), { once: true });
+        audio.addEventListener("error", () => finish(), { once: true });
+        audio.src = url;
+      });
+      if (Number.isFinite(metadataDuration) && metadataDuration > 0) return { supported, durationSeconds: metadataDuration };
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) throw new Error(copyFor(root).metadataTimeout);
+      const context = new AudioContextClass();
+      try { const decoded = await context.decodeAudioData(await blob.arrayBuffer()); return { supported, durationSeconds: decoded.duration }; }
+      catch { throw new Error(copyFor(root).unplayable); }
+      finally { await context.close(); }
+    };
 
     const update = (action) => {
       state = reduceConnectedState(readConnectedState(), action);
@@ -120,6 +144,7 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
     const renderCaptures = (copy) => {
       const list = root.querySelector("[data-capture-list]");
       if (!list) return;
+      audioObjectUrls.forEach((url) => URL.revokeObjectURL(url)); audioObjectUrls.clear();
       list.replaceChildren();
       state.evidence.forEach((evidence) => {
         const article = document.createElement("article"); article.className = "capture-card seeded-capture"; article.dataset.captureKind = evidence.kind;
@@ -131,31 +156,65 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
       state.captures.forEach((capture) => {
         const article = document.createElement("article"); article.className = "capture-card";
         const badge = document.createElement("span"); badge.className = "capture-origin device-capture"; badge.textContent = copy.savedOnDevice;
-        const heading = document.createElement("h4"); heading.textContent = `${capture.id} · ${capture.target === "whole-class" ? copy.wholeClass : copy.eli} · audio-v${capture.audioVersion}`;
-        const audio = document.createElement("audio"); audio.controls = true; audio.preload = "none"; audio.setAttribute("aria-label", `${copy.reopen}: ${capture.id}`);
-        const reopen = document.createElement("button"); reopen.type = "button"; reopen.textContent = copy.reopen;
-        reopen.addEventListener("click", async () => { try { const blob = await loadAudioBlob(capture.id); if (!blob) throw new Error(copy.failed); if (audio.src) URL.revokeObjectURL(audio.src); audio.src = URL.createObjectURL(blob); await audio.play().catch(() => {}); } catch (error) { setStatus(root.querySelector("[data-audio-status]"), error.message); } });
-        const simulate = document.createElement("button"); simulate.type = "button"; simulate.textContent = copy.simulate;
+        const heading = document.createElement("h4"); heading.textContent = `${capture.id} · ${targetLabel(copy, capture.target)} · audio-v${capture.audioVersion}`;
+        const metadata = document.createElement("p"); metadata.className = "capture-metadata"; metadata.textContent = `${capture.mimeType || copy.unknownType} · ${capture.size ?? 0} ${copy.bytes} · ${copy.loadingMetadata}`;
+        const audio = document.createElement("audio"); audio.controls = true; audio.preload = "metadata"; audio.setAttribute("aria-label", `${copy.originalAudio}: ${capture.id}`); audio.hidden = true;
+        const audioStatus = document.createElement("p"); audioStatus.className = "capture-status"; audioStatus.setAttribute("role", "status"); audioStatus.textContent = copy.loadingAudio;
+        const reopen = document.createElement("button"); reopen.type = "button"; reopen.className = "capture-action secondary"; reopen.textContent = copy.reopen; reopen.disabled = true;
+        const attachAudio = async (play = false) => {
+          try {
+            const record = await loadAudioRecord(capture.id); if (!record?.blob) throw new Error(copy.missingAudio);
+            const result = await validateAudioBlob(record.blob, probeAudio);
+            const previous = audioObjectUrls.get(capture.id); if (previous) URL.revokeObjectURL(previous);
+            const url = URL.createObjectURL(record.blob); audioObjectUrls.set(capture.id, url); audio.src = url; audio.hidden = false; reopen.disabled = false;
+            metadata.textContent = `${result.mimeType} · ${result.size} ${copy.bytes} · ${result.durationSeconds.toFixed(1)} ${copy.seconds}`;
+            audioStatus.textContent = copy.audioReady;
+            if (play) await audio.play();
+          } catch (error) { audio.hidden = true; reopen.disabled = true; metadata.textContent = `${capture.mimeType || copy.unknownType} · ${capture.size ?? 0} ${copy.bytes}`; audioStatus.textContent = `${copy.unusableAudio}: ${error.message}`; article.dataset.audioUsable = "false"; }
+        };
+        reopen.addEventListener("click", () => attachAudio(true));
+        const simulate = document.createElement("button"); simulate.type = "button"; simulate.className = "capture-action"; simulate.textContent = copy.simulate;
         simulate.addEventListener("click", () => {
           const audioVersion = capture.audioVersion;
           update({ type: "SAVE_TRANSCRIPT", captureId: capture.id, audioVersion, text: "Simulation pending…", status: "simulated-pending" });
           window.setTimeout(() => {
             const latest = readConnectedState().captures.find((item) => item.id === capture.id);
             if (latest?.audioVersion === audioVersion && latest.transcript?.status === "simulated-pending") {
-              state = reduceConnectedState(readConnectedState(), { type: "SAVE_TRANSCRIPT", captureId: capture.id, audioVersion, text: "Eli explained that the main action now returns to a visible result.", status: "simulated-unreviewed" });
+              state = reduceConnectedState(readConnectedState(), { type: "SAVE_TRANSCRIPT", captureId: capture.id, audioVersion, text: capture.target === "whole-class" ? copyFor(root).wholeClassTranscript : capture.target === "demo-student-lena-chen" ? copyFor(root).lenaTranscript : copyFor(root).eliTranscript, status: "simulated-unreviewed" });
               writeConnectedState(state); render();
             }
           }, 700);
         });
-        const label = document.createElement("label"); label.textContent = copy.transcriptLabel;
-        const textarea = document.createElement("textarea"); textarea.value = capture.transcript?.text || ""; textarea.rows = 3; textarea.disabled = !capture.transcript;
-        const save = document.createElement("button"); save.type = "button"; save.textContent = copy.save; save.disabled = !capture.transcript;
-        save.addEventListener("click", () => update({ type: "SAVE_TRANSCRIPT", captureId: capture.id, audioVersion: capture.audioVersion, text: textarea.value, status: "coach-corrected" }));
-        const cancel = document.createElement("button"); cancel.type = "button"; cancel.textContent = copy.cancel; cancel.disabled = !capture.transcript;
-        cancel.addEventListener("click", () => { textarea.value = capture.transcript?.text || ""; cancel.focus(); });
-        const status = document.createElement("small"); status.textContent = capture.transcript ? `${copy.transcriptLabel} · ${capture.transcript.status} · audio-v${capture.transcript.audioVersion}` : copy.pending;
-        const controls = document.createElement("div"); controls.className = "button-row"; controls.append(reopen, simulate, save, cancel);
-        label.append(textarea); article.append(badge, heading, audio, controls, label, status); list.append(article);
+        const transcript = capture.transcript;
+        const pending = transcript?.status === "simulated-pending";
+        const unreviewed = transcript?.status === "simulated-unreviewed";
+        simulate.hidden = Boolean(transcript); simulate.disabled = pending;
+        const controls = document.createElement("div"); controls.className = "button-row capture-actions"; controls.append(reopen, simulate);
+        const transcriptRegion = document.createElement("section"); transcriptRegion.className = "transcript-region";
+        const status = document.createElement("small"); status.className = "transcript-status"; status.textContent = transcript ? `${labelStatus(copy, transcript.status)} · audio-v${transcript.audioVersion}` : copy.noTranscript;
+        if (pending) {
+          const pendingText = document.createElement("p"); pendingText.textContent = copy.simulationPending; transcriptRegion.append(pendingText);
+        } else if (editingTranscripts.has(capture.id)) {
+          const label = document.createElement("label"); label.textContent = copy.transcriptLabel;
+          const textarea = document.createElement("textarea"); textarea.value = transcript?.text || ""; textarea.rows = 3;
+          const save = document.createElement("button"); save.type = "button"; save.className = "capture-action"; save.textContent = copy.save;
+          save.addEventListener("click", () => { editingTranscripts.delete(capture.id); update({ type: "SAVE_TRANSCRIPT", captureId: capture.id, audioVersion: capture.audioVersion, text: textarea.value, status: textarea.value === transcript?.text ? "coach-reviewed" : "coach-corrected" }); });
+          const cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "capture-action secondary"; cancel.textContent = copy.cancel;
+          cancel.addEventListener("click", () => { editingTranscripts.delete(capture.id); render(); });
+          const transcriptActions = document.createElement("div"); transcriptActions.className = "button-row"; transcriptActions.append(save, cancel);
+          label.append(textarea); transcriptRegion.append(label, transcriptActions);
+        } else if (transcript) {
+          const text = document.createElement("p"); text.className = "transcript-text"; text.textContent = transcript.text;
+          const edit = document.createElement("button"); edit.type = "button"; edit.className = "capture-action secondary"; edit.textContent = copy.edit;
+          edit.addEventListener("click", () => { editingTranscripts.add(capture.id); render(); });
+          const transcriptActions = document.createElement("div"); transcriptActions.className = "button-row"; transcriptActions.append(edit);
+          if (unreviewed) {
+            const confirm = document.createElement("button"); confirm.type = "button"; confirm.className = "capture-action"; confirm.textContent = copy.confirm;
+            confirm.addEventListener("click", () => update({ type: "SAVE_TRANSCRIPT", captureId: capture.id, audioVersion: capture.audioVersion, text: transcript.text, status: "coach-reviewed" })); transcriptActions.append(confirm);
+          }
+          transcriptRegion.append(text, transcriptActions);
+        }
+        transcriptRegion.append(status); article.append(badge, heading, metadata, audio, audioStatus, controls, transcriptRegion); list.append(article); attachAudio(false);
       });
     };
 
@@ -214,15 +273,19 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
       root.querySelector("[data-audio-panel]")?.classList.toggle("selected", state.selectedCaptureType === "audio");
       root.querySelectorAll("[data-capture-kind]").forEach((card) => card.classList.toggle("selected", card.dataset.captureKind === state.selectedCaptureType));
     };
-    const render = () => { state = readConnectedState(); const copy = renderCopy(); renderCaptures(copy); renderEvidence(copy); renderReport(copy); renderHistory(copy); renderFamily(copy); renderMessage(copy); renderCaptureType(); };
+    const syncCaptureForm = () => {
+      const form = root.querySelector("[data-capture-form]"); if (!(form instanceof HTMLFormElement)) return;
+      form.elements.namedItem("target").value = state.selectedTarget;
+      form.elements.namedItem("note").value = state.selectedTarget ? state.draftsByTarget?.[state.selectedTarget] || "" : "";
+    };
+    const render = () => { state = readConnectedState(); const copy = renderCopy(); renderCaptures(copy); renderEvidence(copy); renderReport(copy); renderHistory(copy); renderFamily(copy); renderMessage(copy); renderCaptureType(); syncCaptureForm(); };
 
     const form = root.querySelector("[data-capture-form]");
     if (form instanceof HTMLFormElement) {
       form.elements.namedItem("target").value = state.selectedTarget;
-      form.elements.namedItem("note").value = state.typedNote;
       form.elements.namedItem("target")?.addEventListener("change", (event) => update({ type: "SELECT_TARGET", target: event.currentTarget.value }));
-      form.elements.namedItem("note")?.addEventListener("change", (event) => update({ type: "DRAFT_NOTE", note: event.currentTarget.value }));
-      form.addEventListener("submit", (event) => { event.preventDefault(); if (!form.reportValidity()) return; const values = new FormData(form); const ok = update({ type: "SELECT_TARGET", target: values.get("target") }) && update({ type: "SAVE_NOTE", note: String(values.get("note") || "") }); setStatus(root.querySelector("[data-note-status]"), ok ? copyFor(root).saved : copyFor(root).failed); });
+      form.elements.namedItem("note")?.addEventListener("input", (event) => { const target = String(form.elements.namedItem("target")?.value || ""); if (!target) return; state = reduceConnectedState(readConnectedState(), { type: "DRAFT_NOTE", target, note: event.currentTarget.value }); try { localStorage.setItem(CONNECTED_STATE_KEY, JSON.stringify(state)); } catch (error) { setStatus(root.querySelector("[data-note-status]"), error.message); } });
+      form.addEventListener("submit", (event) => { event.preventDefault(); if (!form.reportValidity()) return; const values = new FormData(form); const target = String(values.get("target") || ""); const ok = update({ type: "SELECT_TARGET", target }) && update({ type: "SAVE_NOTE", target, note: String(values.get("note") || "") }); setStatus(root.querySelector("[data-note-status]"), ok ? copyFor(root).saved : copyFor(root).failed); });
     }
     root.querySelectorAll("[data-capture-type]").forEach((button) => button.addEventListener("click", () => { update({ type: "SELECT_CAPTURE_TYPE", captureType: button.dataset.captureType }); renderCaptureType(); }));
     root.querySelector("[data-record]")?.addEventListener("click", async () => {
@@ -236,13 +299,14 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
         mediaRecorder.addEventListener("stop", async () => {
           try {
             const blob = new Blob(chunks, { type: mediaRecorder.mimeType || "audio/webm" });
-            const id = `audio-${Date.now()}`; await saveAudioBlob(id, blob);
-            update({ type: "ADD_CAPTURE", capture: { id, target, audioVersion: 1, mimeType: blob.type, size: blob.size, savedAt: new Date().toISOString(), transcript: null } });
+            const metadata = await validateAudioBlob(blob, probeAudio);
+            const id = `audio-${Date.now()}`; await saveAudioBlob(id, blob, metadata);
+            update({ type: "ADD_CAPTURE", capture: { id, target, audioVersion: 1, ...metadata, savedAt: new Date().toISOString(), transcript: null } });
             setStatus(status, copyFor(root).saved);
           } catch (error) { setStatus(status, error.message); }
           stream?.getTracks().forEach((track) => track.stop());
         });
-        mediaRecorder.start(); root.querySelector("[data-record]").disabled = true; root.querySelector("[data-stop]").disabled = false; setStatus(status, `${copyFor(root).record}…`);
+        mediaRecorder.start(250); root.querySelector("[data-record]").disabled = true; root.querySelector("[data-stop]").disabled = false; setStatus(status, `${copyFor(root).record}…`);
       } catch (error) { setStatus(status, error.message); }
     });
     root.querySelector("[data-stop]")?.addEventListener("click", () => { if (mediaRecorder?.state === "recording") mediaRecorder.stop(); root.querySelector("[data-record]").disabled = false; root.querySelector("[data-stop]").disabled = true; });
@@ -261,4 +325,20 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
 <style>
   .connected{display:grid;gap:22px;margin-top:28px;padding:clamp(20px,4vw,34px);border:2px solid #a9d8e7;border-radius:20px;background:#f8fcfd;box-shadow:var(--shadow-soft)}.connected-heading{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}.connected-heading h2{margin:.3rem 0 0}.eyebrow{color:var(--color-muted);font-size:.74rem;font-weight:950;text-transform:uppercase}.review-badge{max-width:360px;padding:7px 10px;border-radius:999px;background:#fff2cc;color:#684b00;font-size:.75rem;font-weight:850}.module-sequence ol,.student-path{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:0;list-style:none}.module-sequence li,.student-path li,.three-column article,.audio-panel,.capture-grid form,.report-card,.rule-card,.family-report,.message-card,.capture-card{display:grid;gap:9px;padding:17px;border:1px solid var(--color-border);border-radius:13px;background:#fff}.module-sequence li span,.student-path li>span{font-size:.72rem;font-weight:950;text-transform:uppercase}.done{border-top:4px solid #20aaa5!important}.active{border-top:4px solid #177cab!important}.locked{background:#f1f3f5!important;color:#5d6872}.locked small{line-height:1.4}.three-column,.capture-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.capture-grid{grid-template-columns:1fr 1fr}.connected form,.connected label{display:grid;gap:7px}.connected :is(input,select,textarea){width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--color-border);border-radius:9px;background:#fff;font:inherit}.connected button{min-height:44px;padding:10px 14px;border:0;border-radius:9px;background:var(--color-ink);color:#fff;font-weight:900}.connected button:disabled{opacity:.55}.connected :is(button,select,textarea):focus-visible{outline:3px solid var(--color-blue);outline-offset:2px}.button-row{display:flex;flex-wrap:wrap;gap:10px}.capture-list,.evidence-list{display:grid;gap:12px}.capture-card audio{width:100%}.capture-card small{overflow-wrap:anywhere}.evidence-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px;border:1px solid var(--color-border);border-radius:10px;background:#fff}.boundary,.inline-status{margin:0;padding:10px 12px;border-radius:9px;background:#fff3cf;color:#604600}.history{display:grid;gap:8px}.message-card dl{display:grid;gap:8px}.message-card dl div{display:flex;justify-content:space-between;gap:18px}.message-card dd{font-weight:850}.original-message{padding:12px;border-left:4px solid #177cab;background:#edf7fb}.family-report{border-top:5px solid #20aaa5}.student-path{grid-template-columns:repeat(4,minmax(0,1fr))}@media(max-width:800px){.connected-heading{flex-direction:column}.review-badge{max-width:none}.module-sequence ol,.student-path,.three-column,.capture-grid{grid-template-columns:1fr}.evidence-row{align-items:flex-start;flex-direction:column}.connected{padding:18px}.connected button{min-height:48px}.button-row{display:grid;grid-template-columns:1fr}.message-card dl div{align-items:flex-start;flex-direction:column;gap:3px}}
   .capture-workspace{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:16px}.capture-setup{display:grid;gap:14px;padding:18px;border:1px solid var(--color-border);border-radius:13px;background:#fff}.capture-types{margin:0;padding:0;border:0}.capture-types legend{margin-bottom:8px;font-weight:850}.segmented-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.segmented-controls button{background:#e8eef2;color:var(--color-ink)}.segmented-controls button[aria-pressed="true"]{background:var(--color-ink);color:#fff}.audio-panel{align-content:start;transition:border-color .15s ease,box-shadow .15s ease}.audio-panel.selected{border-color:#177cab;box-shadow:0 0 0 2px #d8edf5}.section-title{display:flex;align-items:end;justify-content:space-between;gap:16px}.section-title :is(h3,p){margin:0}.section-title p{max-width:560px;color:var(--color-muted)}.capture-card{position:relative}.capture-card.selected{border-color:#177cab;box-shadow:0 0 0 2px #d8edf5}.capture-origin{width:max-content;padding:4px 8px;border-radius:999px;background:#e8eef2;color:var(--color-ink);font-size:.72rem;font-weight:900;text-transform:uppercase}.capture-origin.device-capture{background:#dff5ed;color:#165945}.report-transition{display:grid;gap:5px;padding:14px 16px;border-left:4px solid #177cab;background:#edf7fb}.report-transition :is(strong,p){margin:0}.student-context{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(260px,1.2fr);gap:16px;padding:18px;border:1px solid var(--color-border);border-radius:13px;background:#fff}.student-context>div{display:grid;gap:6px}.student-context :is(h3,p,small){margin:0}.student-context>small{grid-column:1/-1;color:var(--color-muted);line-height:1.5}.inline-status[hidden],.inline-status:empty{display:none}.inline-status{min-height:0}.connected code{overflow-wrap:anywhere}.connected button{line-height:1.25}.connected p{line-height:1.55}@media(max-width:800px){.capture-workspace,.student-context{grid-template-columns:1fr}.section-title{align-items:flex-start;flex-direction:column}.segmented-controls{grid-template-columns:1fr}.student-context>small{grid-column:auto}.capture-card{padding:15px}.review-badge{line-height:1.35}.connected h2{font-size:clamp(1.45rem,7vw,2rem)}}
+  :global(.connected .capture-card){display:grid;gap:11px;padding:17px;border:1px solid var(--color-border);border-radius:13px;background:#fff}
+  :global(.connected .capture-card audio){width:100%}
+  :global(.connected .capture-card .button-row){display:flex;flex-wrap:wrap;gap:10px}
+  :global(.connected .capture-card button.capture-action){min-height:44px;padding:10px 14px;border:0;border-radius:9px;background:var(--color-ink);color:#fff;font:inherit;font-weight:900}
+  :global(.connected .capture-card button.capture-action.secondary){border:1px solid var(--color-ink);background:#fff;color:var(--color-ink)}
+  :global(.connected .capture-card button.capture-action:disabled){opacity:.55}
+  :global(.connected .capture-card :is(button,textarea):focus-visible){outline:3px solid var(--color-blue);outline-offset:2px}
+  :global(.connected .capture-card textarea){box-sizing:border-box;width:100%;min-height:88px;padding:10px 12px;border:1px solid var(--color-border);border-radius:9px;background:#fff;font:inherit}
+  :global(.connected .capture-metadata){margin:0;color:var(--color-muted);font-size:.82rem;overflow-wrap:anywhere}
+  :global(.connected .capture-status){margin:0;padding:9px 11px;border-radius:8px;background:#edf7fb;color:#294d61}
+  :global(.connected .capture-card[data-audio-usable="false"] .capture-status){background:#fff3cf;color:#604600}
+  :global(.connected .transcript-region){display:grid;gap:9px;padding-top:10px;border-top:1px solid var(--color-border)}
+  :global(.connected .transcript-region label){display:grid;gap:7px;font-weight:850}
+  :global(.connected .transcript-text){margin:0;padding:11px;border-radius:8px;background:#f3f6f8}
+  :global(.connected .transcript-status){color:var(--color-muted);overflow-wrap:anywhere}
+  @media(max-width:800px){:global(.connected .capture-card .button-row){display:grid;grid-template-columns:1fr}:global(.connected .capture-card button.capture-action){min-height:48px;width:100%}}
 </style>

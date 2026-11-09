@@ -7,6 +7,7 @@ export const CONNECTED_IDS = Object.freeze({
 });
 
 export const CONNECTED_STATE_KEY = "cognit:connected-class-month:v1";
+export const DEFAULT_ELI_NOTE = "Eli connected the primary action to a visible result and explained the revision.";
 
 export function createConnectedState() {
   return {
@@ -14,7 +15,12 @@ export function createConnectedState() {
     sourceRevision: 1,
     selectedTarget: "",
     selectedCaptureType: "photo",
-    typedNote: "Eli connected the primary action to a visible result and explained the revision.",
+    typedNote: DEFAULT_ELI_NOTE,
+    draftsByTarget: {
+      "demo-student-eli-morgan": DEFAULT_ELI_NOTE,
+      "demo-student-lena-chen": "",
+      "whole-class": ""
+    },
     evidence: [
       { id: "evidence-photo-01", kind: "photo", label: "Navigation-flow sketch", reviewed: true, version: 1 },
       { id: "evidence-video-01", kind: "video", label: "Prototype walkthrough example", reviewed: false, version: 1 }
@@ -39,7 +45,11 @@ export function createConnectedState() {
 export function normalizeConnectedState(candidate) {
   const base = createConnectedState();
   if (!candidate || candidate.schema !== 1) return base;
-  return { ...base, ...candidate, selectedCaptureType: candidate.selectedCaptureType ?? base.selectedCaptureType, evidence: candidate.evidence ?? base.evidence, captures: candidate.captures ?? [], reports: candidate.reports ?? [], decisionHistory: candidate.decisionHistory ?? [], messages: candidate.messages ?? base.messages };
+  const draftsByTarget = { ...base.draftsByTarget, ...(candidate.draftsByTarget ?? {}) };
+  if (!candidate.draftsByTarget && candidate.typedNote && candidate.typedNote !== DEFAULT_ELI_NOTE && candidate.selectedTarget) {
+    draftsByTarget[candidate.selectedTarget] = candidate.typedNote;
+  }
+  return { ...base, ...candidate, draftsByTarget, selectedCaptureType: candidate.selectedCaptureType ?? base.selectedCaptureType, evidence: candidate.evidence ?? base.evidence, captures: candidate.captures ?? [], reports: candidate.reports ?? [], decisionHistory: candidate.decisionHistory ?? [], messages: candidate.messages ?? base.messages };
 }
 
 export function readConnectedState(storage = globalThis.localStorage) {
@@ -69,8 +79,8 @@ export function reduceConnectedState(state, action) {
   switch (action.type) {
     case "SELECT_TARGET": return { ...state, selectedTarget: action.target };
     case "SELECT_CAPTURE_TYPE": return { ...state, selectedCaptureType: action.captureType };
-    case "DRAFT_NOTE": return { ...state, typedNote: action.note };
-    case "SAVE_NOTE": return invalidateAccepted({ ...state, typedNote: action.note, sourceRevision: state.sourceRevision + 1 }, "Coach note changed after acceptance.");
+    case "DRAFT_NOTE": return { ...state, typedNote: action.note, draftsByTarget: { ...state.draftsByTarget, [action.target || state.selectedTarget]: action.note } };
+    case "SAVE_NOTE": return invalidateAccepted({ ...state, typedNote: action.note, draftsByTarget: { ...state.draftsByTarget, [action.target || state.selectedTarget]: action.note }, sourceRevision: state.sourceRevision + 1 }, "Coach note changed after acceptance.");
     case "ADD_CAPTURE": return invalidateAccepted({ ...state, captures: [...state.captures, action.capture], sourceRevision: state.sourceRevision + 1 }, "Audio evidence changed after acceptance.");
     case "SAVE_TRANSCRIPT": return invalidateAccepted({
       ...state,
@@ -115,12 +125,12 @@ function openAudioDatabase() {
   });
 }
 
-export async function saveAudioBlob(id, blob) {
+export async function saveAudioBlob(id, blob, metadata = {}) {
   if (!(blob instanceof Blob) || blob.size === 0) throw new Error("The recording is empty and was not saved.");
   const db = await openAudioDatabase();
   await new Promise((resolve, reject) => {
     const transaction = db.transaction("audio", "readwrite");
-    transaction.objectStore("audio").put({ id, blob, savedAt: new Date().toISOString() });
+    transaction.objectStore("audio").put({ id, blob, savedAt: new Date().toISOString(), ...metadata });
     transaction.oncomplete = resolve;
     transaction.onerror = () => reject(transaction.error || new Error("Device-local audio could not be saved."));
   });
@@ -128,12 +138,26 @@ export async function saveAudioBlob(id, blob) {
 }
 
 export async function loadAudioBlob(id) {
+  return (await loadAudioRecord(id))?.blob ?? null;
+}
+
+export async function loadAudioRecord(id) {
   const db = await openAudioDatabase();
   const result = await new Promise((resolve, reject) => {
     const request = db.transaction("audio", "readonly").objectStore("audio").get(id);
-    request.onsuccess = () => resolve(request.result?.blob ?? null);
+    request.onsuccess = () => resolve(request.result ?? null);
     request.onerror = () => reject(request.error || new Error("Saved audio could not be reopened."));
   });
   db.close();
   return result;
+}
+
+export async function validateAudioBlob(blob, probe) {
+  if (!(blob instanceof Blob) || blob.size === 0) throw new Error("The recording is empty and was not saved.");
+  if (!blob.type.startsWith("audio/")) throw new Error("The recording has an unsupported media type and was not saved.");
+  if (blob.size < 64) throw new Error("The recording contains no usable audio and was not saved.");
+  const result = await probe(blob);
+  if (!result?.supported) throw new Error("This browser cannot play the recorded audio format.");
+  if (!Number.isFinite(result.durationSeconds) || result.durationSeconds <= 0) throw new Error("The recording contains no playable audio and was not saved.");
+  return { durationSeconds: result.durationSeconds, mimeType: blob.type, size: blob.size };
 }
