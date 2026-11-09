@@ -332,6 +332,8 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
   :global(.connected .capture-card button.capture-action.secondary){border:1px solid var(--color-ink);background:#fff;color:var(--color-ink)}
   :global(.connected .capture-card button.capture-action:disabled){opacity:.55}
   :global(.connected .capture-card :is(button,textarea):focus-visible){outline:3px solid var(--color-blue);outline-offset:2px}
+  :global(.connected .evidence-row button){min-height:44px;padding:10px 14px;border:0;border-radius:9px;background:var(--color-ink);color:#fff;font:inherit;font-weight:900}
+  :global(.connected .evidence-row button:focus-visible){outline:3px solid var(--color-blue);outline-offset:2px}
   :global(.connected .capture-card textarea){box-sizing:border-box;width:100%;min-height:88px;padding:10px 12px;border:1px solid var(--color-border);border-radius:9px;background:#fff;font:inherit}
   :global(.connected .capture-metadata){margin:0;color:var(--color-muted);font-size:.82rem;overflow-wrap:anywhere}
   :global(.connected .capture-status){margin:0;padding:9px 11px;border-radius:8px;background:#edf7fb;color:#294d61}
@@ -340,5 +342,5 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
   :global(.connected .transcript-region label){display:grid;gap:7px;font-weight:850}
   :global(.connected .transcript-text){margin:0;padding:11px;border-radius:8px;background:#f3f6f8}
   :global(.connected .transcript-status){color:var(--color-muted);overflow-wrap:anywhere}
-  @media(max-width:800px){:global(.connected .capture-card .button-row){display:grid;grid-template-columns:1fr}:global(.connected .capture-card button.capture-action){min-height:48px;width:100%}}
+  @media(max-width:800px){:global(.connected .capture-card .button-row){display:grid;grid-template-columns:1fr}:global(.connected .capture-card button.capture-action),:global(.connected .evidence-row button){min-height:48px;width:100%}}
 </style>
