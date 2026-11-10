@@ -9,6 +9,8 @@ Jorge reported targeted human QA PASS for commit `7eb275ffdcb9333f48b1fd54b297ac
 
 Acceptance covers fresh microphone recording, saving, playback after reload, target-specific drafts, and the revised capture UI. It does not establish qualified Japanese/Hindi language review, exhaustive accessibility review, hosted Preview acceptance, or Production acceptance.
 
+On 2026-11-10, Jorge additionally reported targeted Center Report QA PASS for commit `072f242137124f1a61332bfaa91a9bd712b9e318`, tree `6b651268781e47169c536aac72d713bec2bd9a33`. This acceptance covers the reviewed Center Report correction only. Coach after-class remains unaccepted, and no acceptance transfers to later Coach presentation changes.
+
 ## Narrow-phone correction boundary
 
 Readiness inspection found two concrete defects after the accepted checkpoint:
@@ -22,7 +24,7 @@ The correction is commit `072f242137124f1a61332bfaa91a9bd712b9e318`, tree `6b651
 - `src/components/demo/CognitCoachJourneyView.astro`
 - `src/components/demo/CognitFocusedExpansion.astro`
 
-Jorge's acceptance remains attached only to `7eb275ffdcb9333f48b1fd54b297ac317fb04bca`. The correction requires targeted human review before any Preview push.
+Jorge's audio/capture acceptance remains attached to `7eb275ffdcb9333f48b1fd54b297ac317fb04bca`. The Center Report portion of `072f242137124f1a61332bfaa91a9bd712b9e318` is accepted; its Coach after-class portion remains pending targeted human review.
 
 ## Verification evidence
 
@@ -68,6 +70,10 @@ Fresh canonical discovery used registry commit `e253ad3a249f26d869275bd1634a990f
 - `pp:request:cognit-demo-seven-route-ja-hi-localization-01` → `PRODUCT_LOCAL_CANDIDATE_AUTHORIZED`, `may_proceed: true`.
 
 These receipts permit the existing product-local implementation and verification. They do not authorize a new Cognit push or hosted Preview. Earlier Preview allowances remain consumed.
+
+### 2026-11-10 authority recheck
+
+Before the requested Coach after-class presentation refinement, canonical discovery resolved registry version `0.7.1`, commit `46a833ebb61ca28251963a27722363ae19ba74e9`, remote `O2Mdesign-Obando/loke-product-platform-registry`, clean state, and qualification `PASS`. The existing connected-class request now returns `NEW_IMPLEMENTATION_EXCEPTION_REQUIRED / may_proceed: false`: its requested exception does not match the complete supplied candidate scope. No Coach runtime edit was made. Product Platform/Control Tower must provide an exact-scope authority decision for the presentation-only Coach after-class refinement before implementation resumes.
 
 Read-only Git/Vercel findings:
 
