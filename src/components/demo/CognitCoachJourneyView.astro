@@ -81,7 +81,7 @@ const releases = [
   {journeyView === "after-class" && (
     <section class="reporting-flow" data-reporting-flow>
       <header class="journey-hero compact"><span class="eyebrow">Class complete · reporting</span><h1>Turn teaching moments into learning records.</h1><p>Complete each learner observation, then submit the class report.</p></header>
-      <section class="pending-queue card"><div class="section-heading"><div><span class="eyebrow">Pending learner observations</span><h2>Creative App Lab</h2></div><strong data-report-progress>0 of 2 complete</strong></div><div class="queue-track"><span data-report-progress-bar></span></div><div class="learner-pills report-tabs"><button class="selected" type="button" data-report-learner="eli">{eli.name}</button><button type="button" data-report-learner="lena">{lena.name}</button></div></section>
+      <section class="pending-queue card"><div class="section-heading"><div><span class="eyebrow">Pending learner observations</span><h2>Creative App Lab</h2></div><strong data-report-progress>0 of 2 complete</strong></div><div class="queue-track" aria-hidden="true"><span data-report-progress-bar></span></div><div class="learner-pills report-tabs" role="group" aria-label="Learner observation"><button class="selected" type="button" data-report-learner="eli">{eli.name}</button><button type="button" data-report-learner="lena">{lena.name}</button></div></section>
       <section class="record-spine card" aria-labelledby="coach-record-spine-title">
         <div class="section-heading"><div><span class="eyebrow">Canonical source record · Eli Morgan</span><h2 id="coach-record-spine-title">One teaching event, one connected record</h2></div><span class="status ready">Coach source</span></div>
         <ol>
@@ -92,19 +92,21 @@ const releases = [
         </ol>
         <p class="record-boundary">The Coach authors the source record. Center review and publication remain separate decisions.</p>
       </section>
-      <section class="card observation-editor">
-        <div class="section-heading"><div><span class="eyebrow">Student feedback loop</span><h2>Observation for <span data-report-name>{eli.name}</span></h2></div><div class="report-portraits"><span data-report-portrait="eli"><DemoImage image={getDemoStudentImage(eli.id)} size="avatar-md" /></span><span data-report-portrait="lena" hidden><DemoImage image={getDemoStudentImage(lena.id)} size="avatar-md" /></span></div></div>
-        <fieldset class="evidence-picker" data-report-evidence="eli"><legend>Evidence from class</legend><button type="button" aria-pressed="true"><div class="screen-thumb">Habit<br/><strong>Today</strong></div><span>Prototype screen</span></button><button type="button" aria-pressed="true"><DemoImage image={COGNIT_DEMO_IMAGES.evidence.prototypePhoto} size="avatar-md" /><span>Testing moment</span></button><button type="button" aria-pressed="false"><div class="video-thumb">▶</div><span>Short video</span></button></fieldset>
+      <section class="card observation-editor" aria-labelledby="observation-editor-title">
+        <div class="section-heading"><div><span class="eyebrow">Student feedback loop</span><h2 id="observation-editor-title">Observation for <span data-report-name>{eli.name}</span></h2></div><div class="report-portraits"><span data-report-portrait="eli"><DemoImage image={getDemoStudentImage(eli.id)} size="avatar-md" /></span><span data-report-portrait="lena" hidden><DemoImage image={getDemoStudentImage(lena.id)} size="avatar-md" /></span></div></div>
+        <fieldset class="evidence-picker" data-report-evidence="eli"><legend>Evidence from class</legend><div class="evidence-picker-grid"><button class="evidence-card" type="button" aria-pressed="true"><span class="evidence-preview screen-thumb" aria-hidden="true">Habit<br/><strong>Today</strong></span><span class="evidence-copy"><small>Screenshot</small><strong>Prototype screen</strong></span></button><button class="evidence-card" type="button" aria-pressed="true"><span class="evidence-preview photo-thumb"><DemoImage image={COGNIT_DEMO_IMAGES.evidence.prototypePhoto} size="avatar-md" /></span><span class="evidence-copy"><small>Photo</small><strong>Testing moment</strong></span></button><button class="evidence-card" type="button" aria-pressed="false"><span class="evidence-preview video-thumb" aria-hidden="true">▶</span><span class="evidence-copy"><small>Video</small><strong>Short video</strong></span></button></div></fieldset>
         <section class="evidence-empty" data-report-evidence="lena" hidden><span class="eyebrow">Evidence from class</span><strong>No capture is assigned to Lena.</strong><p>Her observation can still be saved without inheriting Eli’s evidence.</p></section>
-        <label>What happened today?<textarea rows="6" data-report-observation>{model.primary.observation}</textarea></label>
-        <div class="assist-row"><button class="button text" type="button" data-assist-writing>Refine wording</button><span data-assist-status>Suggested wording is ready; Coach remains the author.</span></div>
-        <label>Skills demonstrated<div class="skill-pills"><button type="button" aria-pressed="true" data-report-skill>Interaction testing</button><button type="button" aria-pressed="true" data-report-skill>Independent building</button><button type="button" aria-pressed="false">+ Add skill</button></div></label>
-        <label>Any roadblocks? <span>Optional</span><input type="text" data-roadblock placeholder="No roadblock recorded" /></label>
-        <label>Where should learning continue?<input type="text" data-next-step value={model.primary.next} /></label>
-        <div class="actions"><button class="button secondary" type="button" data-previous-student disabled>Previous learner</button><button class="button primary" type="button" data-save-next>Save & next learner</button></div>
+        <div class="observation-fields">
+          <label><span class="field-label">What happened today?</span><textarea rows="6" data-report-observation>{model.primary.observation}</textarea></label>
+          <div class="assist-row"><button class="button text" type="button" data-assist-writing>Refine wording</button><span data-assist-status role="status" aria-live="polite">Suggested wording is ready; Coach remains the author.</span></div>
+          <label><span class="field-label">Skills demonstrated</span><div class="skill-pills" role="group" aria-label="Skills demonstrated"><button type="button" aria-pressed="true" data-report-skill>Interaction testing</button><button type="button" aria-pressed="true" data-report-skill>Independent building</button><button type="button" aria-pressed="false">+ Add skill</button></div></label>
+          <label><span class="field-label"><span>Any roadblocks?</span><small>Optional</small></span><input type="text" data-roadblock placeholder="No roadblock recorded" /></label>
+          <label><span class="field-label">Where should learning continue?</span><input type="text" data-next-step value={model.primary.next} /></label>
+        </div>
+        <div class="actions form-actions"><button class="button secondary" type="button" data-previous-student disabled>Previous learner</button><button class="button primary" type="button" data-save-next>Save & next learner</button></div>
       </section>
-      <div class="two-column"><section class="card"><span class="eyebrow">Overall class observation · optional</span><h2>Capture the cohort dynamic</h2><textarea rows="5" placeholder="Describe how the learners worked together."></textarea></section><section class="card"><span class="eyebrow">Direct Center note</span><h2>Flag operational follow-up</h2><div class="skill-pills"><button type="button">Schedule</button><button type="button">Equipment</button><button type="button">Positive highlight</button></div><textarea rows="5" placeholder="Add operational follow-up for Center review."></textarea></section></div>
-      <section class="submit-bar"><a class="button text" href="/learninghub/demo/coach/end-of-day">Save draft & pause</a><span data-submit-help>Complete both learner observations to submit.</span><button class="button primary" type="button" data-submit-class-report disabled>Submit all observations</button></section>
+      <div class="two-column optional-notes"><section class="card optional-note-card"><span class="eyebrow">Overall class observation · optional</span><h2>Capture the cohort dynamic</h2><textarea rows="5" aria-label="Overall class observation" placeholder="Describe how the learners worked together."></textarea></section><section class="card optional-note-card"><span class="eyebrow">Direct Center note</span><h2>Flag operational follow-up</h2><div class="skill-pills" role="group" aria-label="Center follow-up category"><button type="button">Schedule</button><button type="button">Equipment</button><button type="button">Positive highlight</button></div><textarea rows="5" aria-label="Direct Center note" placeholder="Add operational follow-up for Center review."></textarea></section></div>
+      <section class="submit-bar" aria-label="Class report actions"><a class="button secondary" href="/learninghub/demo/coach/end-of-day">Save draft & pause</a><span data-submit-help role="status" aria-live="polite">Complete both learner observations to submit.</span><button class="button primary" type="button" data-submit-class-report disabled>Submit all observations</button></section>
       <section class="submission-receipt card" data-class-receipt hidden tabindex="-1"><span class="eyebrow">Submission receipt</span><h2>Creative App Lab reporting complete.</h2><p>Two learner observations were submitted for Center review. Family publication remains separate.</p></section>
     </section>
   )}
@@ -234,10 +236,12 @@ const releases = [
     root.querySelector("[data-open-mobile-drawer]")?.addEventListener("click", () => setDrawer(true)); root.querySelector("[data-close-mobile-drawer]")?.addEventListener("click", () => setDrawer(false)); drawerBackdrop?.addEventListener("click", () => setDrawer(false));
     const reporting = root.querySelector("[data-reporting-flow]");
     if (reporting) {
-      const drafts = { eli: { name: "Eli Morgan", observation: reporting.querySelector("[data-report-observation]")?.value || "", next: reporting.querySelector("[data-next-step]")?.value || "", complete: false }, lena: { name: "Lena Grant", observation: "", next: "Test the reusable component in two flows.", complete: false } }; let selected = "eli";
-      const render = () => { const draft = drafts[selected]; reporting.querySelector("[data-report-name]").textContent = draft.name; reporting.querySelector("[data-report-observation]").value = draft.observation; reporting.querySelector("[data-next-step]").value = draft.next; reporting.querySelectorAll("[data-report-learner]").forEach((button) => button.classList.toggle("selected", button.getAttribute("data-report-learner") === selected)); reporting.querySelectorAll("[data-report-portrait]").forEach((portrait) => { portrait.hidden = portrait.getAttribute("data-report-portrait") !== selected; }); reporting.querySelectorAll("[data-report-evidence]").forEach((evidence) => { evidence.hidden = evidence.getAttribute("data-report-evidence") !== selected; }); reporting.querySelectorAll("[data-report-skill]").forEach((skill) => skill.setAttribute("aria-pressed", String(selected === "eli"))); reporting.querySelector("[data-previous-student]").disabled = selected === "eli"; const complete = Object.values(drafts).filter((draft) => draft.complete).length; reporting.querySelector("[data-report-progress]").textContent = `${complete} of 2 complete`; reporting.querySelector("[data-report-progress-bar]").style.width = `${complete * 50}%`; reporting.querySelector("[data-submit-class-report]").disabled = complete !== 2; };
+      const drafts = { eli: { name: "Eli Morgan", observation: reporting.querySelector("[data-report-observation]")?.value || "", roadblock: reporting.querySelector("[data-roadblock]")?.value || "", next: reporting.querySelector("[data-next-step]")?.value || "", skills: [true, true], complete: false }, lena: { name: "Lena Grant", observation: "", roadblock: "", next: "Test the reusable component in two flows.", skills: [false, false], complete: false } }; let selected = "eli";
+      const render = () => { const draft = drafts[selected]; reporting.querySelector("[data-report-name]").textContent = draft.name; reporting.querySelector("[data-report-observation]").value = draft.observation; reporting.querySelector("[data-roadblock]").value = draft.roadblock; reporting.querySelector("[data-next-step]").value = draft.next; reporting.querySelectorAll("[data-report-learner]").forEach((button) => button.classList.toggle("selected", button.getAttribute("data-report-learner") === selected)); reporting.querySelectorAll("[data-report-portrait]").forEach((portrait) => { portrait.hidden = portrait.getAttribute("data-report-portrait") !== selected; }); reporting.querySelectorAll("[data-report-evidence]").forEach((evidence) => { evidence.hidden = evidence.getAttribute("data-report-evidence") !== selected; }); reporting.querySelectorAll("[data-report-skill]").forEach((skill, index) => skill.setAttribute("aria-pressed", String(draft.skills[index]))); reporting.querySelector("[data-previous-student]").disabled = selected === "eli"; const complete = Object.values(drafts).filter((draft) => draft.complete).length; reporting.querySelector("[data-report-progress]").textContent = `${complete} of 2 complete`; reporting.querySelector("[data-report-progress-bar]").style.width = `${complete * 50}%`; reporting.querySelector("[data-submit-class-report]").disabled = complete !== 2; };
       reporting.querySelectorAll("[data-report-learner]").forEach((button) => button.addEventListener("click", () => { selected = button.getAttribute("data-report-learner"); render(); }));
-      reporting.querySelector("[data-report-observation]")?.addEventListener("input", (event) => { drafts[selected].observation = event.target.value; drafts[selected].complete = false; render(); }); reporting.querySelector("[data-next-step]")?.addEventListener("input", (event) => { drafts[selected].next = event.target.value; drafts[selected].complete = false; render(); });
+      reporting.querySelectorAll(".evidence-card").forEach((button) => button.addEventListener("click", () => button.setAttribute("aria-pressed", String(button.getAttribute("aria-pressed") !== "true"))));
+      reporting.querySelectorAll("[data-report-skill]").forEach((button, index) => button.addEventListener("click", () => { drafts[selected].skills[index] = !drafts[selected].skills[index]; drafts[selected].complete = false; render(); }));
+      reporting.querySelector("[data-report-observation]")?.addEventListener("input", (event) => { drafts[selected].observation = event.target.value; drafts[selected].complete = false; render(); }); reporting.querySelector("[data-roadblock]")?.addEventListener("input", (event) => { drafts[selected].roadblock = event.target.value; drafts[selected].complete = false; }); reporting.querySelector("[data-next-step]")?.addEventListener("input", (event) => { drafts[selected].next = event.target.value; drafts[selected].complete = false; render(); });
       reporting.querySelector("[data-assist-writing]")?.addEventListener("click", () => { if (selected === "eli") drafts.eli.observation = "Eli independently built the core navigation, tested it with a classmate, and revised one confusing interaction."; reporting.querySelector("[data-assist-status]").textContent = selected === "eli" ? "Suggested wording placed in the Coach draft; review before saving." : "Add a Coach-authored observation before requesting wording help."; render(); });
       reporting.querySelector("[data-save-next]")?.addEventListener("click", () => { drafts[selected].complete = Boolean(drafts[selected].observation.trim() && drafts[selected].next.trim()); if (selected === "eli") selected = "lena"; render(); }); reporting.querySelector("[data-previous-student]")?.addEventListener("click", () => { selected = "eli"; render(); });
       reporting.querySelector("[data-submit-class-report]")?.addEventListener("click", () => { if (!Object.values(drafts).every((draft) => draft.complete)) return; reporting.querySelector("[data-submit-help]").textContent = "Submission complete."; const receipt = reporting.querySelector("[data-class-receipt]"); if (receipt instanceof HTMLElement) { receipt.hidden = false; receipt.focus(); } }); render();
@@ -835,6 +839,262 @@ const releases = [
     color: var(--color-muted);
   }
 
+  .reporting-flow {
+    display: grid;
+    gap: var(--coach-space-5);
+    min-width: 0;
+  }
+
+  .reporting-flow > * {
+    min-width: 0;
+    margin: 0;
+  }
+
+  .pending-queue {
+    display: grid;
+    gap: var(--coach-space-3);
+    padding-block: var(--coach-space-4) !important;
+  }
+
+  .pending-queue .section-heading,
+  .record-spine .section-heading,
+  .observation-editor .section-heading {
+    margin: 0;
+  }
+
+  .queue-track {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e5ecf1;
+  }
+
+  .queue-track > span {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--coach-accent);
+    transition: width .2s ease;
+  }
+
+  .report-tabs {
+    padding-top: var(--coach-space-1);
+  }
+
+  .reporting-flow .record-spine {
+    display: grid;
+    gap: var(--coach-space-3);
+    padding: var(--coach-space-4);
+  }
+
+  .reporting-flow .record-spine ol {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--coach-space-2);
+    margin: 0;
+  }
+
+  .reporting-flow .record-spine li {
+    padding: var(--coach-space-3);
+  }
+
+  .observation-editor {
+    display: grid;
+    gap: var(--coach-space-4);
+  }
+
+  .observation-editor .section-heading {
+    padding-bottom: var(--coach-space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .evidence-picker {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+  }
+
+  .evidence-picker legend {
+    margin-bottom: var(--coach-space-2);
+    color: var(--color-ink);
+    font-weight: 900;
+  }
+
+  .evidence-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--coach-space-2);
+  }
+
+  .evidence-card {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    min-width: 0;
+    min-height: 84px;
+    padding: 0;
+    overflow: hidden;
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--color-ink);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .evidence-card:hover {
+    border-color: #9cb5c7;
+  }
+
+  .evidence-card[aria-pressed="true"] {
+    border-color: var(--coach-accent);
+    background: #f4fbfa;
+    box-shadow: 0 0 0 2px rgb(32 170 165 / 16%);
+  }
+
+  .evidence-card:focus-visible {
+    outline: 3px solid var(--coach-accent);
+    outline-offset: 3px;
+  }
+
+  .evidence-preview {
+    display: grid;
+    min-width: 0;
+    height: 100%;
+    min-height: 80px;
+    place-content: center;
+    background: #eaf5f7;
+    text-align: center;
+  }
+
+  .evidence-preview.photo-thumb {
+    background: #e7edf1;
+  }
+
+  .evidence-preview.photo-thumb :global(img) {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 80px;
+    border: 0 !important;
+    border-radius: 0 !important;
+    object-fit: cover;
+  }
+
+  .evidence-preview.video-thumb {
+    background: var(--color-ink);
+    color: #fff;
+    font-size: 1.55rem;
+  }
+
+  .evidence-copy {
+    display: grid;
+    align-content: center;
+    gap: 5px;
+    min-width: 0;
+    padding: var(--coach-space-2);
+  }
+
+  .evidence-copy small {
+    color: var(--color-muted);
+    font-size: .68rem;
+    font-weight: 900;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .evidence-copy strong {
+    line-height: 1.25;
+  }
+
+  .observation-fields {
+    display: grid;
+    gap: var(--coach-space-4);
+  }
+
+  .observation-fields > label,
+  .optional-note-card {
+    gap: var(--coach-space-2);
+  }
+
+  .field-label {
+    display: flex;
+    gap: var(--coach-space-2);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .field-label small {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #edf2f5;
+    color: var(--color-muted);
+    font-size: .7rem;
+    font-weight: 900;
+  }
+
+  .assist-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--coach-space-3);
+    padding: var(--coach-space-3);
+    border-left: 4px solid var(--coach-accent);
+    border-radius: 9px;
+    background: #f1f8fa;
+  }
+
+  .assist-row .button.text {
+    justify-self: start;
+  }
+
+  .assist-row [data-assist-status] {
+    align-self: center;
+    color: var(--color-muted);
+    line-height: 1.45;
+  }
+
+  .form-actions {
+    justify-content: flex-end;
+    padding-top: var(--coach-space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .optional-notes {
+    gap: var(--coach-space-4);
+  }
+
+  .optional-note-card {
+    display: grid;
+    align-content: start;
+  }
+
+  .optional-note-card :is(h2, textarea) {
+    margin: 0;
+  }
+
+  .optional-note-card .skill-pills {
+    margin-block: var(--coach-space-1);
+  }
+
+  .submit-bar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--coach-space-4);
+    align-items: center;
+    padding: var(--coach-space-4);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .submit-bar [data-submit-help] {
+    color: var(--color-muted);
+    line-height: 1.45;
+    text-align: center;
+  }
+
   .faq {
     gap: var(--coach-space-2);
   }
@@ -978,6 +1238,47 @@ const releases = [
     .release-modal .actions {
       align-items: stretch;
       flex-direction: column;
+    }
+
+    .reporting-flow {
+      gap: var(--coach-space-4);
+    }
+
+    .reporting-flow .record-spine ol {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .evidence-picker-grid,
+    .submit-bar {
+      grid-template-columns: 1fr;
+    }
+
+    .assist-row {
+      grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .form-actions .button,
+    .submit-bar .button {
+      width: 100%;
+    }
+
+    .submit-bar [data-submit-help] {
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .reporting-flow .record-spine ol {
+      grid-template-columns: 1fr;
+    }
+
+    .evidence-card {
+      grid-template-columns: 68px minmax(0, 1fr);
     }
   }
 </style>
