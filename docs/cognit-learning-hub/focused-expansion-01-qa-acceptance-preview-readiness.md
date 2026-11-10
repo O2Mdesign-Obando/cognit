@@ -26,6 +26,18 @@ The correction is commit `072f242137124f1a61332bfaa91a9bd712b9e318`, tree `6b651
 
 Jorge's audio/capture acceptance remains attached to `7eb275ffdcb9333f48b1fd54b297ac317fb04bca`. The Center Report portion of `072f242137124f1a61332bfaa91a9bd712b9e318` is accepted; its Coach after-class portion remains pending targeted human review.
 
+## Coach after-class refinement candidate
+
+The presentation-only Coach refinement is runtime commit `bee40f176035704681da302a4257e8f71b7de4db`, tree `e56d71342e96d4d93b01263049214828886c4b36`. It is a descendant of both accepted checkpoints and changes:
+
+- `src/components/demo/CognitCoachJourneyView.astro`
+- `src/components/demo/CognitFocusedExpansion.astro`
+- `src/components/demo/CognitLanguageControls.astro`
+
+The candidate replaces default-looking evidence controls with Cognit evidence cards; restores consistent field, section, optional-note, and submission spacing; presents monthly evidence by readable name with source IDs as secondary traceability; distinguishes actionable review controls from informational Reviewed status; and preserves Eli/Lena draft fields independently. The existing compact fallback notice is also constrained to the mobile header so it no longer extends left of the viewport at 320 px.
+
+Jorge's Center Report and audio/capture acceptances remain attached to their reviewed commits. They do not transfer to `bee40f176035704681da302a4257e8f71b7de4db`; the Coach refinement remains pending targeted human QA.
+
 ## Verification evidence
 
 Automated browser checks exercised all seven authorized routes at 360 × 780 in en-US, es-US, ja-JP, and hi-IN, and at 320 × 700 in ja-JP and hi-IN:
@@ -73,7 +85,27 @@ These receipts permit the existing product-local implementation and verification
 
 ### 2026-11-10 authority recheck
 
-Before the requested Coach after-class presentation refinement, canonical discovery resolved registry version `0.7.1`, commit `46a833ebb61ca28251963a27722363ae19ba74e9`, remote `O2Mdesign-Obando/loke-product-platform-registry`, clean state, and qualification `PASS`. The existing connected-class request now returns `NEW_IMPLEMENTATION_EXCEPTION_REQUIRED / may_proceed: false`: its requested exception does not match the complete supplied candidate scope. No Coach runtime edit was made. Product Platform/Control Tower must provide an exact-scope authority decision for the presentation-only Coach after-class refinement before implementation resumes.
+The earlier blocked receipt was produced by the installed discovery helper symlink against stale registry worktree commit `46a833ebb61ca28251963a27722363ae19ba74e9`. It was a provenance failure, not a scope denial, and is superseded.
+
+Corrected discovery ran the supported helper directly from `/Users/jorgeobando/.codex/worktrees/pp-cognit-focused-expansion-01` at required canonical registry commit `e253ad3a249f26d869275bd1634a990f9a52dfcb`. Registry version `0.7.1`, remote `O2Mdesign-Obando/loke-product-platform-registry`, clean state, qualification `PASS`, and unchanged product repository were confirmed. Request `pp:request:cognit-demo-connected-class-month-composition-01` returned `KEEP_PRODUCT_LOCAL / may_proceed: true` under `pp:exception:cognit-demo-connected-class-month-composition-01`. The permitted boundary remains the local synthetic connected class/month composition; no centralization, extraction, registry mutation, push, or deployment authority is implied.
+
+Focused verification of the Coach candidate passed:
+
+- production build: 387 pages;
+- localization manifest: 385 routes, unchanged SHA-256 `818ee5dd04351d544b4b73f214edc8fcfb8fccdcb3ebfdb36f3030b2a43533e4`;
+- structured curriculum, seven-route locale boundary, connected state, invalidation, and Family visibility checks;
+- route validation: 446 HTML pages and 13,680 local references, zero missing;
+- Demo2 validation: 54 declared routes, 59 prerendered routes, 845 local references, zero missing;
+- desktop and 360 px observation/evidence layouts; production-build inspection at 320 px;
+- en-US, es-US, ja-JP, and hi-IN selection on the authorized Coach route;
+- Eli/Lena observation, roadblock, next-step, and skill isolation across learner switching;
+- evidence review changing from an action button to an informational Reviewed status;
+- monthly draft sequencing, readable evidence names, retained source IDs, and disabled submission prerequisites;
+- keyboard focus traversal and visible focus styling; no browser console warnings or errors.
+
+Local visual evidence is preserved in `docs/cognit-learning-hub/evidence/coach-after-class-ui-refinement-01/`: desktop observation feedback, desktop populated monthly evidence, corresponding 360 px views, and the corrected 320 px Hindi fallback state.
+
+Japanese and Hindi remain drafted and pending qualified review. No real screen-reader session was performed in this refinement pass; prior DOM/accessibility and keyboard evidence is retained.
 
 Read-only Git/Vercel findings:
 
@@ -88,15 +120,29 @@ Read-only Git/Vercel findings:
 - a push to the named non-main feature branch targets a Git-connected Preview;
 - current feature Preview: `dpl_GJvad86zaXZUic4LV52xH123NBjf`, source `a614ffb245d01b416e5ae69ae056441563468f53`, READY;
 - current Production: `dpl_6F6oaQhnkEdcRFutSLPNsi6kHyT5`, source `88997bc352d4ccc3508e27acac0465c40edc5510`, READY;
-- no deployment attributable to `7eb275ffdcb9333f48b1fd54b297ac317fb04bca` or `072f242137124f1a61332bfaa91a9bd712b9e318` exists in the inspected deployment history.
+- no deployment attributable to `7eb275ffdcb9333f48b1fd54b297ac317fb04bca`, `072f242137124f1a61332bfaa91a9bd712b9e318`, or `bee40f176035704681da302a4257e8f71b7de4db` exists in the inspected deployment history.
 
-After targeted acceptance of the correction, the exact proposed push is:
+After targeted acceptance of the Coach refinement and a subsequent one-push/one-Preview release authorization, the exact proposed push is:
 
 ```sh
-git push origin 072f242137124f1a61332bfaa91a9bd712b9e318:refs/heads/feat/demo-structured-curriculum-multilingual-01
+git push origin bee40f176035704681da302a4257e8f71b7de4db:refs/heads/feat/demo-structured-curriculum-multilingual-01
 ```
 
 Do not push documentation HEAD.
+
+## Updated Preview authorization request — pending Coach acceptance
+
+Jorge's targeted acceptance of the Coach after-class refinement is still required. After that acceptance, Control Tower/Product Platform is requested to authorize one sequential assignment for repository `O2Mdesign-Obando/cognit`, branch `feat/demo-structured-curriculum-multilingual-01`, runtime commit `bee40f176035704681da302a4257e8f71b7de4db`, tree `e56d71342e96d4d93b01263049214828886c4b36`:
+
+1. record Jorge's acceptance against that exact runtime identity;
+2. qualify the smallest amendment permitting one normal non-force feature-branch push, one resulting Git-connected non-Production Preview, and hosted verification;
+3. preserve all consumed historical allowances and require fresh canonical discovery for connected class/month composition, bounded ja-JP/hi-IN delivery, existing en-US/es-US behavior, and read-only progression presentation;
+4. preflight the existing authenticated Vercel team/project integration, Production branch, Preview-only targeting, unused new allowance, remote fast-forward feasibility, and current Production identity;
+5. execute exactly `git push origin bee40f176035704681da302a4257e8f71b7de4db:refs/heads/feat/demo-structured-curriculum-multilingual-01` once, without force and without pushing documentation HEAD;
+6. verify exact deployment attribution and the connected seven-route journey, including the Coach evidence cards, learner-specific drafts, responsive submission layout, reviewed/action evidence states, monthly sequence, source IDs, four authorized locales, fallback/restore, keyboard/focus, mobile layout, console, approval/invalidation behavior, and Family visibility boundaries;
+7. confirm Production remains unchanged.
+
+Held: PRs, merges, manual deployments, hosted configuration/database changes, Production actions, dependencies, provider calls, shared storage, external messages, registry work beyond the narrow qualified amendment, and scope expansion. Japanese/Hindi remain pending qualified language review.
 
 ## Learning-site boundary
 
