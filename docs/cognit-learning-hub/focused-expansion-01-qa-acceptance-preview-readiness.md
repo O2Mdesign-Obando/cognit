@@ -13,6 +13,8 @@ On 2026-11-10, Jorge additionally reported targeted Center Report QA PASS for co
 
 On 2026-11-11, Jorge reported visual QA PASS for the Coach after-class refinement at commit `bee40f176035704681da302a4257e8f71b7de4db`, tree `e56d71342e96d4d93b01263049214828886c4b36`. This acceptance covers the reviewed presentation across the four selected language states. It does not establish Japanese/Hindi translation completeness or linguistic quality, and it does not transfer to later localization-copy changes.
 
+Jorge subsequently reported targeted human QA PASS for the corrected runtime commit `e3e81f96a5d943fcae5275f963512d2f3f3608a1`, tree `3780a409636c1dedb71a03d3c909629bd918e0fe`. This acceptance covers the reviewed Coach interface/localization corrections and preservation of entered text. Earlier audio, Center Report, and visual acceptances remain attached to their respective checkpoints. Qualified Japanese/Hindi linguistic review, real VoiceOver testing, exhaustive interaction coverage, hosted Preview acceptance, and Production acceptance remain outstanding.
+
 ## Narrow-phone correction boundary
 
 Readiness inspection found two concrete defects after the accepted checkpoint:
@@ -51,7 +53,7 @@ The remaining English on `/learninghub/demo/coach/after-class` is classified as 
 - content outside the authorized translation boundary: none displayed on this route; unrelated Demo routes remain outside the exact seven-route Japanese/Hindi boundary;
 - missing in-scope interface translation: none found after this correction in the exercised initial, refine-feedback, learner-progress, and submission-receipt states.
 
-The Spanish fallback notice was not suppressed. Its actual triggers were untranslated accessibility labels and dynamically rendered review/progress feedback. Those in-scope strings are now translated; the notice remains available and appears only if a real fallback occurs. Japanese/Hindi copy in this correction is CODEX-drafted and pending qualified language review. Because the runtime copy changed after the accepted presentation checkpoint, `e3e81f96a5d943fcae5275f963512d2f3f3608a1` requires targeted human review before any release authorization is exercised.
+The Spanish fallback notice was not suppressed. Its actual triggers were untranslated accessibility labels and dynamically rendered review/progress feedback. Those in-scope strings are now translated; the notice remains available and appears only if a real fallback occurs. Japanese/Hindi copy in this correction is CODEX-drafted and pending qualified language review. Jorge has accepted this corrected runtime for the bounded scope recorded above; a new registry authorization and one-push/one-Preview allowance are still required before release execution.
 
 Correction verification passed:
 
@@ -152,7 +154,7 @@ Read-only Git/Vercel findings:
 - current Production: `dpl_6F6oaQhnkEdcRFutSLPNsi6kHyT5`, source `88997bc352d4ccc3508e27acac0465c40edc5510`, READY;
 - no deployment attributable to `7eb275ffdcb9333f48b1fd54b297ac317fb04bca`, `072f242137124f1a61332bfaa91a9bd712b9e318`, or `bee40f176035704681da302a4257e8f71b7de4db` exists in the inspected deployment history.
 
-After targeted acceptance of the localization correction and a subsequent one-push/one-Preview release authorization, the exact proposed push is:
+After canonical approval of the new one-push/one-Preview release authorization, the exact proposed push is:
 
 ```sh
 git push origin e3e81f96a5d943fcae5275f963512d2f3f3608a1:refs/heads/feat/demo-structured-curriculum-multilingual-01
@@ -160,19 +162,22 @@ git push origin e3e81f96a5d943fcae5275f963512d2f3f3608a1:refs/heads/feat/demo-st
 
 Do not push documentation HEAD.
 
-## Updated Preview authorization request — pending localization-correction acceptance
+## Updated Preview authorization request — accepted candidate, execution held
 
-Jorge's targeted acceptance of the Coach after-class localization correction is required. After that acceptance, Control Tower/Product Platform is requested to authorize one sequential assignment for repository `O2Mdesign-Obando/cognit`, branch `feat/demo-structured-curriculum-multilingual-01`, runtime commit `e3e81f96a5d943fcae5275f963512d2f3f3608a1`, tree `3780a409636c1dedb71a03d3c909629bd918e0fe`:
+Jorge's targeted acceptance of the Coach after-class localization correction is recorded. Control Tower/Product Platform is requested to authorize one sequential assignment for repository `O2Mdesign-Obando/cognit`, branch `feat/demo-structured-curriculum-multilingual-01`, runtime commit `e3e81f96a5d943fcae5275f963512d2f3f3608a1`, tree `3780a409636c1dedb71a03d3c909629bd918e0fe`:
 
 1. record Jorge's acceptance against that exact runtime identity;
-2. qualify the smallest amendment permitting one normal non-force feature-branch push, one resulting Git-connected non-Production Preview, and hosted verification;
+2. prepare, review, qualify, and canonically promote the smallest normal-fast-forward registry amendment permitting one normal non-force feature-branch push, one resulting Git-connected non-Production Preview, and hosted verification, while preserving consumed allowances as historical evidence;
 3. preserve all consumed historical allowances and require fresh canonical discovery for connected class/month composition, bounded ja-JP/hi-IN delivery, existing en-US/es-US behavior, and read-only progression presentation;
 4. preflight the existing authenticated Vercel team/project integration, Production branch, Preview-only targeting, unused new allowance, remote fast-forward feasibility, and current Production identity;
 5. execute exactly `git push origin e3e81f96a5d943fcae5275f963512d2f3f3608a1:refs/heads/feat/demo-structured-curriculum-multilingual-01` once, without force and without pushing documentation HEAD;
-6. verify exact deployment attribution and the connected seven-route journey, including the accepted Coach presentation, learner-specific drafts, localized dynamic feedback and accessibility names, authored-content preservation, monthly sequence, source IDs, four authorized locales, legitimate fallback/restore behavior, keyboard/focus, mobile layout, console, approval/invalidation behavior, and Family visibility boundaries;
-7. confirm Production remains unchanged.
+6. verify exact deployment attribution and the connected seven-route journey, including the accepted Coach presentation, learner-specific drafts, localized dynamic feedback and accessibility names, authored-content preservation, device-local audio, explicitly simulated transcription/drafting, stale-result protection, exact-version Center acceptance/invalidation, monthly sequence, source IDs, four authorized locales, legitimate fallback/restore behavior, keyboard/focus, responsive layout, console capture, and Family visibility boundaries;
+7. perform representative HTTPS phone microphone testing and distinguish automated, representative desktop/mobile, real-device, and untested coverage while confirming that the unchanged 385-route availability manifest remains intact;
+8. confirm Production remains unchanged by comparing its deployment and source identity before and after.
 
 Held: PRs, merges, manual deployments, hosted configuration/database changes, Production actions, dependencies, provider calls, shared storage, external messages, registry work beyond the narrow qualified amendment, and scope expansion. Japanese/Hindi remain pending qualified language review.
+
+This is an authorization request only. Registry promotion, Cognit push, Preview execution, and hosted verification remain held until Control Tower approves the sequential assignment.
 
 ## Learning-site boundary
 
