@@ -189,9 +189,10 @@ function translateLiteralText(root, locale) {
       node.parentElement?.setAttribute("data-literal-english-fallback", "true");
     }
   });
-  ["aria-label", "placeholder", "title", "data-center-local-action"].forEach((attribute) => {
+  ["aria-label", "alt", "placeholder", "title", "data-center-local-action"].forEach((attribute) => {
     root.querySelectorAll(`[${attribute}]`).forEach((element) => {
       if (element.hasAttribute(`data-i18n-${attribute}`)) return;
+      if (element.closest("[data-i18n-preserve]")) return;
       if (!originalAttributes.has(element)) originalAttributes.set(element, {});
       const values = originalAttributes.get(element);
       if (!(attribute in values)) values[attribute] = element.getAttribute(attribute);
@@ -199,7 +200,7 @@ function translateLiteralText(root, locale) {
       const translated = literalDictionaries[locale]?.[source];
       const nextValue = translated ?? source;
       if (element.getAttribute(attribute) !== nextValue) element.setAttribute(attribute, nextValue);
-      if (locale !== "en-US" && translated === undefined && /[A-Za-z]{2}/.test(source || "")) {
+      if (locale !== "en-US" && translated === undefined && !isIntentionalPreserveLiteral(source || "") && /[A-Za-z]{2}/.test(source || "")) {
         fallbackCount += 1;
         element.setAttribute("data-literal-english-fallback", "true");
       }

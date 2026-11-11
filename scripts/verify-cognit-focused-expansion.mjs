@@ -4,6 +4,9 @@ import { createConnectedState, normalizeConnectedState, reduceConnectedState, sa
 import { focusedExpansionCopy } from "../src/demo/cognit-focused-expansion-copy.js";
 import { creativeAppLabProgression } from "../src/demo/cognit-curriculum-progression.js";
 import { COGNIT_FOCUSED_EXPANSION_ROUTES, readCenterLanguageSetting, resolveEffectiveLocale, writeCenterHindiSetting, writeCenterJapaneseSetting } from "../src/demo/cognit-localization.js";
+import { esUSLiterals } from "../src/demo/locales/es-US-literals.js";
+import { hiINLiterals } from "../src/demo/locales/hi-IN-literals.js";
+import { jaJPLiterals } from "../src/demo/locales/ja-JP-literals.js";
 
 assert.deepEqual(COGNIT_FOCUSED_EXPANSION_ROUTES, [
   "/learninghub/demo/center/courses/creative-app-lab",
@@ -20,6 +23,16 @@ for (const locale of ["en-US", "es-US", "ja-JP", "hi-IN"]) {
 }
 assert.equal(focusedExpansionCopy["es-US"].organization, "Organización");
 assert.equal(focusedExpansionCopy["es-US"].currentLabel, "Vigente");
+for (const [literals, expected] of [
+  [esUSLiterals, "2 de 2 completadas"],
+  [jaJPLiterals, "2件中2件完了"],
+  [hiINLiterals, "2 में से 2 पूरे"]
+]) {
+  assert.equal(literals["2 of 2 complete"], expected);
+  assert.ok(literals["Add a Coach-authored observation before requesting wording help."]);
+  assert.ok(literals["Learner testing a prototype"]);
+  assert.ok(literals["Confirm review: Prototype walkthrough example"].includes("Prototype walkthrough example"));
+}
 assert.equal(creativeAppLabProgression.teachingModuleId, "creative-prototype");
 assert.deepEqual(creativeAppLabProgression.completedModuleIds, ["creative-foundations"]);
 

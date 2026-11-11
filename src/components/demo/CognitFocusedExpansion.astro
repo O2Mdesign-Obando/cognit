@@ -227,7 +227,7 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
       const h = document.createElement("h3"); h.textContent = `${report.id} · ${labelStatus(copy, report.status)}`;
       const p = document.createElement("p"); p.textContent = report.text;
       const sources = document.createElement("p"); sources.textContent = `${copy.sourceIds}: ${report.sourceIds.join(", ")}`;
-      const meta = document.createElement("p"); meta.textContent = `${report.rule === "manual" ? copy.manual : copy.routine} · source-revision ${report.sourceRevision}`;
+      const meta = document.createElement("p"); meta.textContent = `${report.rule === "manual" ? copy.manual : copy.routine} · ${copy.sourceRevision} ${report.sourceRevision}`;
       card.append(h, p, sources, meta);
       if (stale) { const warning = document.createElement("strong"); warning.textContent = copy.stale; card.append(warning); }
       const reviewButton = root.querySelector("[data-review-report]"); if (reviewButton) reviewButton.disabled = report.coachReviewed;
@@ -240,7 +240,7 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
       list.replaceChildren(...state.evidence.map((item) => {
         const row = document.createElement("article"); row.className = "evidence-row"; row.setAttribute("role", "listitem");
         const text = document.createElement("div"); text.className = "evidence-copy";
-        const title = document.createElement("strong"); title.textContent = item.label;
+        const title = document.createElement("strong"); title.textContent = item.label; title.setAttribute("data-i18n-preserve", "");
         const details = document.createElement("small"); details.textContent = `${copy[item.kind] || item.kind} · ${copy.sourceIds}: ${item.id} · v${item.version}`;
         text.append(title, details);
         if (item.reviewed) {
@@ -317,7 +317,7 @@ const curriculum = getCreativeAppLabProgressionProjection(isStudent ? "student" 
       } catch (error) { setStatus(status, error.message); }
     });
     root.querySelector("[data-stop]")?.addEventListener("click", () => { if (mediaRecorder?.state === "recording") mediaRecorder.stop(); root.querySelector("[data-record]").disabled = false; root.querySelector("[data-stop]").disabled = true; });
-    root.querySelector("[data-create-report]")?.addEventListener("click", () => update({ type: "CREATE_REPORT", rule: "routine", text: "Eli completed Frame the problem and is now prototyping the core flow. The reviewed sketch and Coach note support this progress summary." }));
+    root.querySelector("[data-create-report]")?.addEventListener("click", () => update({ type: "CREATE_REPORT", rule: "routine", text: copyFor(root).draftText }));
     root.querySelector("[data-review-report]")?.addEventListener("click", () => { const report = currentReport(); if (report) update({ type: "REVIEW_REPORT", id: report.id }); });
     root.querySelector("[data-submit-report]")?.addEventListener("click", () => { const report = currentReport(); if (report) update({ type: "SUBMIT_REPORT", id: report.id }); });
     root.querySelector("[data-center-accept]")?.addEventListener("click", () => { const report = currentReport(); if (report) update({ type: "CENTER_DECIDE", id: report.id, decision: "accepted", reason: "Routine rule passed; Center explicitly accepted this exact version." }); });
