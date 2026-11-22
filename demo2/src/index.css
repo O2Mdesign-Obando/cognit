@@ -72,3 +72,99 @@ body {
 .animate-fade-up {
   animation: cognit-fade-up 0.4s ease both;
 }
+
+.pl-title {
+  max-width: 1000px;
+  color: var(--color-navy);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+.pl-h2 {
+  margin-bottom: 0.75rem;
+  color: var(--color-navy);
+  font-size: clamp(1.35rem, 3vw, 1.65rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+.pl-lead {
+  margin-block: 1rem;
+  font-size: 1.1rem;
+  line-height: 1.55;
+}
+.pl-primary,
+.pl-secondary,
+.pl-pill,
+.pl-chip,
+.pl-choice {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.75rem 1.15rem;
+  color: var(--color-navy);
+  font-weight: 650;
+  line-height: 1.25;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.pl-primary,
+.pl-secondary {
+  width: 100%;
+  margin-top: 0.8rem;
+}
+.pl-primary {
+  border: 1px solid var(--color-gold);
+  background: var(--color-gold);
+}
+.pl-secondary,
+.pl-pill,
+.pl-chip,
+.pl-choice {
+  border: 1px solid var(--color-navy);
+  background: white;
+}
+.pl-chip {
+  flex: 0 0 auto;
+  padding-inline: 0.95rem;
+  font-size: 0.875rem;
+}
+.pl-chip-selected,
+.pl-choice-selected {
+  background: var(--color-navy);
+  color: white;
+  box-shadow: inset 0 0 0 2px white;
+}
+.pl-primary:hover,
+.pl-primary:focus-visible {
+  filter: brightness(1.04);
+}
+.pl-secondary:hover,
+.pl-pill:hover,
+.pl-chip:hover,
+.pl-choice:hover {
+  background: var(--color-cool-100);
+}
+.pl-primary:focus-visible,
+.pl-secondary:focus-visible,
+.pl-pill:focus-visible,
+.pl-chip:focus-visible,
+.pl-choice:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--color-navy);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
