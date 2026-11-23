@@ -1,7 +1,7 @@
 export type Position = "Top" | "Right" | "Bottom" | "Left"
 export type Presentation = "narrated" | "interactive" | "written"
 export type StudentId = "robert" | "lily" | "jake"
-export type DemoView = "hq-upload" | "hq-processing" | "hq-clarify" | "hq-failure" | "hq-review" | "available" | "adventure" | "practice" | "checks" | "results" | "coach" | "evidence" | "updated" | "family-draft" | "family-view"
+export type DemoView = "guided-hq" | "guided-center" | "guided-coach" | "guided-student" | "guided-review" | "guided-family" | "hq-upload" | "hq-processing" | "hq-clarify" | "hq-failure" | "hq-review" | "available" | "adventure" | "practice" | "checks" | "results" | "coach" | "evidence" | "updated" | "family-draft" | "family-view"
 
 export interface ApprovalRecord {
   id: string
@@ -52,6 +52,35 @@ export interface ReportRevision {
   invalidatedReason?: string
 }
 
+export interface ReportReviewRecord {
+  id: string
+  version: string
+  role: "coach" | "center"
+  action: "reviewed" | "approved" | "invalidated"
+  createdAt: string
+  reason?: string
+}
+
+export interface FamilyCommentRecord {
+  id: string
+  reportVersion: string
+  text: string
+  createdAt: string
+  simulated: true
+}
+
+export interface CenterAssessmentRecord {
+  version: "assessment-1"
+  status: "prepared" | "reviewed"
+  knowledge: string
+  skills: string
+  preference: string
+  interests: string
+  supportNeeds: string
+  evidenceSources: string[]
+  reviewedAt?: string
+}
+
 export interface StudentRecord {
   id: StudentId
   name: string
@@ -66,10 +95,13 @@ export interface StudentRecord {
   pendingRecommendation?: Presentation
   evidenceApprovals: ApprovalRecord[]
   reportRevisions: ReportRevision[]
+  reportReviews: ReportReviewRecord[]
+  familyComments: FamilyCommentRecord[]
+  centerAssessment?: CenterAssessmentRecord
 }
 
 export interface PersonalizedLearningState {
-  schemaVersion: 1
+  schemaVersion: 2
   locale: "en" | "es"
   view: DemoView
   activeStudent: StudentId
@@ -113,14 +145,16 @@ function student(
     pendingRecommendation: id === "lily" ? "narrated" : undefined,
     evidenceApprovals: [],
     reportRevisions: [],
+    reportReviews: [],
+    familyComments: [],
   }
 }
 
 export function emptyState(): PersonalizedLearningState {
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     locale: "en",
-    view: "hq-upload",
+    view: "guided-hq",
     activeStudent: "robert",
     activePresentation: "narrated",
     activeCheck: 1,
@@ -132,8 +166,8 @@ export function emptyState(): PersonalizedLearningState {
       sourceVersion: "1.2",
       draftVersion: "0.9",
       preparedVersion: "1.0",
-      status: "upload",
-      clarificationSaved: false,
+      status: "review",
+      clarificationSaved: true,
       approvals: [],
     },
     students: {
@@ -167,6 +201,23 @@ export function emptyState(): PersonalizedLearningState {
       ),
     },
     presenterOpen: false,
+  }
+}
+
+export function robertAssessment(): CenterAssessmentRecord {
+  return {
+    version: "assessment-1",
+    status: "prepared",
+    knowledge: "Robert identifies clockwise and counterclockwise direction from the shaft-end view.",
+    skills: "He predicts quarter-turn endpoints and revises after visible motor feedback.",
+    preference: "He currently engages most readily when he can try the controls.",
+    interests: "Rescue missions, robots, and testing a prediction.",
+    supportNeeds: "Counting complete rotations still needs one concise example before independent practice.",
+    evidenceSources: [
+      "New-student intake: fictional interest and presentation-preference questions.",
+      "Prepared prior evidence · September 8: supported quarter-turn revision.",
+      "Prepared prior evidence · September 15: direction correct; complete-turn count uncertain.",
+    ],
   }
 }
 
@@ -278,6 +329,11 @@ export function populatedRobertState(): PersonalizedLearningState {
       createdAt: NOW,
     },
   ]
+  state.students.robert.centerAssessment = {
+    ...robertAssessment(),
+    status: "reviewed",
+    reviewedAt: NOW,
+  }
   return state
 }
 
@@ -354,7 +410,18 @@ export function loadState(): PersonalizedLearningState {
     const parsed = JSON.parse(
       window.localStorage.getItem(STORAGE_KEY) ?? "null",
     )
-    return parsed?.schemaVersion === 1 ? parsed : emptyState()
+    if (parsed?.schemaVersion === 2) return parsed
+    if (parsed?.schemaVersion === 1) {
+      const migrated = parsed as PersonalizedLearningState
+      migrated.schemaVersion = 2
+      migrated.view = "guided-hq"
+      for (const record of Object.values(migrated.students)) {
+        record.reportReviews ??= []
+        record.familyComments ??= []
+      }
+      return migrated
+    }
+    return emptyState()
   } catch {
     return emptyState()
   }
@@ -381,6 +448,11 @@ export function invalidateApprovals(
       revision.status === "approved" || revision.status === "shared"
         ? { ...revision, status: "invalidated", invalidatedReason: reason }
         : revision,
+    ),
+    reportReviews: student.reportReviews.map((review) =>
+      review.action === "reviewed" || review.action === "approved"
+        ? { ...review, action: "invalidated", reason }
+        : review,
     ),
   }
 }

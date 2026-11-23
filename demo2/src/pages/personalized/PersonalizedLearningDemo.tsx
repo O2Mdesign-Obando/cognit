@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Check, ChevronRight, Settings2, X } from "lucide-react"
+import { ArrowLeft, Check, ChevronRight, Settings2, X } from "lucide-react"
 import { Avatar, LogoHorizontal, LogoWordmark } from "../../lib/brand"
 import {
   STORAGE_KEY,
@@ -10,6 +10,7 @@ import {
   populatedJakeState,
   populatedLilyState,
   populatedRobertState,
+  robertAssessment,
   type AttemptRecord,
   type DemoView,
   type PersonalizedLearningState,
@@ -30,6 +31,12 @@ const PRESENTATIONS: { id: Presentation; en: string; es: string }[] = [
 ]
 
 const VIEW_LABELS: { id: DemoView; en: string; es: string }[] = [
+  { id: "guided-hq", en: "1 · HQ", es: "1 · Central" },
+  { id: "guided-center", en: "2 · Center", es: "2 · Centro" },
+  { id: "guided-coach", en: "3 · Coach", es: "3 · Instructor" },
+  { id: "guided-student", en: "4 · Student", es: "4 · Estudiante" },
+  { id: "guided-review", en: "5 · Monthly review", es: "5 · Revisión mensual" },
+  { id: "guided-family", en: "6 · Family", es: "6 · Familia" },
   { id: "hq-upload", en: "HQ · Source", es: "Central · Fuente" },
   { id: "hq-review", en: "HQ · Approve", es: "Central · Aprobar" },
   { id: "available", en: "Center · Available", es: "Centro · Disponible" },
@@ -45,6 +52,15 @@ const VIEW_LABELS: { id: DemoView; en: string; es: string }[] = [
     es: "Instructor · Borrador familiar",
   },
   { id: "family-view", en: "Family · Progress", es: "Familia · Progreso" },
+]
+
+const GUIDED_MOMENTS: { id: DemoView; en: string; es: string }[] = [
+  { id: "guided-hq", en: "Prepare", es: "Preparar" },
+  { id: "guided-center", en: "Understand", es: "Comprender" },
+  { id: "guided-coach", en: "Choose", es: "Elegir" },
+  { id: "guided-student", en: "Learn", es: "Aprender" },
+  { id: "guided-review", en: "Review", es: "Revisar" },
+  { id: "guided-family", en: "Respond", es: "Responder" },
 ]
 
 function now() {
@@ -80,9 +96,11 @@ export default function PersonalizedLearningDemo() {
   const [state, setState] = useState<PersonalizedLearningState>(loadState)
   const [message, setMessage] = useState("")
   const [validation, setValidation] = useState("")
+  const [familyCommentDraft, setFamilyCommentDraft] = useState("")
   const locale = state.locale
   const student = state.students[state.activeStudent]
   const tx = (en: string, es: string) => text(locale, en, es)
+  const guidedFurthest = guidedFurthestIndex(state)
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
@@ -269,6 +287,162 @@ export default function PersonalizedLearningDemo() {
     })
   }
 
+  function makeGuidedPackageAvailable() {
+    update((draft) => {
+      draft.package.status = "available"
+      if (!draft.package.approvals.some((approval) => approval.status === "accepted")) {
+        draft.package.approvals.push({
+          id: `package-${Date.now()}`,
+          kind: "package",
+          version: "1.0",
+          status: "accepted",
+          acceptedAt: now(),
+        })
+      }
+      draft.students.robert.centerAssessment ??= robertAssessment()
+      draft.activeStudent = "robert"
+      draft.view = "guided-center"
+      return draft
+    })
+    setMessage(tx("Package v1.0 is available to Plainsboro Center.", "El paquete v1.0 está disponible para el Centro Plainsboro."))
+  }
+
+  function reviewGuidedAssessment() {
+    update((draft) => {
+      const assessment = draft.students.robert.centerAssessment ?? robertAssessment()
+      assessment.status = "reviewed"
+      assessment.reviewedAt = now()
+      draft.students.robert.centerAssessment = assessment
+      draft.activeStudent = "robert"
+      draft.view = "guided-coach"
+      return draft
+    })
+    setMessage(tx("Robert's fictional assessment is ready for Marcus.", "La evaluación ficticia de Robert está lista para Marcus."))
+  }
+
+  function saveGuidedDecision(adjusted: boolean) {
+    update((draft) => {
+      const record = draft.students.robert
+      record.recommendationHistory.push({
+        id: `robert-guided-decision-${Date.now()}`,
+        approach: "narrated-then-reduced",
+        action: adjusted ? "modified" : "accepted",
+        reason: adjusted
+          ? tx("Marcus added one visual marker cue to the narrated example, then reduced prompting.", "Marcus agregó una pista visual al ejemplo narrado y luego redujo las indicaciones.")
+          : tx("Marcus accepted one short narrated example, then independent practice.", "Marcus aceptó un ejemplo narrado breve y luego práctica independiente."),
+        evidenceIds: ["prepared-sept-08", "prepared-sept-15"],
+        createdAt: now(),
+      })
+      record.reportRevisions = record.reportRevisions.map((revision) =>
+        revision.status === "approved" || revision.status === "shared"
+          ? { ...revision, status: "invalidated", invalidatedReason: tx("The teaching approach changed.", "El enfoque docente cambió.") }
+          : revision,
+      )
+      record.reportReviews = record.reportReviews.map((review) =>
+        review.action === "reviewed" || review.action === "approved"
+          ? { ...review, action: "invalidated", reason: tx("The teaching approach changed.", "El enfoque docente cambió.") }
+          : review,
+      )
+      if (!record.attempts.some((attempt) => attempt.activity === "check-1" && !attempt.submitted)) {
+        record.attempts.push(createAttempt("check-1", "1¼ counterclockwise rotations from Top"))
+      }
+      draft.activeStudent = "robert"
+      draft.activePresentation = "narrated"
+      draft.view = "guided-student"
+      return draft
+    })
+    setMessage(adjusted ? tx("Marcus adjusted and saved the approach.", "Marcus ajustó y guardó el enfoque.") : tx("Marcus accepted and saved the approach.", "Marcus aceptó y guardó el enfoque."))
+  }
+
+  function openGuidedMonthlyReview() {
+    update((draft) => {
+      const record = draft.students.robert
+      if (!record.reportRevisions.some((revision) => revision.status === "draft")) {
+        const nextVersion = `2.${record.reportRevisions.length + 1}`
+        record.reportRevisions.push({
+          id: `monthly-${Date.now()}`,
+          version: nextVersion,
+          contentFingerprint: `prepared-sept-08-sept-15-sept-22-${record.attempts.length}-${record.recommendationHistory.length}`,
+          status: "draft",
+          createdAt: now(),
+        })
+      }
+      draft.view = "guided-review"
+      return draft
+    })
+    setMessage("")
+  }
+
+  function reviewGuidedReport() {
+    update((draft) => {
+      const record = draft.students.robert
+      const report = [...record.reportRevisions].reverse().find((revision) => revision.status === "draft")
+      if (!report) return draft
+      record.reportReviews.push({
+        id: `coach-review-${Date.now()}`,
+        version: report.version,
+        role: "coach",
+        action: "reviewed",
+        createdAt: now(),
+        reason: tx("Marcus confirmed the prepared evidence and next step.", "Marcus confirmó la evidencia preparada y el siguiente paso."),
+      })
+      return draft
+    })
+    setMessage(tx("Coach review recorded for this exact report version.", "La revisión del instructor se registró para esta versión exacta."))
+  }
+
+  function approveGuidedReport() {
+    update((draft) => {
+      const record = draft.students.robert
+      const report = [...record.reportRevisions].reverse().find((revision) => revision.status === "draft")
+      if (!report || !record.reportReviews.some((review) => review.version === report.version && review.role === "coach" && review.action === "reviewed")) return draft
+      report.status = "approved"
+      record.reportReviews.push({
+        id: `center-approval-${Date.now()}`,
+        version: report.version,
+        role: "center",
+        action: "approved",
+        createdAt: now(),
+        reason: tx("Plainsboro Center approved the exact reviewed version.", "El Centro Plainsboro aprobó la versión exacta revisada."),
+      })
+      return draft
+    })
+    setMessage(tx("Center approval recorded. The Family view can now use this exact version.", "Aprobación del Centro registrada. La vista familiar ya puede usar esta versión exacta."))
+  }
+
+  function shareGuidedReport() {
+    update((draft) => {
+      const report = [...draft.students.robert.reportRevisions].reverse().find((revision) => revision.status === "approved")
+      if (!report) return draft
+      report.status = "shared"
+      draft.view = "guided-family"
+      return draft
+    })
+    setMessage(tx("Shared only inside this fictional browser-local demo.", "Compartido solo dentro de esta demostración ficticia local del navegador."))
+  }
+
+  function submitFamilyComment() {
+    if (!familyCommentDraft.trim()) {
+      setValidation(tx("Write a fictional comment before submitting.", "Escribe un comentario ficticio antes de enviarlo."))
+      return
+    }
+    update((draft) => {
+      const record = draft.students.robert
+      const report = [...record.reportRevisions].reverse().find((revision) => revision.status === "shared")
+      if (!report) return draft
+      record.familyComments.push({
+        id: `family-comment-${Date.now()}`,
+        reportVersion: report.version,
+        text: familyCommentDraft.trim(),
+        createdAt: now(),
+        simulated: true,
+      })
+      return draft
+    })
+    setFamilyCommentDraft("")
+    setMessage(tx("Fictional comment saved locally and now visible to Coach Marcus.", "Comentario ficticio guardado localmente y ahora visible para el instructor Marcus."))
+  }
+
   function choosePresentation(presentation: Presentation, previewOnly = true) {
     update((draft) => {
       const record = draft.students[draft.activeStudent]
@@ -357,7 +531,9 @@ export default function PersonalizedLearningDemo() {
 
   function currentInteractiveAttempt(snapshot = state) {
     const activities: AttemptRecord["activity"][] =
-      snapshot.view === "updated"
+      snapshot.view === "guided-student"
+        ? ["check-1"]
+        : snapshot.view === "updated"
         ? ["transfer"]
         : snapshot.view === "checks"
           ? [snapshot.activeCheck === 1 ? "check-1" : "check-2"]
@@ -377,28 +553,32 @@ export default function PersonalizedLearningDemo() {
       : undefined
   }
 
-  const roleName = state.view.startsWith("hq-")
+  const roleName = state.view === "guided-hq" || state.view.startsWith("hq-")
     ? "Marcus Vance · HQ"
-    : state.view === "available"
+    : state.view === "guided-center" || state.view === "available"
       ? "Kevin · Center Director"
-      : state.view.startsWith("family")
+      : state.view === "guided-family" || state.view.startsWith("family")
         ? "Hayes Family"
-        : ["coach", "evidence", "family-draft"].includes(state.view)
+        : ["guided-coach", "guided-review", "coach", "evidence", "family-draft"].includes(state.view)
           ? "Coach Marcus"
           : student.name
 
   return (
     <div className="min-h-screen bg-cool-50 text-[#162b3d]">
-      <header className="sticky top-0 z-40 flex min-h-16 items-center justify-between border-b border-cool-300/70 bg-white px-4 py-3 sm:px-8">
+      <header className="sticky top-0 z-40 flex min-h-16 flex-wrap items-center justify-between gap-y-2 border-b border-cool-300/70 bg-white px-4 py-3 sm:px-8">
         <a
           href="/learninghub/demo2/"
           aria-label={tx(
             "Cognit Demo home",
             "Inicio de la demostración Cognit",
           )}
+          className="flex min-h-11 items-center gap-3 rounded-lg px-1 focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-navy"
         >
           <LogoHorizontal className="hidden h-7 sm:block" />
           <LogoWordmark className="h-6 sm:hidden" />
+          <span className="hidden items-center gap-1 border-l border-cool-300 pl-3 text-sm font-semibold text-navy md:flex">
+            <ArrowLeft size={15} /> {tx("Back to Demo2", "Volver a Demo2")}
+          </span>
         </a>
         <div className="flex items-center gap-2">
           <button
@@ -416,6 +596,16 @@ export default function PersonalizedLearningDemo() {
           <Avatar name={roleName} size={32} />
           <span className="text-sm font-medium text-navy">{roleName}</span>
         </div>
+
+        {state.view.startsWith("guided-") && (
+          <GuidedProgress
+            moments={GUIDED_MOMENTS}
+            current={state.view}
+            furthest={guidedFurthest}
+            locale={locale}
+            onSelect={(view) => navigate(view)}
+          />
+        )}
       </header>
 
       <main className="mx-auto w-full max-w-[1440px] px-4 py-7 sm:px-8 sm:py-10">
@@ -515,7 +705,8 @@ export default function PersonalizedLearningDemo() {
           </section>
         )}
 
-        {!state.view.startsWith("hq-") &&
+        {!state.view.startsWith("guided-") &&
+          !state.view.startsWith("hq-") &&
           state.view !== "available" &&
           !state.view.startsWith("family") && (
             <div
@@ -559,6 +750,18 @@ export default function PersonalizedLearningDemo() {
 
   function renderView() {
     switch (state.view) {
+      case "guided-hq":
+        return <GuidedHq />
+      case "guided-center":
+        return <GuidedCenter />
+      case "guided-coach":
+        return <GuidedCoach />
+      case "guided-student":
+        return <GuidedStudent />
+      case "guided-review":
+        return <GuidedReview />
+      case "guided-family":
+        return <GuidedFamily />
       case "hq-upload":
         return <HqUpload />
       case "hq-processing":
@@ -590,6 +793,237 @@ export default function PersonalizedLearningDemo() {
       case "family-view":
         return <FamilyView />
     }
+  }
+
+  function GuidedHq() {
+    const available = state.package.approvals.some((approval) => approval.status === "accepted")
+    const formats = [
+      [tx("Video / storyboard", "Video / guion gráfico"), tx("Working prepared storyboard", "Guion gráfico preparado y funcional")],
+      [tx("Audio / narration", "Audio / narración"), tx("Simulated media · script and transcript", "Medio simulado · guion y transcripción")],
+      [tx("Animation / interactive", "Animación / interactivo"), tx("Working keyboard-accessible motor lab", "Laboratorio de motor funcional y accesible por teclado")],
+      [tx("Text", "Texto"), tx("Working concise brief and extension", "Guía breve y extensión funcionales")],
+    ]
+    return (
+      <Page
+        title={tx("One curriculum. Several ways to learn.", "Un currículo. Varias formas de aprender.")}
+        subtitle={tx("HQ prepared one fictional Robotics Explorers package with shared objectives and four presentations.", "La Central preparó un paquete ficticio de Exploradores de Robótica con objetivos comunes y cuatro presentaciones.")}
+        eyebrow={tx("MOMENT 1 OF 6 · HQ PREPARATION", "MOMENTO 1 DE 6 · PREPARACIÓN CENTRAL")}
+      >
+        <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+          <Panel>
+            <Label>{tx("PACKAGE v1.0 · MTR-01", "PAQUETE v1.0 · MTR-01")}</Label>
+            <h2 className="pl-h2">{tx("Turn, test, explain", "Girar, probar, explicar")}</h2>
+            <ul className="space-y-3 text-[1.02rem]">
+              <li>✓ {tx("Predict clockwise and counterclockwise movement.", "Predecir el movimiento horario y antihorario.")}</li>
+              <li>✓ {tx("Distinguish partial turns from complete rotations.", "Distinguir giros parciales de rotaciones completas.")}</li>
+              <li>✓ {tx("Transfer the idea to a new starting position.", "Transferir la idea a una nueva posición inicial.")}</li>
+              <li>✓ {tx("Explain or demonstrate the result.", "Explicar o demostrar el resultado.")}</li>
+            </ul>
+            <Info>{tx("Clarified shaft-end view, facing the motor. Two complete clockwise rotations = 720°.", "Vista aclarada desde el extremo del eje, frente al motor. Dos rotaciones completas en sentido horario = 720°.")}</Info>
+          </Panel>
+          <Panel>
+            <h2 className="pl-h2">{tx("Prepared teaching formats", "Formatos de enseñanza preparados")}</h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {formats.map(([name, detail]) => (
+                <div key={name} className="rounded-xl border border-cool-300 bg-cool-50 p-4">
+                  <p className="font-semibold text-navy">{name}</p>
+                  <p className="mt-1 text-sm text-cool-600">{detail}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-sm text-cool-600">{tx("All formats use the same objectives and comparable evidence task. No media was recorded or generated live.", "Todos los formatos usan los mismos objetivos y una tarea de evidencia comparable. No se grabó ni generó contenido en vivo.")}</p>
+          </Panel>
+        </div>
+        {available ? (
+          <Primary onClick={() => navigate("guided-center")}>{tx("Continue to Plainsboro Center", "Continuar al Centro Plainsboro")} <ChevronRight size={18} /></Primary>
+        ) : (
+          <Primary onClick={makeGuidedPackageAvailable}>{tx("Make available to centers", "Hacer disponible para los centros")} <ChevronRight size={18} /></Primary>
+        )}
+      </Page>
+    )
+  }
+
+  function GuidedCenter() {
+    const assessment = state.students.robert.centerAssessment ?? robertAssessment()
+    return (
+      <Page
+        title={tx("Understand Robert before choosing an approach", "Comprender a Robert antes de elegir un enfoque")}
+        subtitle={tx("The Center combines a fictional intake assessment with prepared prior evidence. Preferences are current signals, not fixed labels.", "El Centro combina una evaluación ficticia de ingreso con evidencia previa preparada. Las preferencias son señales actuales, no etiquetas fijas.")}
+        eyebrow={tx("MOMENT 2 OF 6 · CENTER ASSESSMENT", "MOMENTO 2 DE 6 · EVALUACIÓN DEL CENTRO")}
+      >
+        <div className="grid gap-5 lg:grid-cols-2">
+          <Panel>
+            <Label>{tx("HOW ASSESSMENT WORKS", "CÓMO FUNCIONA LA EVALUACIÓN")}</Label>
+            <div className="space-y-4">
+              <div className="rounded-xl bg-[#fff3d6] p-4"><strong>{tx("New student", "Estudiante nuevo")}</strong><p>{tx("Brief fictional questions establish current knowledge, interests, preferred ways to begin, and support needs.", "Preguntas ficticias breves establecen conocimientos actuales, intereses, formas preferidas de comenzar y necesidades de apoyo.")}</p></div>
+              <div className="rounded-xl bg-[#dce9f4] p-4"><strong>{tx("Existing student", "Estudiante existente")}</strong><p>{tx("Prepared prior responses add evidence without replacing new observations or turning a preference into a label.", "Las respuestas previas preparadas agregan evidencia sin reemplazar nuevas observaciones ni convertir una preferencia en etiqueta.")}</p></div>
+            </div>
+          </Panel>
+          <Panel>
+            <Label>{tx("ROBERT · ASSESSMENT-1", "ROBERT · EVALUACIÓN-1")}</Label>
+            <AssessmentRow label={tx("Current knowledge", "Conocimiento actual")} value={tx(assessment.knowledge, "Robert identifica la dirección horaria y antihoraria desde la vista del extremo del eje.")} />
+            <AssessmentRow label={tx("Skills", "Habilidades")} value={tx(assessment.skills, "Predice los puntos finales de cuartos de vuelta y revisa después de ver la respuesta del motor.")} />
+            <AssessmentRow label={tx("Presentation preference", "Preferencia de presentación")} value={tx(assessment.preference, "Actualmente participa con más facilidad cuando puede probar los controles.")} />
+            <AssessmentRow label={tx("Interests", "Intereses")} value={tx(assessment.interests, "Misiones de rescate, robots y poner a prueba una predicción.")} />
+            <AssessmentRow label={tx("Support need", "Necesidad de apoyo")} value={tx(assessment.supportNeeds, "Contar rotaciones completas todavía requiere un ejemplo conciso antes de la práctica independiente.")} />
+          </Panel>
+        </div>
+        <Panel>
+          <h2 className="pl-h2">{tx("Evidence used", "Evidencia utilizada")}</h2>
+          <ul className="grid gap-3 md:grid-cols-3">
+            {assessment.evidenceSources.map((source, index) => <li key={source} className="rounded-xl border border-cool-300 p-4">{tx(source, [
+              "Ingreso de estudiante nuevo: preguntas ficticias sobre intereses y preferencias de presentación.",
+              "Evidencia previa preparada · 8 de septiembre: revisión apoyada de un cuarto de vuelta.",
+              "Evidencia previa preparada · 15 de septiembre: dirección correcta; conteo de vueltas completas incierto.",
+            ][index])}</li>)}
+          </ul>
+        </Panel>
+        <Primary onClick={reviewGuidedAssessment}>{tx("Review recommended approach", "Revisar el enfoque recomendado")} <ChevronRight size={18} /></Primary>
+      </Page>
+    )
+  }
+
+  function GuidedCoach() {
+    const record = state.students.robert
+    const assessment = record.centerAssessment ?? robertAssessment()
+    const latestComment = record.familyComments.at(-1)
+    return (
+      <Page
+        title={tx("Marcus chooses the teaching approach", "Marcus elige el enfoque de enseñanza")}
+        subtitle={tx("The recommendation, rationale, and source evidence stay together. Marcus retains the decision.", "La recomendación, el motivo y la evidencia fuente permanecen juntos. Marcus conserva la decisión.")}
+        eyebrow={tx("MOMENT 3 OF 6 · COACH DECISION", "MOMENTO 3 DE 6 · DECISIÓN DEL INSTRUCTOR")}
+      >
+        {latestComment && <Status>{tx("New fictional Family response", "Nueva respuesta ficticia de la familia")}: “{latestComment.text}” · {tx("Report", "Informe")} {latestComment.reportVersion}</Status>}
+        <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+          <Panel>
+            <Label>{tx("ROBERT'S ASSESSMENT", "EVALUACIÓN DE ROBERT")}</Label>
+            <p className="font-semibold text-navy">{tx(assessment.preference, "Actualmente participa con más facilidad cuando puede probar los controles.")}</p>
+            <p className="mt-3">{tx(assessment.supportNeeds, "Contar rotaciones completas todavía requiere un ejemplo conciso antes de la práctica independiente.")}</p>
+            <p className="mt-4 text-sm text-cool-600">{tx("Evidence: prepared fictional sessions on September 8 and September 15.", "Evidencia: sesiones ficticias preparadas del 8 y 15 de septiembre.")}</p>
+          </Panel>
+          <Panel>
+            <Label>{tx("COGNIT RECOMMENDATION · AWAITING MARCUS", "RECOMENDACIÓN COGNIT · ESPERANDO A MARCUS")}</Label>
+            <h2 className="pl-h2">{tx("One short narrated example, then independent practice", "Un ejemplo narrado breve y luego práctica independiente")}</h2>
+            <p>{tx("Robert prefers hands-on activities. His previous responses suggest he needs help counting complete rotations. Start with a short narrated example, then let him try independently.", "Robert prefiere actividades prácticas. Sus respuestas anteriores sugieren que necesita ayuda para contar rotaciones completas. Comienza con un ejemplo narrado breve y luego deja que lo intente de forma independiente.")}</p>
+            <Info>{tx("This is a changeable teaching decision—not a learning-style label.", "Esta es una decisión docente que puede cambiar, no una etiqueta de estilo de aprendizaje.")}</Info>
+          </Panel>
+        </div>
+        <Primary onClick={() => saveGuidedDecision(false)}>{tx("Accept approach & start Robert's activity", "Aceptar enfoque e iniciar la actividad de Robert")} <ChevronRight size={18} /></Primary>
+        <Secondary onClick={() => saveGuidedDecision(true)}>{tx("Adjust: add one visual cue", "Ajustar: agregar una pista visual")}</Secondary>
+      </Page>
+    )
+  }
+
+  function GuidedStudent() {
+    const attempt = latestAttempt(state, "check-1")
+    const decision = state.students.robert.recommendationHistory.at(-1)
+    return (
+      <Page
+        title={tx("A short example, then Robert tries", "Un ejemplo breve y luego Robert intenta")}
+        subtitle={tx("Chosen presentation: narrated + illustrated. Support level: one example, then reduced prompting.", "Presentación elegida: narrada + ilustrada. Nivel de apoyo: un ejemplo y luego menos indicaciones.")}
+        eyebrow={tx("MOMENT 4 OF 6 · STUDENT LEARNING", "MOMENTO 4 DE 6 · APRENDIZAJE DEL ESTUDIANTE")}
+      >
+        <div className="grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
+          <Panel>
+            <Label>{tx("TEACHING EXAMPLE · PREPARED STORYBOARD", "EJEMPLO DOCENTE · GUION PREPARADO")}</Label>
+            <Rotation start="Top" end="Bottom" locale={locale} />
+            <p className="mt-4">{tx("A half-turn moves the marker to the opposite side. Narration is represented by prepared captions and transcript; no audio was recorded.", "Media vuelta mueve el indicador al lado opuesto. La narración se representa con subtítulos y transcripción preparados; no se grabó audio.")}</p>
+          </Panel>
+          {!attempt ? (
+            <Panel><h2 className="pl-h2">{tx("Ready for the meaningful task", "Listo para la tarea significativa")}</h2><p>{tx("Robert will predict 1¼ counterclockwise rotations from Top and explain how he counted.", "Robert predecirá 1¼ rotaciones antihorarias desde Arriba y explicará cómo contó.")}</p><Primary onClick={() => ensureAttempt("check-1", "1¼ counterclockwise rotations from Top")}>{tx("Start Robert's task", "Iniciar la tarea de Robert")}</Primary></Panel>
+          ) : attempt.submitted ? (
+            <Panel>
+              <h2 className="pl-h2">{tx("What Robert demonstrated", "Lo que Robert demostró")}</h2>
+              <AttemptSummary attempt={attempt} locale={locale} />
+              <Status>{attempt.independentlyExplained ? tx("Independent achievement", "Logro independiente") : attempt.correct ? tx("Supported achievement", "Logro con apoyo") : tx("Incorrect response preserved for review", "Respuesta incorrecta conservada para revisión")}</Status>
+            </Panel>
+          ) : (
+            <Panel>
+              <h2 className="pl-h2">{tx("Robert's task", "Tarea de Robert")}</h2>
+              <p className="mb-4 font-semibold text-navy">{tx("Start at Top. Predict the endpoint after 1¼ counterclockwise rotations.", "Comienza Arriba. Predice el punto final después de 1¼ rotaciones antihorarias.")}</p>
+              <div className="grid gap-3 sm:grid-cols-2">{POSITIONS.map((position, index) => <button key={position} className={`pl-choice ${attempt.answer === position ? "pl-choice-selected" : ""}`} onClick={() => selectAnswer(position)} aria-pressed={attempt.answer === position}>{index + 1} · {locale === "es" ? positionEs(position) : position}</button>)}</div>
+              <label className="mt-5 block font-semibold text-navy" htmlFor="guided-explanation">{tx("Explain how you counted", "Explica cómo contaste")}</label>
+              <textarea id="guided-explanation" rows={3} className="mt-2 w-full rounded-xl border border-cool-300 bg-cool-50 p-3" value={attempt.explanation} onChange={(event) => changeAttempt("check-1", (item) => { item.explanation = event.target.value; item.responseMode = "text" })} />
+              <details className="mt-4 rounded-xl border border-cool-300 p-4"><summary className="cursor-pointer font-semibold text-navy">{tx("Optional help", "Ayuda opcional")}</summary><Secondary onClick={() => changeAttempt("check-1", (item) => { item.hintUsed = true; item.supportNotes.push(tx("Marcus pointed to each complete rotation.", "Marcus señaló cada rotación completa.")) })}>{tx("Ask Marcus for one counting hint", "Pedir a Marcus una pista para contar")}</Secondary></details>
+              <Primary onClick={() => submitAttempt("check-1", true)}>{tx("Submit Robert's response", "Enviar la respuesta de Robert")}</Primary>
+            </Panel>
+          )}
+        </div>
+        {attempt?.submitted && <Primary onClick={openGuidedMonthlyReview}>{tx("See Robert's monthly progress", "Ver el progreso mensual de Robert")} <ChevronRight size={18} /></Primary>}
+        {decision && <p className="text-sm text-cool-600">{tx("Saved teaching decision", "Decisión docente guardada")}: {decision.reason}</p>}
+      </Page>
+    )
+  }
+
+  function GuidedReview() {
+    const record = state.students.robert
+    const report = [...record.reportRevisions].reverse().find((revision) => revision.status !== "invalidated")
+    const coachReviewed = Boolean(report && record.reportReviews.some((review) => review.version === report.version && review.role === "coach" && review.action === "reviewed"))
+    const centerApproved = Boolean(report && record.reportReviews.some((review) => review.version === report.version && review.role === "center" && review.action === "approved"))
+    const currentAttempt = latestAttempt(state, "check-1")
+    return (
+      <Page
+        title={tx("Review Robert's monthly progress", "Revisar el progreso mensual de Robert")}
+        subtitle={tx("Prepared evidence from several fictional sessions is combined here. The visitor's single task is shown separately and does not represent the month.", "Aquí se combina evidencia preparada de varias sesiones ficticias. La única tarea del visitante se muestra por separado y no representa el mes.")}
+        eyebrow={tx("MOMENT 5 OF 6 · COACH + CENTER REPORT WORKSPACE", "MOMENTO 5 DE 6 · ESPACIO DE INFORME DEL INSTRUCTOR + CENTRO")}
+      >
+        {!report ? <Panel><p>{tx("No monthly report version exists yet.", "Aún no existe una versión del informe mensual.")}</p><Primary onClick={openGuidedMonthlyReview}>{tx("Prepare monthly report workspace", "Preparar el espacio del informe mensual")}</Primary></Panel> : <>
+          <Status>{tx("MONTHLY REPORT", "INFORME MENSUAL")} · {tx("Exact version", "Versión exacta")} {report.version} · {report.status}</Status>
+          <div className="grid gap-5 xl:grid-cols-3">
+            <Panel><h2 className="pl-h2">{tx("Objectives", "Objetivos")}</h2><p>{tx("Direction, partial versus complete rotations, transfer, and explanation.", "Dirección, rotaciones parciales frente a completas, transferencia y explicación.")}</p></Panel>
+            <Panel><h2 className="pl-h2">{tx("Assessment → approach", "Evaluación → enfoque")}</h2><p>{tx("Hands-on preference plus uncertainty counting full turns supported one narrated example, then reduced prompting.", "La preferencia práctica y la incertidumbre al contar vueltas completas respaldaron un ejemplo narrado y luego menos indicaciones.")}</p></Panel>
+            <Panel><h2 className="pl-h2">{tx("Remaining uncertainty", "Incertidumbre restante")}</h2><p>{tx("Transfer from a different starting position still needs independent evidence.", "La transferencia desde otra posición inicial aún necesita evidencia independiente.")}</p></Panel>
+          </div>
+          <Panel>
+            <h2 className="pl-h2">{tx("Prepared multi-session evidence", "Evidencia preparada de varias sesiones")}</h2>
+            <div className="grid gap-3 md:grid-cols-3">
+              <EvidenceCard date={tx("September 8", "8 de septiembre")} prepared={tx("Prepared fictional session", "Sesión ficticia preparada")} title={tx("Supported revision", "Revisión con apoyo")} body={tx("Robert revised a quarter-turn prediction after one visual hint.", "Robert revisó una predicción de cuarto de vuelta después de una pista visual.")} />
+              <EvidenceCard date={tx("September 15", "15 de septiembre")} prepared={tx("Prepared fictional session", "Sesión ficticia preparada")} title={tx("Independent direction", "Dirección independiente")} body={tx("He identified clockwise direction independently; complete-turn counting remained uncertain.", "Identificó la dirección horaria de forma independiente; contar vueltas completas siguió siendo incierto.")} />
+              <EvidenceCard date={tx("September 22", "22 de septiembre")} prepared={tx("Prepared fictional session", "Sesión ficticia preparada")} title={tx("Explained endpoint", "Punto final explicado")} body={tx("He explained that one complete turn returns to the starting position.", "Explicó que una vuelta completa regresa a la posición inicial.")} />
+            </div>
+          </Panel>
+          <Panel><h2 className="pl-h2">{tx("Current demo activity · separate evidence", "Actividad actual de la demostración · evidencia separada")}</h2><AttemptSummary attempt={currentAttempt} locale={locale} /></Panel>
+          <div className="grid gap-3 md:grid-cols-2">
+            <Status>{tx("Coach Marcus", "Instructor Marcus")}: {coachReviewed ? tx("reviewed this exact version", "revisó esta versión exacta") : tx("review pending", "revisión pendiente")}</Status>
+            <Status>{tx("Plainsboro Center", "Centro Plainsboro")}: {centerApproved ? tx("approved this exact version", "aprobó esta versión exacta") : tx("approval pending", "aprobación pendiente")}</Status>
+          </div>
+          {!coachReviewed ? <Primary onClick={reviewGuidedReport}>{tx("Coach Marcus · Review exact version", "Instructor Marcus · Revisar versión exacta")}</Primary> : !centerApproved ? <Primary onClick={approveGuidedReport}>{tx("Plainsboro Center · Approve exact version", "Centro Plainsboro · Aprobar versión exacta")}</Primary> : <Primary onClick={shareGuidedReport}>{tx("Share demo report with family", "Compartir informe de demostración con la familia")} <ChevronRight size={18} /></Primary>}
+          <details className="rounded-xl border border-cool-300 bg-white p-4">
+            <summary className="cursor-pointer font-semibold text-navy">{tx("Version and invalidation history", "Historial de versiones e invalidación")}</summary>
+            <ul className="mt-3 space-y-2">
+              {record.reportRevisions.map((revision) => <li key={revision.id}>{tx("Version", "Versión")} {revision.version} · {tx(revision.status, revision.status === "invalidated" ? "invalidada" : revision.status === "shared" ? "compartida" : "borrador")}{revision.invalidatedReason ? ` · ${tx(revision.invalidatedReason, "El enfoque docente cambió.")}` : ""}</li>)}
+            </ul>
+            <p className="mt-4 text-xs font-bold uppercase tracking-wide text-cool-600">{tx("Coach and Center approval history", "Historial de aprobación del instructor y el Centro")}</p>
+            <ul className="mt-2 space-y-2">
+              {record.reportReviews.length ? record.reportReviews.map((review) => <li key={review.id}>{review.role === "coach" ? tx("Coach Marcus", "Instructor Marcus") : tx("Plainsboro Center", "Centro Plainsboro")} · {tx("Version", "Versión")} {review.version} · {tx(review.action, review.action === "reviewed" ? "revisada" : review.action === "approved" ? "aprobada" : "invalidada")}{review.reason ? ` · ${tx(review.reason, "El contenido del informe cambió.")}` : ""}</li>) : <li>{tx("No approvals recorded yet.", "Aún no hay aprobaciones registradas.")}</li>}
+            </ul>
+          </details>
+        </>}
+      </Page>
+    )
+  }
+
+  function GuidedFamily() {
+    const record = state.students.robert
+    const shared = [...record.reportRevisions].reverse().find((revision) => revision.status === "shared")
+    const latestComment = record.familyComments.at(-1)
+    return (
+      <Page
+        title={tx("Robert's monthly learning story", "Historia mensual de aprendizaje de Robert")}
+        subtitle={tx("A reviewed fictional report from Coach Marcus and Plainsboro Center.", "Un informe ficticio revisado por el instructor Marcus y el Centro Plainsboro.")}
+        eyebrow={tx("MOMENT 6 OF 6 · FAMILY RESPONSE", "MOMENTO 6 DE 6 · RESPUESTA FAMILIAR")}
+      >
+        {!shared ? <Info>{tx("No Center-approved report is available to the Family yet.", "Aún no hay un informe aprobado por el Centro disponible para la familia.")}</Info> : <>
+          <Status>{tx("SIMULATED FAMILY VIEW · REPORT", "VISTA FAMILIAR SIMULADA · INFORME")} {shared.version}</Status>
+          <div className="grid gap-5 lg:grid-cols-2">
+            <Panel><h2 className="pl-h2">{tx("What Robert learned", "Lo que Robert aprendió")}</h2><p>{tx("Across prepared fictional September sessions, Robert improved at predicting direction and explaining why complete rotations return to the starting point.", "Durante sesiones ficticias preparadas de septiembre, Robert mejoró al predecir la dirección y explicar por qué las rotaciones completas regresan al punto inicial.")}</p><h3 className="mt-5 font-semibold text-navy">{tx("Support used", "Apoyo utilizado")}</h3><p>{tx("One narrated example and an early visual hint; later direction evidence was independent.", "Un ejemplo narrado y una pista visual inicial; la evidencia posterior de dirección fue independiente.")}</p></Panel>
+            <Panel><h2 className="pl-h2">{tx("What happens next", "Qué sigue")}</h2><p>{tx("Marcus will reduce prompting and check transfer from a new starting position.", "Marcus reducirá las indicaciones y comprobará la transferencia desde una nueva posición inicial.")}</p><p className="mt-5 text-sm text-cool-600">{tx("This report and response stay in this browser. Nothing is messaged or delivered.", "Este informe y la respuesta permanecen en este navegador. No se envía ni entrega nada.")}</p></Panel>
+          </div>
+          {latestComment ? <Panel><h2 className="pl-h2">{tx("Your response", "Tu respuesta")}</h2><Status>✓ {tx("Saved locally and visible to Coach Marcus", "Guardada localmente y visible para el instructor Marcus")}</Status><p className="mt-4">“{latestComment.text}”</p><Secondary onClick={() => navigate("guided-coach")}>{tx("See the Coach perspective", "Ver la perspectiva del instructor")}</Secondary></Panel> : <Panel><label className="pl-h2 block" htmlFor="family-comment">{tx("Respond to Coach Marcus", "Responder al instructor Marcus")}</label><textarea id="family-comment" rows={4} className="w-full rounded-xl border border-cool-300 bg-cool-50 p-3" placeholder={tx("Write a fictional Family comment…", "Escribe un comentario familiar ficticio…")} value={familyCommentDraft} onChange={(event) => setFamilyCommentDraft(event.target.value)} /><Primary onClick={submitFamilyComment}>{tx("Submit fictional comment", "Enviar comentario ficticio")}</Primary></Panel>}
+        </>}
+        {!shared && <Secondary onClick={() => navigate("guided-review")}>{tx("Return to monthly review", "Volver a la revisión mensual")}</Secondary>}
+      </Page>
+    )
   }
 
   function HqUpload() {
@@ -2076,6 +2510,68 @@ export default function PersonalizedLearningDemo() {
   }
 }
 
+function guidedFurthestIndex(state: PersonalizedLearningState) {
+  const record = state.students.robert
+  const shared = record.reportRevisions.some((revision) => revision.status === "shared")
+  const approved = record.reportReviews.some((review) => review.role === "center" && review.action === "approved")
+  const submitted = record.attempts.some((attempt) => attempt.activity === "check-1" && attempt.submitted)
+  if (shared || approved) return 5
+  if (submitted) return 4
+  if (record.recommendationHistory.length) return 3
+  if (record.centerAssessment?.status === "reviewed") return 2
+  if (state.package.approvals.some((approval) => approval.status === "accepted")) return 1
+  return 0
+}
+
+function GuidedProgress({
+  moments,
+  current,
+  furthest,
+  locale,
+  onSelect,
+}: {
+  moments: { id: DemoView; en: string; es: string }[]
+  current: DemoView
+  furthest: number
+  locale: "en" | "es"
+  onSelect: (view: DemoView) => void
+}) {
+  return (
+    <nav className="order-3 w-full lg:order-none lg:max-w-[800px]" aria-label={locale === "es" ? "Progreso de la demostración guiada" : "Guided demo progress"}>
+      <ol className="pl-moment-list grid grid-cols-6 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+        {moments.map((moment, index) => {
+          const active = current === moment.id
+          const available = index <= furthest
+          return (
+            <li key={moment.id}>
+              <button
+                type="button"
+                className={`pl-moment ${active ? "pl-moment-active" : ""}`}
+                onClick={() => onSelect(moment.id)}
+                disabled={!available}
+                aria-current={active ? "step" : undefined}
+                aria-label={`${index + 1} ${locale === "es" ? moment.es : moment.en}`}
+                title={!available ? (locale === "es" ? "Completa el momento anterior" : "Complete the previous moment") : undefined}
+              >
+                <span className="pl-moment-number">{index + 1}</span>
+                <span className="hidden sm:inline">{locale === "es" ? moment.es : moment.en}</span>
+              </button>
+            </li>
+          )
+        })}
+      </ol>
+    </nav>
+  )
+}
+
+function AssessmentRow({ label, value }: { label: string; value: string }) {
+  return <div className="border-b border-cool-300 py-3 last:border-0"><p className="text-xs font-bold uppercase tracking-wide text-cool-600">{label}</p><p className="mt-1">{value}</p></div>
+}
+
+function EvidenceCard({ date, prepared, title, body }: { date: string; prepared: string; title: string; body: string }) {
+  return <article className="rounded-xl border border-cool-300 bg-cool-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-cool-600">{date} · {prepared}</p><h3 className="mt-2 font-semibold text-navy">{title}</h3><p className="mt-2 text-sm">{body}</p></article>
+}
+
 function Page({
   title,
   subtitle,
@@ -2331,6 +2827,18 @@ function positionEs(position: Position) {
   }[position]
 }
 function breadcrumb(view: DemoView, locale: "en" | "es", student: string) {
+  if (view === "guided-hq")
+    return locale === "es" ? "COGNIT CENTRAL / CURRÍCULO" : "COGNIT HQ / CURRICULUM"
+  if (view === "guided-center")
+    return locale === "es" ? "Centro Plainsboro / Evaluación de Robert" : "Plainsboro Center / Robert assessment"
+  if (view === "guided-coach")
+    return locale === "es" ? "Enseñanza / Decisión de Marcus" : "Teaching / Marcus's decision"
+  if (view === "guided-student")
+    return locale === "es" ? "Mi aprendizaje / Exploradores de Robótica" : "My learning / Robotics Explorers"
+  if (view === "guided-review")
+    return locale === "es" ? "Instructor + Centro / Informe mensual" : "Coach + Center / Monthly report"
+  if (view === "guided-family")
+    return locale === "es" ? `Familia / Trayectoria / ${student}` : `Family / Learning Journey / ${student}`
   if (view.startsWith("hq-"))
     return locale === "es"
       ? "COGNIT CENTRAL / CURRÍCULO"
