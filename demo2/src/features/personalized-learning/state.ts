@@ -15,7 +15,7 @@ export interface ApprovalRecord {
 
 export interface AttemptRecord {
   id: string
-  activity: "adventure-1" | "adventure-2" | "guided" | "interactive" | "check-1" | "check-2" | "transfer"
+  activity: "adventure-1" | "adventure-2" | "guided" | "guided-challenge" | "interactive" | "check-1" | "check-2" | "transfer"
   prompt: string
   packageVersion: string
   answer?: Position
@@ -26,6 +26,13 @@ export interface AttemptRecord {
   hintUsed: boolean
   demonstrationUsed: boolean
   supportNotes: string[]
+  submissionHistory?: Array<{
+    answer: Position
+    correct: boolean
+    submittedAt: string
+    hintUsed: boolean
+    supportNotes: string[]
+  }>
   submitted: boolean
   correct: boolean
   independentlyExplained: boolean
@@ -236,6 +243,7 @@ export function createAttempt(
     hintUsed: false,
     demonstrationUsed: false,
     supportNotes: [],
+    submissionHistory: [],
     submitted: false,
     correct: false,
     independentlyExplained: false,
@@ -404,13 +412,23 @@ export function populatedJakeState(): PersonalizedLearningState {
 
 export const STORAGE_KEY = "cognit.personalized-learning.demo.v1"
 
+function normalizeAttemptHistory(state: PersonalizedLearningState) {
+  for (const record of Object.values(state.students)) {
+    for (const attempt of record.attempts) {
+      attempt.submissionHistory ??= []
+    }
+  }
+  return state
+}
+
 export function loadState(): PersonalizedLearningState {
   if (typeof window === "undefined") return emptyState()
   try {
     const parsed = JSON.parse(
       window.localStorage.getItem(STORAGE_KEY) ?? "null",
     )
-    if (parsed?.schemaVersion === 2) return parsed
+    if (parsed?.schemaVersion === 2)
+      return normalizeAttemptHistory(parsed as PersonalizedLearningState)
     if (parsed?.schemaVersion === 1) {
       const migrated = parsed as PersonalizedLearningState
       migrated.schemaVersion = 2
@@ -419,7 +437,7 @@ export function loadState(): PersonalizedLearningState {
         record.reportReviews ??= []
         record.familyComments ??= []
       }
-      return migrated
+      return normalizeAttemptHistory(migrated)
     }
     return emptyState()
   } catch {

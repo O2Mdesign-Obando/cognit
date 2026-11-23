@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { ArrowLeft, Check, ChevronRight, Settings2, X } from "lucide-react"
+import { ArrowLeft, Check, ChevronRight, Lightbulb, Pause, Play, RotateCcw, Settings2, X } from "lucide-react"
 import { Avatar, LogoHorizontal, LogoWordmark } from "../../lib/brand"
 import {
   STORAGE_KEY,
@@ -85,6 +85,7 @@ function expectedPosition(activity: AttemptRecord["activity"]): Position {
     "adventure-1": "Right",
     "adventure-2": "Left",
     guided: "Bottom",
+    "guided-challenge": "Right",
     interactive: "Bottom",
     "check-1": "Left",
     "check-2": "Top",
@@ -229,10 +230,21 @@ export default function PersonalizedLearningDemo() {
         .reverse()
         .find((item) => item.activity === activity && !item.submitted)
       if (!target) return draft
+      const submittedAnswer = target.answer
+      if (!submittedAnswer) return draft
       target.submitted = true
       target.submittedAt = now()
       target.correct = target.answer === expectedPosition(activity)
+      target.submissionHistory ??= []
+      target.submissionHistory.push({
+        answer: submittedAnswer,
+        correct: target.correct,
+        submittedAt: target.submittedAt,
+        hintUsed: target.hintUsed || target.demonstrationUsed,
+        supportNotes: [...target.supportNotes],
+      })
       target.independentlyExplained = Boolean(
+        activity !== "guided-challenge" &&
         target.correct &&
           (target.explanation.trim() ||
             target.responseMode === "coach-recorded") &&
@@ -343,8 +355,8 @@ export default function PersonalizedLearningDemo() {
           ? { ...review, action: "invalidated", reason: tx("The teaching approach changed.", "El enfoque docente cambió.") }
           : review,
       )
-      if (!record.attempts.some((attempt) => attempt.activity === "check-1" && !attempt.submitted)) {
-        record.attempts.push(createAttempt("check-1", "1¼ counterclockwise rotations from Top"))
+      if (!record.attempts.some((attempt) => attempt.activity === "guided-challenge" && !attempt.submitted)) {
+        record.attempts.push(createAttempt("guided-challenge", "1¼ clockwise turns from Top"))
       }
       draft.activeStudent = "robert"
       draft.activePresentation = "narrated"
@@ -371,6 +383,78 @@ export default function PersonalizedLearningDemo() {
       return draft
     })
     setMessage("")
+  }
+
+  function showGuidedHint() {
+    update((draft) => {
+      const record = draft.students.robert
+      const attempt = [...record.attempts]
+        .reverse()
+        .find((item) => item.activity === "guided-challenge")
+      if (!attempt) return draft
+      attempt.hintUsed = true
+      attempt.independentlyExplained = false
+      const note = tx(
+        "Used a concept hint: separate the complete turn from the remaining quarter-turn.",
+        "Usó una pista conceptual: separar la vuelta completa del cuarto de vuelta restante.",
+      )
+      if (!attempt.supportNotes.includes(note)) attempt.supportNotes.push(note)
+      draft.students.robert = invalidateApprovals(
+        record,
+        tx("Practice support changed.", "Cambió el apoyo de la práctica."),
+      )
+      return draft
+    })
+  }
+
+  function retryGuidedChallenge() {
+    update((draft) => {
+      const record = draft.students.robert
+      const attempt = [...record.attempts]
+        .reverse()
+        .find((item) => item.activity === "guided-challenge")
+      if (!attempt) return draft
+      attempt.submitted = false
+      attempt.correct = false
+      attempt.independentlyExplained = false
+      attempt.demonstrationUsed = true
+      const note = tx(
+        "Retried after watching the result animation.",
+        "Volvió a intentar después de ver la animación del resultado.",
+      )
+      if (!attempt.supportNotes.includes(note)) attempt.supportNotes.push(note)
+      draft.students.robert = invalidateApprovals(
+        record,
+        tx("A practice response was revised.", "Se revisó una respuesta de práctica."),
+      )
+      return draft
+    })
+    setMessage(tx("Your first answer is saved. Try the same task again.", "Tu primera respuesta está guardada. Intenta la misma tarea de nuevo."))
+  }
+
+  function openGuidedExplanation(presentation: Presentation) {
+    update((draft) => {
+      const record = draft.students.robert
+      record.previewPresentation = presentation
+      draft.activePresentation = presentation
+      const attempt = [...record.attempts]
+        .reverse()
+        .find((item) => item.activity === "guided-challenge")
+      if (attempt && (!attempt.submitted || !attempt.correct)) {
+        attempt.demonstrationUsed = true
+        attempt.independentlyExplained = false
+        const note = tx(
+          `${presentationName(presentation, "en")} explanation used during practice.`,
+          `Se usó la explicación ${presentationName(presentation, "es")} durante la práctica.`,
+        )
+        if (!attempt.supportNotes.includes(note)) attempt.supportNotes.push(note)
+        draft.students.robert = invalidateApprovals(
+          record,
+          tx("Practice support changed.", "Cambió el apoyo de la práctica."),
+        )
+      }
+      return draft
+    })
   }
 
   function reviewGuidedReport() {
@@ -532,7 +616,7 @@ export default function PersonalizedLearningDemo() {
   function currentInteractiveAttempt(snapshot = state) {
     const activities: AttemptRecord["activity"][] =
       snapshot.view === "guided-student"
-        ? ["check-1"]
+        ? ["guided-challenge"]
         : snapshot.view === "updated"
         ? ["transfer"]
         : snapshot.view === "checks"
@@ -915,42 +999,85 @@ export default function PersonalizedLearningDemo() {
   }
 
   function GuidedStudent() {
-    const attempt = latestAttempt(state, "check-1")
+    const record = state.students.robert
+    const attempt = latestAttempt(state, "guided-challenge")
     const decision = state.students.robert.recommendationHistory.at(-1)
+    const alternative = record.previewPresentation
     return (
       <Page
-        title={tx("A short example, then Robert tries", "Un ejemplo breve y luego Robert intenta")}
-        subtitle={tx("Chosen presentation: narrated + illustrated. Support level: one example, then reduced prompting.", "Presentación elegida: narrada + ilustrada. Nivel de apoyo: un ejemplo y luego menos indicaciones.")}
+        title={tx("Watch this example. Then you try.", "Mira este ejemplo. Luego inténtalo.")}
+        subtitle={tx("Marcus chose a short example to help you count complete turns.", "Marcus eligió un ejemplo breve para ayudarte a contar vueltas completas.")}
         eyebrow={tx("MOMENT 4 OF 6 · STUDENT LEARNING", "MOMENTO 4 DE 6 · APRENDIZAJE DEL ESTUDIANTE")}
       >
-        <div className="grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
+        <Status>{tx("Chosen support: animated example with captions · then practice with reduced prompting", "Apoyo elegido: ejemplo animado con subtítulos · luego práctica con menos indicaciones")}</Status>
+        <div className="mt-5 grid items-start gap-5 lg:grid-cols-[0.95fr_1.05fr]">
           <Panel>
-            <Label>{tx("TEACHING EXAMPLE · PREPARED STORYBOARD", "EJEMPLO DOCENTE · GUION PREPARADO")}</Label>
-            <Rotation start="Top" end="Bottom" locale={locale} />
-            <p className="mt-4">{tx("A half-turn moves the marker to the opposite side. Narration is represented by prepared captions and transcript; no audio was recorded.", "Media vuelta mueve el indicador al lado opuesto. La narración se representa con subtítulos y transcripción preparados; no se grabó audio.")}</p>
+            <Label>{tx("WATCH THIS EXAMPLE · ANIMATION WITH CAPTIONS", "MIRA ESTE EJEMPLO · ANIMACIÓN CON SUBTÍTULOS")}</Label>
+            <h2 className="pl-h2">{tx("Count one full turn, then one half-turn", "Cuenta una vuelta completa y luego media vuelta")}</h2>
+            <MotorAnimation totalDegrees={540} locale={locale} captionsOn={state.captionsOn} onToggleCaptions={() => update((draft) => ({ ...draft, captionsOn: !draft.captionsOn }))} showControls />
+            <p className="mt-4 font-semibold text-navy">{tx("1 complete turn + ½ turn = 1½ turns. The marker ends at Bottom.", "1 vuelta completa + ½ vuelta = 1½ vueltas. El indicador termina Abajo.")}</p>
+            <p className="mt-2 text-sm text-cool-600">{tx("This is a silent local animation with captions. No audio was recorded or generated.", "Esta es una animación local silenciosa con subtítulos. No se grabó ni generó audio.")}</p>
           </Panel>
-          {!attempt ? (
-            <Panel><h2 className="pl-h2">{tx("Ready for the meaningful task", "Listo para la tarea significativa")}</h2><p>{tx("Robert will predict 1¼ counterclockwise rotations from Top and explain how he counted.", "Robert predecirá 1¼ rotaciones antihorarias desde Arriba y explicará cómo contó.")}</p><Primary onClick={() => ensureAttempt("check-1", "1¼ counterclockwise rotations from Top")}>{tx("Start Robert's task", "Iniciar la tarea de Robert")}</Primary></Panel>
-          ) : attempt.submitted ? (
+          {!attempt ? <Panel><h2 className="pl-h2">{tx("Now you try", "Ahora inténtalo")}</h2><p>{tx("The prepared task is loading.", "La tarea preparada se está cargando.")}</p><Primary onClick={() => ensureAttempt("guided-challenge", "1¼ clockwise turns from Top")}>{tx("Load the prepared task", "Cargar la tarea preparada")}</Primary></Panel> : attempt.submitted ? (
             <Panel>
-              <h2 className="pl-h2">{tx("What Robert demonstrated", "Lo que Robert demostró")}</h2>
-              <AttemptSummary attempt={attempt} locale={locale} />
-              <Status>{attempt.independentlyExplained ? tx("Independent achievement", "Logro independiente") : attempt.correct ? tx("Supported achievement", "Logro con apoyo") : tx("Incorrect response preserved for review", "Respuesta incorrecta conservada para revisión")}</Status>
+              <Label>{tx("NOW YOU TRY · RESULT", "AHORA INTÉNTALO · RESULTADO")}</Label>
+              <h2 className="pl-h2">{tx("Start at Top. Run 1¼ clockwise turns.", "Comienza Arriba. Ejecuta 1¼ vueltas en sentido horario.")}</h2>
+              <MotorAnimation key={`challenge-${attempt.submissionHistory?.length ?? 0}`} totalDegrees={450} locale={locale} captionsOn autoPlay />
+              {attempt.correct ? <>
+                <Status>{attempt.hintUsed || attempt.demonstrationUsed ? tx("Supported practice completed", "Práctica con apoyo completada") : tx("Practice completed without help", "Práctica completada sin ayuda")}</Status>
+                <p className="mt-4 font-semibold text-navy">{tx("One complete turn brings you back to Top. Another quarter-turn takes you to Right.", "Una vuelta completa te regresa Arriba. Otro cuarto de vuelta te lleva a la Derecha.")}</p>
+              </> : <>
+                <div className="mt-4 rounded-xl border border-[#d78b2e] bg-[#fff3d8] p-4" role="status">
+                  <h3 className="font-semibold text-navy">{tx("Good try—watch the two parts", "Buen intento: mira las dos partes")}</h3>
+                  <p className="mt-2">{tx("One complete turn brings you back to Top. Another quarter-turn takes you to Right.", "Una vuelta completa te regresa Arriba. Otro cuarto de vuelta te lleva a la Derecha.")}</p>
+                </div>
+                {attempt.hintUsed && <Info><Lightbulb className="mr-2 inline" size={18} />{tx("Hint: separate 1¼ into one complete turn and one remaining quarter-turn. Trace only that final quarter clockwise.", "Pista: separa 1¼ en una vuelta completa y un cuarto de vuelta restante. Traza solo ese último cuarto en sentido horario.")}</Info>}
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <Secondary onClick={showGuidedHint}>{tx("Show me a hint", "Muéstrame una pista")}</Secondary>
+                  <Primary onClick={retryGuidedChallenge}>{tx("Try again", "Intentar de nuevo")}</Primary>
+                </div>
+              </>}
+              <details className="mt-4 rounded-xl border border-cool-300 p-4">
+                <summary className="cursor-pointer font-semibold text-navy">{tx("Practice response details", "Detalles de la respuesta de práctica")}</summary>
+                <div className="mt-3"><AttemptSummary attempt={attempt} locale={locale} /></div>
+              </details>
             </Panel>
           ) : (
             <Panel>
-              <h2 className="pl-h2">{tx("Robert's task", "Tarea de Robert")}</h2>
-              <p className="mb-4 font-semibold text-navy">{tx("Start at Top. Predict the endpoint after 1¼ counterclockwise rotations.", "Comienza Arriba. Predice el punto final después de 1¼ rotaciones antihorarias.")}</p>
+              <Label>{tx("NOW YOU TRY · PREPARED CHALLENGE", "AHORA INTÉNTALO · DESAFÍO PREPARADO")}</Label>
+              <h2 className="pl-h2">{tx("Start at Top. Predict the endpoint after 1¼ clockwise turns.", "Comienza Arriba. Predice el punto final después de 1¼ vueltas en sentido horario.")}</h2>
+              <Rotation start="Top" locale={locale} />
+              <p className="my-4 font-semibold text-navy">{tx("Where will the marker stop?", "¿Dónde se detendrá el indicador?")}</p>
               <div className="grid gap-3 sm:grid-cols-2">{POSITIONS.map((position, index) => <button key={position} className={`pl-choice ${attempt.answer === position ? "pl-choice-selected" : ""}`} onClick={() => selectAnswer(position)} aria-pressed={attempt.answer === position}>{index + 1} · {locale === "es" ? positionEs(position) : position}</button>)}</div>
-              <label className="mt-5 block font-semibold text-navy" htmlFor="guided-explanation">{tx("Explain how you counted", "Explica cómo contaste")}</label>
-              <textarea id="guided-explanation" rows={3} className="mt-2 w-full rounded-xl border border-cool-300 bg-cool-50 p-3" value={attempt.explanation} onChange={(event) => changeAttempt("check-1", (item) => { item.explanation = event.target.value; item.responseMode = "text" })} />
-              <details className="mt-4 rounded-xl border border-cool-300 p-4"><summary className="cursor-pointer font-semibold text-navy">{tx("Optional help", "Ayuda opcional")}</summary><Secondary onClick={() => changeAttempt("check-1", (item) => { item.hintUsed = true; item.supportNotes.push(tx("Marcus pointed to each complete rotation.", "Marcus señaló cada rotación completa.")) })}>{tx("Ask Marcus for one counting hint", "Pedir a Marcus una pista para contar")}</Secondary></details>
-              <Primary onClick={() => submitAttempt("check-1", true)}>{tx("Submit Robert's response", "Enviar la respuesta de Robert")}</Primary>
+              <label className="mt-5 block font-semibold text-navy" htmlFor="guided-explanation">{tx("How did you count? (optional practice note)", "¿Cómo contaste? (nota de práctica opcional)")}</label>
+              <textarea id="guided-explanation" rows={2} className="mt-2 w-full rounded-xl border border-cool-300 bg-cool-50 p-3" value={attempt.explanation} onChange={(event) => changeAttempt("guided-challenge", (item) => { item.explanation = event.target.value; item.responseMode = "text" })} />
+              <Primary onClick={() => submitAttempt("guided-challenge")}>{tx("Run the motor", "Ejecutar el motor")} <Play size={18} /></Primary>
             </Panel>
           )}
         </div>
-        {attempt?.submitted && <Primary onClick={openGuidedMonthlyReview}>{tx("See Robert's monthly progress", "Ver el progreso mensual de Robert")} <ChevronRight size={18} /></Primary>}
-        {decision && <p className="text-sm text-cool-600">{tx("Saved teaching decision", "Decisión docente guardada")}: {decision.reason}</p>}
+        <details className="rounded-2xl border border-cool-300 bg-white p-5">
+          <summary className="cursor-pointer font-semibold text-navy">{tx("Try another explanation", "Prueba otra explicación")}</summary>
+          <p className="mt-3 text-sm text-cool-600">{tx("Choose another working presentation. Marcus's saved recommendation will not change.", "Elige otra presentación funcional. La recomendación guardada de Marcus no cambiará.")}</p>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <Secondary onClick={() => openGuidedExplanation("interactive")}>{tx("Animated demonstration", "Demostración animada")}</Secondary>
+            <Secondary onClick={() => openGuidedExplanation("narrated")}>{tx("Step-by-step illustrated", "Explicación ilustrada paso a paso")}</Secondary>
+            <Secondary onClick={() => openGuidedExplanation("written")}>{tx("Concise written explanation", "Explicación escrita concisa")}</Secondary>
+          </div>
+        </details>
+        {alternative && <Panel>
+          <Label>{tx("SELECTED ALTERNATIVE EXPLANATION", "EXPLICACIÓN ALTERNATIVA SELECCIONADA")}</Label>
+          <AlternativeExplanation presentation={alternative} locale={locale} captionsOn={state.captionsOn} />
+        </Panel>}
+        {attempt?.submitted && attempt.correct && <Panel>
+          <h2 className="pl-h2">{tx("Practice outcome", "Resultado de la práctica")}</h2>
+          <div className="grid gap-3 md:grid-cols-3">
+            <Info><strong>{tx("Practiced", "Practicó")}:</strong><br />{tx("Counting 1¼ clockwise turns from Top.", "Contar 1¼ vueltas horarias desde Arriba.")}</Info>
+            <Info><strong>{tx("Help used", "Ayuda utilizada")}:</strong><br />{attempt.hintUsed || attempt.demonstrationUsed ? tx("Yes—this remains supported practice.", "Sí: esto sigue siendo práctica con apoyo.") : tx("No help in this practice attempt.", "Sin ayuda en este intento de práctica.")}</Info>
+            <Info><strong>{tx("Still needed", "Aún se necesita")}:</strong><br />{tx("Independent demonstration and Coach review.", "Demostración independiente y revisión del instructor.")}</Info>
+          </div>
+          <Primary onClick={openGuidedMonthlyReview}>{tx("See Robert's monthly progress", "Ver el progreso mensual de Robert")} <ChevronRight size={18} /></Primary>
+        </Panel>}
+        {decision && <details className="rounded-xl border border-cool-300 bg-white p-4 text-sm text-cool-600"><summary className="cursor-pointer font-semibold text-navy">{tx("Coach evidence details", "Detalles de evidencia del instructor")}</summary><p className="mt-3">{tx("Saved teaching decision", "Decisión docente guardada")}: {decision.reason}</p></details>}
       </Page>
     )
   }
@@ -960,7 +1087,7 @@ export default function PersonalizedLearningDemo() {
     const report = [...record.reportRevisions].reverse().find((revision) => revision.status !== "invalidated")
     const coachReviewed = Boolean(report && record.reportReviews.some((review) => review.version === report.version && review.role === "coach" && review.action === "reviewed"))
     const centerApproved = Boolean(report && record.reportReviews.some((review) => review.version === report.version && review.role === "center" && review.action === "approved"))
-    const currentAttempt = latestAttempt(state, "check-1")
+    const currentAttempt = latestAttempt(state, "guided-challenge")
     return (
       <Page
         title={tx("Review Robert's monthly progress", "Revisar el progreso mensual de Robert")}
@@ -2514,7 +2641,7 @@ function guidedFurthestIndex(state: PersonalizedLearningState) {
   const record = state.students.robert
   const shared = record.reportRevisions.some((revision) => revision.status === "shared")
   const approved = record.reportReviews.some((review) => review.role === "center" && review.action === "approved")
-  const submitted = record.attempts.some((attempt) => attempt.activity === "check-1" && attempt.submitted)
+  const submitted = record.attempts.some((attempt) => attempt.activity === "guided-challenge" && attempt.submitted)
   if (shared || approved) return 5
   if (submitted) return 4
   if (record.recommendationHistory.length) return 3
@@ -2658,6 +2785,119 @@ function Secondary({
   )
 }
 
+function MotorAnimation({
+  totalDegrees,
+  locale,
+  captionsOn,
+  onToggleCaptions,
+  showControls = false,
+  autoPlay = false,
+}: {
+  totalDegrees: 450 | 540
+  locale: "en" | "es"
+  captionsOn: boolean
+  onToggleCaptions?: () => void
+  showControls?: boolean
+  autoPlay?: boolean
+}) {
+  const [degrees, setDegrees] = useState(0)
+  const [playing, setPlaying] = useState(autoPlay)
+  const [reducedMotion, setReducedMotion] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const sync = () => setReducedMotion(media.matches)
+    sync()
+    media.addEventListener?.("change", sync)
+    return () => media.removeEventListener?.("change", sync)
+  }, [])
+
+  useEffect(() => {
+    if (!playing) return
+    if (reducedMotion) {
+      setDegrees(totalDegrees)
+      setPlaying(false)
+      return
+    }
+    const timer = window.setInterval(() => {
+      setDegrees((current) => Math.min(totalDegrees, current + 6))
+    }, 30)
+    return () => window.clearInterval(timer)
+  }, [playing, reducedMotion, totalDegrees])
+
+  useEffect(() => {
+    if (degrees >= totalDegrees) setPlaying(false)
+  }, [degrees, totalDegrees])
+
+  const play = () => {
+    if (degrees >= totalDegrees) setDegrees(0)
+    setPlaying(true)
+  }
+  const replay = () => {
+    setDegrees(0)
+    setPlaying(true)
+  }
+  const endpoint: Position = degrees >= 450 ? (totalDegrees === 450 ? "Right" : degrees >= 540 ? "Bottom" : "Right") : degrees >= 360 ? "Top" : degrees >= 270 ? "Left" : degrees >= 180 ? "Bottom" : degrees >= 90 ? "Right" : "Top"
+  const caption = degrees === 0
+    ? text(locale, "Start at Top.", "Comienza Arriba.")
+    : degrees < 360
+      ? text(locale, "Make one complete clockwise turn.", "Haz una vuelta completa en sentido horario.")
+      : degrees === 360
+        ? text(locale, "One complete turn returns to Top.", "Una vuelta completa regresa Arriba.")
+        : degrees < totalDegrees
+          ? text(locale, totalDegrees === 540 ? "Now add one half-turn." : "Now add one quarter-turn.", totalDegrees === 540 ? "Ahora agrega media vuelta." : "Ahora agrega un cuarto de vuelta.")
+          : text(locale, totalDegrees === 540 ? "One and one-half turns end at Bottom." : "One and one-quarter turns end at Right.", totalDegrees === 540 ? "Una vuelta y media termina Abajo." : "Una vuelta y un cuarto termina a la Derecha.")
+  const completeTurns = degrees >= 360 ? 1 : 0
+  const extra = degrees <= 360 ? "0" : degrees >= 540 ? "½" : degrees >= 450 ? "¼" : text(locale, "in progress", "en progreso")
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-xl bg-[#dce9f4] p-4">
+        <div className="relative mx-auto h-52 w-52 max-w-full" role="img" aria-label={text(locale, `Animated shaft-end marker. ${caption}`, `Indicador animado desde el extremo del eje. ${caption}`)}>
+          <span className="absolute left-1/2 top-0 -translate-x-1/2 text-sm text-navy">{text(locale, "Top", "Arriba")}</span>
+          <span className="absolute right-0 top-1/2 -translate-y-1/2 text-sm text-navy">{text(locale, "Right", "Derecha")}</span>
+          <span className="absolute bottom-0 left-1/2 -translate-x-1/2 text-sm text-navy">{text(locale, "Bottom", "Abajo")}</span>
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 text-sm text-navy">{text(locale, "Left", "Izquierda")}</span>
+          <div className="absolute inset-7 rounded-full border-[3px] border-navy bg-white">
+            <div className="absolute left-1/2 top-1/2 h-[4px] w-[46%] origin-left rounded-full bg-navy" style={{ transform: `rotate(${degrees - 90}deg)` }}>
+              <span className="absolute -right-1 -top-1.5 h-4 w-4 rounded-full bg-navy" />
+            </div>
+            <span className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold" />
+          </div>
+        </div>
+        <div className="mt-2 h-2 overflow-hidden rounded-full bg-white" aria-hidden="true"><div className="h-full rounded-full bg-gold" style={{ width: `${Math.min(100, (degrees / totalDegrees) * 100)}%` }} /></div>
+        <p className="mt-3 text-center font-semibold text-navy">{text(locale, "Turn counter", "Contador de vueltas")}: {completeTurns} {text(locale, "complete", "completa")} + {extra}</p>
+        <p className="text-center text-sm text-cool-600">{text(locale, "Current marker", "Indicador actual")}: {locale === "es" ? positionEs(endpoint) : endpoint}</p>
+      </div>
+      {captionsOn && <div className="rounded-xl bg-navy px-4 py-3 text-center text-white" aria-live="polite">{caption}</div>}
+      {showControls && <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <button type="button" className="pl-secondary" onClick={play}><Play size={18} />{text(locale, "Play", "Reproducir")}</button>
+        <button type="button" className="pl-secondary" onClick={() => setPlaying(false)}><Pause size={18} />{text(locale, "Pause", "Pausar")}</button>
+        <button type="button" className="pl-secondary" onClick={replay}><RotateCcw size={18} />{text(locale, "Replay", "Repetir")}</button>
+        {onToggleCaptions && <button type="button" className="pl-secondary" onClick={onToggleCaptions}>{text(locale, captionsOn ? "Captions on" : "Captions off", captionsOn ? "Subtítulos activos" : "Subtítulos desactivados")}</button>}
+      </div>}
+      <details className="rounded-xl border border-cool-300 bg-cool-50 p-4">
+        <summary className="cursor-pointer font-semibold text-navy">{text(locale, "Step-by-step reduced-motion equivalent", "Equivalente paso a paso con movimiento reducido")}</summary>
+        <ol className="mt-3 grid gap-3 sm:grid-cols-3">
+          <li><strong>1.</strong> {text(locale, "Start at Top.", "Comienza Arriba.")}</li>
+          <li><strong>2.</strong> {text(locale, "One complete turn returns to Top.", "Una vuelta completa regresa Arriba.")}</li>
+          <li><strong>3.</strong> {totalDegrees === 540 ? text(locale, "Add ½ turn and finish at Bottom.", "Agrega ½ vuelta y termina Abajo.") : text(locale, "Add ¼ turn and finish at Right.", "Agrega ¼ de vuelta y termina a la Derecha.")}</li>
+        </ol>
+      </details>
+    </div>
+  )
+}
+
+function AlternativeExplanation({ presentation, locale, captionsOn }: { presentation: Presentation; locale: "en" | "es"; captionsOn: boolean }) {
+  if (presentation === "interactive") return <MotorAnimation totalDegrees={540} locale={locale} captionsOn={captionsOn} showControls />
+  if (presentation === "narrated") return <div className="grid gap-3 sm:grid-cols-3">
+    <Info><strong>1 · {text(locale, "Top", "Arriba")}</strong><br />{text(locale, "Place the marker at the starting point.", "Coloca el indicador en el punto inicial.")}</Info>
+    <Info><strong>2 · {text(locale, "Top again", "Arriba de nuevo")}</strong><br />{text(locale, "Count one complete clockwise turn.", "Cuenta una vuelta completa en sentido horario.")}</Info>
+    <Info><strong>3 · {text(locale, "Bottom", "Abajo")}</strong><br />{text(locale, "Add one half-turn to reach the opposite side.", "Agrega media vuelta para llegar al lado opuesto.")}</Info>
+  </div>
+  return <Info><strong>{text(locale, "Concise written explanation", "Explicación escrita concisa")}</strong><br />{text(locale, "A complete turn returns the marker to where it started. One more half-turn moves it to the opposite side: 1 + ½ = 1½ turns, ending at Bottom.", "Una vuelta completa regresa el indicador al punto inicial. Media vuelta más lo mueve al lado opuesto: 1 + ½ = 1½ vueltas, terminando Abajo.")}</Info>
+}
+
 function Rotation({
   start,
   end,
@@ -2775,6 +3015,14 @@ function AttemptSummary({
           </strong>{" "}
           {attempt.originalAnswer} → {attempt.revisions.join(" → ")}
         </p>
+      )}
+      {attempt.submissionHistory && attempt.submissionHistory.length > 1 && (
+        <div>
+          <strong>{tx("Saved submissions", "Envíos guardados")}:</strong>
+          <ol className="mt-1 list-decimal space-y-1 pl-5">
+            {attempt.submissionHistory.map((submission, index) => <li key={`${submission.submittedAt}-${index}`}>{locale === "es" ? positionEs(submission.answer) : submission.answer} · {submission.correct ? tx("correct", "correcta") : tx("incorrect", "incorrecta")} · {submission.hintUsed ? tx("supported", "con apoyo") : tx("no help recorded", "sin ayuda registrada")}</li>)}
+          </ol>
+        </div>
       )}
     </div>
   )
