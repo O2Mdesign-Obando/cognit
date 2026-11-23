@@ -16,6 +16,19 @@ export default function FamilyHome() {
     <div className="animate-fade-up">
       <PageTitle title="Welcome back, Hayes Family." subtitle="Here is what is new with Robert's learning journey." />
 
+      <Card accent="gold" className="mb-6 flex flex-wrap items-center justify-between gap-5 p-6">
+        <div>
+          <Badge tone="gold">Local synthetic demo</Badge>
+          <h2 className="mt-3 text-[22px] font-semibold text-navy">Read Robert's reviewed monthly story</h2>
+          <p className="mt-1 max-w-2xl text-sm text-cool-600">
+            Follow the connected journey from prepared curriculum to a browser-local fictional Family response.
+          </p>
+        </div>
+        <Button variant="gold" onClick={() => navigate("/personalized-learning")}>
+          Open connected journey <ArrowRight size={16} />
+        </Button>
+      </Card>
+
       <div className="mb-8 flex items-center gap-3">
         <Eyebrow>Viewing for</Eyebrow>
         <div className="flex gap-1.5">

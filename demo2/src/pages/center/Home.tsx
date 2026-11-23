@@ -1,12 +1,25 @@
 import { useNavigate } from "react-router";
-import { CheckCircle2 } from "lucide-react";
-import { PageTitle, ActionRow, Card } from "../../components/ui";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { PageTitle, ActionRow, Badge, Button, Card } from "../../components/ui";
 
 export default function CenterHome() {
   const navigate = useNavigate();
   return (
     <div className="animate-fade-up">
       <PageTitle title="Good morning, Jack." subtitle="Here is what needs your attention today." />
+
+      <Card accent="gold" className="mb-6 flex flex-wrap items-center justify-between gap-5 p-6">
+        <div>
+          <Badge tone="gold">Local synthetic demo</Badge>
+          <h2 className="mt-3 text-[22px] font-semibold text-navy">Understand Robert's learning needs</h2>
+          <p className="mt-1 max-w-2xl text-sm text-cool-600">
+            See how prepared evidence informs a changeable assessment before Marcus chooses a teaching approach.
+          </p>
+        </div>
+        <Button variant="gold" onClick={() => navigate("/personalized-learning")}>
+          Open connected journey <ArrowRight size={16} />
+        </Button>
+      </Card>
 
       <div className="space-y-4">
         <ActionRow

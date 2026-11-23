@@ -22,6 +22,19 @@ export default function CoachHome() {
     <div className="animate-fade-up">
       <PageTitle title="Good afternoon, Marcus." subtitle="Here's what you need to know before class starts." />
 
+      <Card accent="gold" className="mb-6 flex flex-wrap items-center justify-between gap-5 p-6">
+        <div>
+          <Badge tone="gold">Local synthetic demo</Badge>
+          <h2 className="mt-3 text-[22px] font-semibold text-navy">Choose Robert's teaching approach</h2>
+          <p className="mt-1 max-w-2xl text-sm text-cool-600">
+            Review the assessment, supporting evidence, guided activity, and browser-local Family response.
+          </p>
+        </div>
+        <Button variant="gold" onClick={() => navigate("/personalized-learning")}>
+          Open connected journey <ArrowRight size={16} />
+        </Button>
+      </Card>
+
       {/* Upcoming class banner */}
       <Card className="p-7">
         <div className="flex items-start justify-between gap-4">

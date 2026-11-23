@@ -11,6 +11,19 @@ export default function StudentHome() {
     <div className="animate-fade-up">
       <PageTitle title="Good afternoon, Saúl." subtitle="Your next class starts in 12 minutes." />
 
+      <Card accent="gold" className="mb-6 flex flex-wrap items-center justify-between gap-5 p-6">
+        <div>
+          <Badge tone="gold">Personalized Learning walkthrough</Badge>
+          <h2 className="mt-3 text-[22px] font-semibold text-navy">Watch Robert learn, try, and revise</h2>
+          <p className="mt-1 max-w-2xl text-sm text-cool-600">
+            Explore a fictional Robotics Explorers example with visible support, feedback, and saved retries.
+          </p>
+        </div>
+        <Button variant="gold" onClick={() => navigate("/personalized-learning")}>
+          Open connected journey <ArrowRight size={16} />
+        </Button>
+      </Card>
+
       {/* Hero */}
       <div className="flex items-center justify-between gap-6 overflow-hidden rounded-[16px] bg-gradient-to-r from-deepnavy via-navy to-blue px-8 py-7 [box-shadow:var(--shadow-card)]">
         <div>
