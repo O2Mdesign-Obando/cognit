@@ -1,0 +1,10 @@
+---
+import BaseLayout from "../../../components/layout/BaseLayout.astro";
+import Container from "../../../components/ui/Container.astro";
+import CognitPersonalizedLearning from "../../../components/demo/CognitPersonalizedLearning.astro";
+---
+
+<BaseLayout title="Personalized Learning · Cognit Learning Hub" shellVariant="demo-shell" footerVariant="compact" demoPerspective="entry">
+  <main class="pl-page"><Container><CognitPersonalizedLearning /></Container></main>
+</BaseLayout>
+<style>.pl-page{min-height:72vh;padding:clamp(26px,5vw,58px) 0 70px}.pl-page :global(.container){max-width:1180px}</style>

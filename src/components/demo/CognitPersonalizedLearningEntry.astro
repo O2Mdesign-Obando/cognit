@@ -1,0 +1,27 @@
+---
+const { perspective = "center" } = Astro.props;
+const copy = {
+  hq: ["Curriculum continuity", "Prepare one curriculum in several teaching formats.", "Open HQ preparation"],
+  center: ["Personalized learning", "See how assessment and prior evidence inform Robert’s next approach.", "Understand Robert"],
+  coach: ["Teaching decision", "Review Robert’s assessment, evidence, and recommended approach together.", "Choose Robert’s approach"],
+  student: ["Robotics Explorers", "Watch a short example, then help Robert demonstrate what he understands.", "Start Robert’s activity"],
+  family: ["Monthly learning story", "See the reviewed fictional report and respond in this browser.", "Read Robert’s report"]
+};
+const moment = { hq: 1, center: 2, coach: 3, student: 4, family: 6 }[perspective] ?? 1;
+const [eyebrow, body, action] = copy[perspective] ?? copy.center;
+---
+
+<aside class="pl-entry" aria-labelledby={`pl-entry-${perspective}`} data-i18n-preserve>
+  <div>
+    <span>{eyebrow} · Synthetic guided demo</span>
+    <h2 id={`pl-entry-${perspective}`}>One curriculum. One connected learning story.</h2>
+    <p>{body}</p>
+  </div>
+  <a href={`/learninghub/demo/personalized-learning?moment=${moment}&from=${perspective}`}>{action} →</a>
+</aside>
+
+<style>
+  .pl-entry{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:0 0 30px;padding:22px 24px;border:1px solid var(--color-border);border-left:6px solid #f6ac2c;border-radius:16px;background:linear-gradient(135deg,#fff8e8,#fff);box-shadow:var(--shadow-soft)}
+  .pl-entry span{color:#516476;font-size:.76rem;font-weight:950;letter-spacing:.04em;text-transform:uppercase}.pl-entry h2{margin:.3rem 0;font-size:clamp(1.4rem,3vw,2rem)}.pl-entry p{margin:0;line-height:1.55}.pl-entry a{display:inline-flex;min-height:48px;min-width:220px;align-items:center;justify-content:center;padding:12px 18px;border-radius:999px;background:#0b4167;color:#fff;font-weight:900;text-align:center}
+  @media(max-width:720px){.pl-entry{align-items:stretch;flex-direction:column}.pl-entry a{width:100%;min-width:0}}
+</style>

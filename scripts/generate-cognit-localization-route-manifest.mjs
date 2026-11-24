@@ -31,12 +31,12 @@ const counts = routes.reduce((result, route) => {
   return result;
 }, {});
 const fingerprint = createHash("sha256").update(`${routes.join("\n")}\n`).digest("hex");
-const expectedCounts = { entry: 1, center: 321, coach: 26, student: 12, family: 14, hq: 11 };
+const expectedCounts = { entry: 1, center: 321, coach: 26, student: 12, family: 14, hq: 11, "personalized-learning": 1 };
 if (Object.entries(expectedCounts).some(([family, count]) => counts[family] !== count)
   || Object.keys(counts).length !== Object.keys(expectedCounts).length) {
   throw new Error(`Unexpected Cognit Demo route counts: ${JSON.stringify(counts)}`);
 }
-if (fingerprint !== "818ee5dd04351d544b4b73f214edc8fcfb8fccdcb3ebfdb36f3030b2a43533e4") {
+if (fingerprint !== "b36e5ae0211614a13add6944b2f4ba04c973e98511840a55d855cdcd74bf8286") {
   throw new Error(`Unexpected Cognit Demo route fingerprint: ${fingerprint}`);
 }
 

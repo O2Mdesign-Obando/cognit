@@ -374,6 +374,7 @@ export const COGNIT_DEMO_LOCALIZATION_MANIFEST = Object.freeze([
   "/learninghub/demo/hq/network",
   "/learninghub/demo/hq/performance",
   "/learninghub/demo/hq/support",
+  "/learninghub/demo/personalized-learning",
   "/learninghub/demo/student",
   "/learninghub/demo/student/active",
   "/learninghub/demo/student/artifact",
@@ -395,8 +396,9 @@ export const COGNIT_DEMO_LOCALIZATION_MANIFEST_META = Object.freeze({
     "coach": 26,
     "family": 14,
     "hq": 11,
+    "personalized-learning": 1,
     "student": 12
   },
-  "fingerprint": "818ee5dd04351d544b4b73f214edc8fcfb8fccdcb3ebfdb36f3030b2a43533e4",
+  "fingerprint": "b36e5ae0211614a13add6944b2f4ba04c973e98511840a55d855cdcd74bf8286",
   "reviewStatus": "SPANISH_HUMAN_REVIEW_PENDING"
 });

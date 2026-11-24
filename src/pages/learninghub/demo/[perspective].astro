@@ -7,6 +7,7 @@ import CognitFamilyJourneyView from "../../../components/demo/CognitFamilyJourne
 import CognitHqView from "../../../components/demo/CognitHqView.astro";
 import CognitCenterView from "../../../components/demo/CognitCenterView.astro";
 import DemoLoopNav from "../../../components/demo/DemoLoopNav.astro";
+import CognitPersonalizedLearningEntry from "../../../components/demo/CognitPersonalizedLearningEntry.astro";
 import { getCognitDemoPerspectiveModel } from "../../../demo/cognit-demo-model.js";
 
 const perspectives = {
@@ -56,6 +57,8 @@ const model = selectedKey === "hq" ? null : getCognitDemoPerspectiveModel(select
         <h1 id="demo-title">{selected.title}</h1>
         <p>{selected.body}</p>
       </section>}
+
+      <CognitPersonalizedLearningEntry perspective={selectedKey} />
 
       {selectedKey === "student" ? <CognitStudentJourneyView view="today" /> : selectedKey === "family" ? <CognitFamilyJourneyView view="overview" /> : selectedKey === "hq" ? <CognitHqView view="home" /> : selectedKey === "center" ? <CognitCenterView view="overview" /> : <CognitDemoPerspective model={model} />}
 
