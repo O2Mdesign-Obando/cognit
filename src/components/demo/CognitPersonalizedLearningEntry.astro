@@ -1,27 +1,66 @@
 ---
 const { perspective = "center" } = Astro.props;
-const copy = {
-  hq: ["Curriculum continuity", "Prepare one curriculum in several teaching formats.", "Open HQ preparation"],
-  center: ["Personalized learning", "See how assessment and prior evidence inform Robert’s next approach.", "Understand Robert"],
-  coach: ["Teaching decision", "Review Robert’s assessment, evidence, and recommended approach together.", "Choose Robert’s approach"],
-  student: ["Robotics Explorers", "Watch a short example, then help Robert demonstrate what he understands.", "Start Robert’s activity"],
-  family: ["Monthly learning story", "See the reviewed fictional report and respond in this browser.", "Read Robert’s report"]
+const content = {
+  hq: {
+    eyebrow: ["Personalized learning starts here", "El aprendizaje personalizado comienza aquí"],
+    title: ["One curriculum. Common objectives. Several teaching presentations.", "Un currículo. Objetivos comunes. Varias presentaciones de enseñanza."],
+    body: ["HQ prepares the shared package; Centers and Coaches retain responsibility for how it is used with each student.", "La sede central prepara el paquete compartido; los Centros y los instructores conservan la responsabilidad de cómo se usa con cada estudiante."],
+    points: [["Storyboard, narration, interactive, and written formats", "Formatos ilustrados, narrados, interactivos y escritos"], ["Exact package approval before Center availability", "Aprobación de la versión exacta antes de estar disponible para el Centro"], ["Availability remains separate from assignment", "La disponibilidad permanece separada de la asignación"]],
+    action: ["See where the journey starts", "Ver dónde comienza el recorrido"], moment: 1
+  },
+  center: {
+    eyebrow: ["Understand each student", "Comprende a cada estudiante"],
+    title: ["Assessment helps the Center and Coach choose appropriate support.", "La evaluación ayuda al Centro y al instructor a elegir el apoyo adecuado."],
+    body: ["Robert’s current knowledge, skills, preferences, interests, support needs, and prepared prior evidence stay visible without becoming a fixed label.", "Los conocimientos, habilidades, preferencias, intereses, necesidades de apoyo y evidencia previa preparada de Robert permanecen visibles sin convertirse en una etiqueta fija."],
+    points: [["New-student questions establish a starting point", "Las preguntas para estudiantes nuevos establecen un punto de partida"], ["Prior learning evidence informs an existing student’s assessment", "La evidencia previa informa la evaluación de un estudiante existente"], ["Prepared context is clearly separated from this browser visit", "El contexto preparado se separa claramente de esta visita"]],
+    action: ["Explore Robert’s assessment", "Explorar la evaluación de Robert"], moment: 2
+  },
+  coach: {
+    eyebrow: ["Choose the approach", "Elige el enfoque"],
+    title: ["Marcus reviews assessment, recommendation, evidence, and rationale together.", "Marcus revisa juntos la evaluación, la recomendación, la evidencia y el motivo."],
+    body: ["Robert currently prefers hands-on activity and needs help counting complete rotations. Marcus retains the decision to accept, adjust, or dismiss the recommendation.", "Robert actualmente prefiere actividades prácticas y necesita ayuda para contar rotaciones completas. Marcus conserva la decisión de aceptar, ajustar o descartar la recomendación."],
+    points: [["Preference remains changeable", "La preferencia puede cambiar"], ["Supporting observations stay attached to the recommendation", "Las observaciones de apoyo permanecen vinculadas a la recomendación"], ["The saved teaching decision has its own history", "La decisión de enseñanza guardada tiene su propio historial"]],
+    action: ["Review Robert’s learning plan", "Revisar el plan de aprendizaje de Robert"], moment: 3
+  },
+  student: {
+    eyebrow: ["Learn and demonstrate", "Aprende y demuestra"],
+    title: ["Robert sees the chosen explanation, practices, and can use useful help.", "Robert ve la explicación elegida, practica y puede usar ayuda útil."],
+    body: ["The working lesson keeps incorrect, supported, independent, and missing evidence distinct instead of treating completion as understanding.", "La lección funcional mantiene separadas la evidencia incorrecta, con apoyo, independiente y faltante, sin tratar la finalización como comprensión."],
+    points: [["Short animated example with captions", "Ejemplo animado breve con subtítulos"], ["One meaningful rotation task with hint and retry", "Una tarea significativa de rotación con pista y reintento"], ["Alternative illustrated and written explanations", "Explicaciones alternativas ilustradas y escritas"]],
+    action: ["Try your learning activity", "Probar tu actividad de aprendizaje"], moment: 4
+  },
+  family: {
+    eyebrow: ["Reviewed family progress", "Progreso familiar revisado"],
+    title: ["Families can see specific progress in their preferred language.", "Las familias pueden ver el progreso específico en su idioma preferido."],
+    body: ["The prepared fictional report connects objectives, achievements, support used, remaining uncertainty, and next steps after Coach review and Center exact-version approval.", "El informe ficticio preparado conecta objetivos, logros, apoyo utilizado, incertidumbre restante y próximos pasos después de la revisión del instructor y la aprobación de versión exacta del Centro."],
+    points: [["Only the reviewed shared Demo version is visible", "Solo es visible la versión revisada y compartida de la demostración"], ["English and Spanish follow the saved Demo preference", "El inglés y el español siguen la preferencia guardada de la demostración"], ["A fictional comment stays in this browser and returns to Coach", "Un comentario ficticio permanece en este navegador y vuelve al instructor"]],
+    action: ["View Robert’s progress", "Ver el progreso de Robert"], moment: 6
+  }
 };
-const moment = { hq: 1, center: 2, coach: 3, student: 4, family: 6 }[perspective] ?? 1;
-const [eyebrow, body, action] = copy[perspective] ?? copy.center;
+const selected = content[perspective] ?? content.center;
 ---
 
-<aside class="pl-entry" aria-labelledby={`pl-entry-${perspective}`} data-i18n-preserve>
-  <div>
-    <span>{eyebrow} · Synthetic guided demo</span>
-    <h2 id={`pl-entry-${perspective}`}>One curriculum. One connected learning story.</h2>
-    <p>{body}</p>
+<section class="pl-entry" aria-labelledby={`pl-entry-${perspective}`} data-pl-discovery data-i18n-preserve>
+  <div class="pl-entry__intro">
+    <span data-en={`${selected.eyebrow[0]} · Prepared fictional context`} data-es={`${selected.eyebrow[1]} · Contexto ficticio preparado`}>{selected.eyebrow[0]} · Prepared fictional context</span>
+    <h2 id={`pl-entry-${perspective}`} data-en={selected.title[0]} data-es={selected.title[1]}>{selected.title[0]}</h2>
+    <p data-en={selected.body[0]} data-es={selected.body[1]}>{selected.body[0]}</p>
   </div>
-  <a href={`/learninghub/demo/personalized-learning?moment=${moment}&from=${perspective}`}>{action} →</a>
-</aside>
+  <ul>{selected.points.map((point) => <li data-en={point[0]} data-es={point[1]}>{point[0]}</li>)}</ul>
+  <a href={`/learninghub/demo/personalized-learning?moment=${selected.moment}&from=${perspective}&entry=prepared`} data-en={`${selected.action[0]} →`} data-es={`${selected.action[1]} →`}>{selected.action[0]} →</a>
+</section>
+
+<script>
+  const applyPersonalizedDiscoveryLocale = () => {
+    const spanish = document.documentElement.lang.toLowerCase().startsWith("es");
+    document.querySelectorAll("[data-pl-discovery]").forEach((root) => root.querySelectorAll("[data-en][data-es]").forEach((node) => { node.textContent = node.getAttribute(spanish ? "data-es" : "data-en") || node.textContent; }));
+  };
+  applyPersonalizedDiscoveryLocale();
+  document.addEventListener("cognit:language-changed", applyPersonalizedDiscoveryLocale);
+</script>
 
 <style>
-  .pl-entry{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:0 0 30px;padding:22px 24px;border:1px solid var(--color-border);border-left:6px solid #f6ac2c;border-radius:16px;background:linear-gradient(135deg,#fff8e8,#fff);box-shadow:var(--shadow-soft)}
-  .pl-entry span{color:#516476;font-size:.76rem;font-weight:950;letter-spacing:.04em;text-transform:uppercase}.pl-entry h2{margin:.3rem 0;font-size:clamp(1.4rem,3vw,2rem)}.pl-entry p{margin:0;line-height:1.55}.pl-entry a{display:inline-flex;min-height:48px;min-width:220px;align-items:center;justify-content:center;padding:12px 18px;border-radius:999px;background:#0b4167;color:#fff;font-weight:900;text-align:center}
-  @media(max-width:720px){.pl-entry{align-items:stretch;flex-direction:column}.pl-entry a{width:100%;min-width:0}}
+  .pl-entry{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(230px,.75fr);gap:18px 30px;margin:0 0 34px;padding:clamp(22px,3vw,32px);border-top:6px solid #f6ac2c;border-radius:18px;background:linear-gradient(120deg,#fff9e9,#fff 52%,#edf6f8);box-shadow:var(--shadow-soft)}
+  .pl-entry__intro span{color:#516476;font-size:.75rem;font-weight:950;letter-spacing:.04em;text-transform:uppercase}.pl-entry h2{margin:.45rem 0 .7rem;font-size:clamp(1.55rem,3vw,2.25rem)}.pl-entry p{margin:0;line-height:1.58}.pl-entry ul{display:grid;align-content:start;gap:9px;margin:0;padding-left:20px}.pl-entry li{line-height:1.45}.pl-entry a{display:inline-flex;min-height:48px;align-items:center;justify-content:center;grid-column:1/-1;padding:12px 18px;border-radius:999px;background:#0b4167;color:#fff;font-weight:900;text-align:center}.pl-entry a:focus-visible{outline:3px solid #f6ac2c;outline-offset:3px}
+  @media(max-width:720px){.pl-entry{grid-template-columns:1fr}.pl-entry a{grid-column:auto;width:100%}}
 </style>
